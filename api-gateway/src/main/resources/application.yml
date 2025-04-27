@@ -11,6 +11,10 @@ spring:
           uri: lb://pet-service
           predicates:
             - Path=/pets/**
+        - id: user-service
+          uri: lb://user-service
+          predicates:
+            - Path=/auth/**
 
 eureka:
   client:

@@ -15,12 +15,12 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "pet")
+@Table(name = "pets")
 public class Pet {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "pet_id_seq")
-    @SequenceGenerator(name = "pet_id_seq", sequenceName = "pet_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "pets_id_seq")
+    @SequenceGenerator(name = "pets_id_seq", sequenceName = "pets_id_seq", allocationSize = 1)
     private Long id;
 
     @Column(nullable = false)

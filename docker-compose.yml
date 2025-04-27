@@ -40,6 +40,35 @@ services:
     networks:
       - adoption-network
 
+  user-db:
+    image: postgres:latest
+    container_name: user-db
+    environment:
+      - POSTGRES_USER=${USER_SERVICE_DB_USERNAME}
+      - POSTGRES_PASSWORD=${USER_SERVICE_DB_PASSWORD}
+      - POSTGRES_DB=${USER_SERVICE_DB}
+    ports:
+      - "5433:5432"
+    networks:
+      - adoption-network
+    volumes:
+      - user-db-data:/var/lib/postgresql/data
+
+  user-service:
+    container_name: user-service
+    build:
+      context: ./user-service
+      dockerfile: Dockerfile
+    ports:
+      - "8082:8082"
+    env_file:
+      - .env
+    depends_on:
+      - user-db
+      - eureka-server
+    networks:
+      - adoption-network
+
   api-gateway:
     container_name: api-gateway
     build:
@@ -53,6 +82,7 @@ services:
     depends_on:
       - eureka-server
       - pet-service
+      - user-service
     networks:
       - adoption-network
 
@@ -62,3 +92,4 @@ networks:
 
 volumes:
   pet-db-data:
+  user-db-data:

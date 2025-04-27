@@ -1,0 +1,35 @@
+server:
+  port: 8082
+
+app:
+  auth:
+    secret: ${JWT_SECRET}
+
+spring:
+  datasource:
+    url: ${USER_SERVICE_DB_URL}
+    username: ${USER_SERVICE_DB_USERNAME}
+    password: ${USER_SERVICE_DB_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: none
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+  flyway:
+    enabled: true
+    locations: classpath:database/migration
+    baseline-on-migrate: true
+  application:
+    name: user-service
+  cloud:
+    discovery:
+      enabled: true
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_SERVER}
+    fetch-registry: true
+    register-with-eureka: true
+  instance:
+    prefer-ip-address: true
