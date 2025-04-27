@@ -1,0 +1,64 @@
+services:
+  eureka-server:
+    container_name: eureka-server
+    build:
+      context: ./eureka-server
+      dockerfile: Dockerfile
+    ports:
+      - "8761:8761"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    networks:
+      - adoption-network
+
+  pet-db:
+    image: postgres:latest
+    container_name: pet-db
+    environment:
+      - POSTGRES_USER=${PET_SERVICE_DB_USERNAME}
+      - POSTGRES_PASSWORD=${PET_SERVICE_DB_PASSWORD}
+      - POSTGRES_DB=${PET_SERVICE_DB}
+    ports:
+      - "5432:5432"
+    networks:
+      - adoption-network
+    volumes:
+      - pet-db-data:/var/lib/postgresql/data
+
+  pet-service:
+    container_name: pet-service
+    build:
+      context: ./pet-service
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8081"
+    env_file:
+      - .env
+    depends_on:
+      - pet-db
+      - eureka-server
+    networks:
+      - adoption-network
+
+  api-gateway:
+    container_name: api-gateway
+    build:
+      context: ./api-gateway
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+    depends_on:
+      - eureka-server
+      - pet-service
+    networks:
+      - adoption-network
+
+networks:
+  adoption-network:
+    driver: bridge
+
+volumes:
+  pet-db-data:
