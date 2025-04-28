@@ -24,7 +24,7 @@ public class AuthService {
         }
 
         User user = userFound.get();
-        return jwtUtil.generateToken(user.getEmail());
+        return jwtUtil.generateToken(user);
     }
 
     public User register(User user) {

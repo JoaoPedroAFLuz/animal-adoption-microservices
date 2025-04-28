@@ -3,14 +3,14 @@ package br.com.joaopedroafluz.petservice.domain.enums;
 import lombok.Getter;
 
 @Getter
-public enum Status {
+public enum Specie {
 
-    AVAILABLE("Available"),
-    ADOPTED("Adopted");
+    DOG("Dog"),
+    CAT("Cat");
 
     private final String description;
 
-    Status(String description) {
+    Specie(String description) {
         this.description = description;
     }
 

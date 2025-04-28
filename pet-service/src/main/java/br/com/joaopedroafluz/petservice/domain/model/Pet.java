@@ -2,6 +2,7 @@ package br.com.joaopedroafluz.petservice.domain.model;
 
 import br.com.joaopedroafluz.petservice.domain.enums.Gender;
 import br.com.joaopedroafluz.petservice.domain.enums.Size;
+import br.com.joaopedroafluz.petservice.domain.enums.Specie;
 import br.com.joaopedroafluz.petservice.domain.enums.Status;
 import jakarta.persistence.*;
 import lombok.*;
@@ -23,20 +24,30 @@ public class Pet {
     @SequenceGenerator(name = "pets_id_seq", sequenceName = "pets_id_seq", allocationSize = 1)
     private Long id;
 
+    @Column(name = "owner_id")
+    private Long ownerId;
+
     @Column(nullable = false)
     private String name;
 
     private String description;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Specie specie;
+
+    @Column(nullable = false)
     private String breed;
 
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Size size;
 
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Status status = Status.AVAILABLE;
 
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Gender gender;
 

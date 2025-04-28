@@ -1,6 +1,7 @@
-package br.com.joaopedroafluz.petservice.api;
+package br.com.joaopedroafluz.petservice.api.controller;
 
 import br.com.joaopedroafluz.petservice.domain.dtos.PetInputDTO;
+import br.com.joaopedroafluz.petservice.domain.exception.UnauthorizedException;
 import br.com.joaopedroafluz.petservice.domain.model.Pet;
 import br.com.joaopedroafluz.petservice.domain.service.PetService;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,21 @@ public class PetController {
         return petService.findAll();
     }
 
+    @GetMapping("/owner/{ownerId}")
+    public List<Pet> findByOwner(@PathVariable Long ownerId,
+                                 @RequestHeader("X-Auth-User-Role") String role) {
+        if (!"ADMIN".equals(role)) {
+            throw new UnauthorizedException();
+        }
+
+        return petService.findByOwnerId(ownerId);
+    }
+
+    @GetMapping("/me")
+    public List<Pet> findByLoggedUser(@RequestHeader("X-Auth-User-Id") String userId) {
+        return petService.findByOwnerId(Long.parseLong(userId));
+    }
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Pet save(@RequestBody PetInputDTO petInputDTO) {
@@ -33,9 +49,13 @@ public class PetController {
     }
 
     @PutMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
     public Pet update(@PathVariable Long id, @RequestBody PetInputDTO petInputDTO) {
         return petService.update(id, petInputDTO);
+    }
+
+    @PutMapping("/adopt/{id}")
+    public Pet adopt(@PathVariable Long id, @RequestHeader("X-Auth-User-Id") String userId) {
+        return petService.adopt(id, Long.parseLong(userId));
     }
 
     @DeleteMapping("/{id}")

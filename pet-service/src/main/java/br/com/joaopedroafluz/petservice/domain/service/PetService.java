@@ -3,7 +3,10 @@ package br.com.joaopedroafluz.petservice.domain.service;
 import br.com.joaopedroafluz.petservice.domain.dtos.PetInputDTO;
 import br.com.joaopedroafluz.petservice.domain.enums.Gender;
 import br.com.joaopedroafluz.petservice.domain.enums.Size;
+import br.com.joaopedroafluz.petservice.domain.enums.Specie;
 import br.com.joaopedroafluz.petservice.domain.enums.Status;
+import br.com.joaopedroafluz.petservice.domain.exception.PetAlreadyAdoptedException;
+import br.com.joaopedroafluz.petservice.domain.exception.PetNotFoundException;
 import br.com.joaopedroafluz.petservice.domain.model.Pet;
 import br.com.joaopedroafluz.petservice.domain.repository.PetRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,15 +26,19 @@ public class PetService {
     }
 
     public Pet findByIdOrThrow(Long id) {
-        return findById(id).orElseThrow(() -> new RuntimeException("Pet not found"));
+        return findById(id).orElseThrow(() -> new PetNotFoundException(id));
     }
 
     public List<Pet> findAll() {
         return petRepository.findAll();
     }
 
+    public List<Pet> findByOwnerId(Long ownerId) {
+        return petRepository.findByOwnerId(ownerId);
+    }
+
     public Pet save(PetInputDTO newPetDTO) {
-        var pet = convertInputDtoToModel(newPetDTO);
+        var pet = convertInputDTOToModel(newPetDTO);
 
         return save(pet);
     }
@@ -45,6 +52,7 @@ public class PetService {
 
         petFound.setName(petInputDTO.name());
         petFound.setDescription(petInputDTO.description());
+        petFound.setSpecie(Specie.valueOf(petInputDTO.specie()));
         petFound.setBreed(petInputDTO.breed());
         petFound.setSize(Size.valueOf(petInputDTO.size()));
         petFound.setStatus(Status.valueOf(petInputDTO.status()));
@@ -54,15 +62,29 @@ public class PetService {
         return save(petFound);
     }
 
+    public Pet adopt(Long petId, Long ownerId) {
+        var pet = findByIdOrThrow(petId);
+
+        if (pet.getOwnerId() != null || Status.ADOPTED.equals(pet.getStatus())) {
+            throw new PetAlreadyAdoptedException();
+        }
+
+        pet.setOwnerId(ownerId);
+        pet.setStatus(Status.ADOPTED);
+
+        return save(pet);
+    }
+
     public void deleteById(Long id) {
         petRepository.deleteById(id);
     }
 
-    private static Pet convertInputDtoToModel(PetInputDTO petInputDTO) {
+    private Pet convertInputDTOToModel(PetInputDTO petInputDTO) {
         return Pet.builder()
                 .id(petInputDTO.id())
                 .name(petInputDTO.name())
                 .description(petInputDTO.description())
+                .specie(Specie.valueOf(petInputDTO.specie()))
                 .breed(petInputDTO.breed())
                 .size(Size.valueOf(petInputDTO.size()))
                 .status(Status.AVAILABLE)

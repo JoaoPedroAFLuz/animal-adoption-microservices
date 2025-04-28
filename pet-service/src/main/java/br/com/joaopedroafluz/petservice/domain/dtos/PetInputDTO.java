@@ -6,6 +6,7 @@ public record PetInputDTO(
         Long id,
         String name,
         String description,
+        String specie,
         String breed,
         String size,
         String status,
