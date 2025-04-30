@@ -11,8 +11,43 @@ services:
     networks:
       - adoption-network
 
+  mailhog:
+    image: mailhog/mailhog:v1.0.1
+    platform: linux/amd64
+    container_name: mailhog
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    networks:
+      - adoption-network
+
+  rabbitmq:
+    image: rabbitmq:4-management
+    container_name: rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBIT_MQ_USER}
+      - RABBITMQ_DEFAULT_PASS=${RABBIT_MQ_PASSWORD}
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - adoption-network
+
+  notification-service:
+    container_name: notification-service
+    build:
+      context: ./notification-service
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    depends_on:
+      - rabbitmq
+      - mailhog
+    networks:
+      - adoption-network
+
   pet-db:
-    image: postgres:latest
+    image: postgres:14.17
     container_name: pet-db
     environment:
       - POSTGRES_USER=${PET_SERVICE_DB_USERNAME}
@@ -35,13 +70,15 @@ services:
     env_file:
       - .env
     depends_on:
-      - pet-db
       - eureka-server
+      - pet-db
+      - rabbitmq
+      - notification-service
     networks:
       - adoption-network
 
   user-db:
-    image: postgres:latest
+    image: postgres:14.17
     container_name: user-db
     environment:
       - POSTGRES_USER=${USER_SERVICE_DB_USERNAME}
@@ -64,8 +101,8 @@ services:
     env_file:
       - .env
     depends_on:
-      - user-db
       - eureka-server
+      - user-db
     networks:
       - adoption-network
 

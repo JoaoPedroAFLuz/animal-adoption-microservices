@@ -1,0 +1,25 @@
+server:
+  port: 8083
+
+spring:
+  mail:
+    host: ${MAIL_HOST:localhost}
+    port: ${MAIL_PORT:1025}
+    username: ""
+    password: ""
+    properties:
+      mail:
+        smtp:
+          auth: false
+          starttls:
+            enable: false
+  rabbitmq:
+    host: ${RABBIT_MQ_HOST:localhost}
+    port: ${RABBIT_MQ_PORT:5672}
+    username: ${RABBIT_MQ_USER:joaopedroafluz}
+    password: ${RABBIT_MQ_PASSWORD:docker}
+
+rabbit:
+  queue: ${RABBIT_MQ_QUEUE:pet.adoption.notification}
+  exchange: ${RABBIT_MQ_EXCHANGE:pet.exchange}
+  routing-key: ${RABBIT_MQ_ROUTING_KEY:pet.adopted}

@@ -54,8 +54,10 @@ public class PetController {
     }
 
     @PutMapping("/adopt/{id}")
-    public Pet adopt(@PathVariable Long id, @RequestHeader("X-Auth-User-Id") String userId) {
-        return petService.adopt(id, Long.parseLong(userId));
+    public Pet adopt(@PathVariable Long id,
+                     @RequestHeader("X-Auth-User-Id") String userId,
+                     @RequestHeader("X-Auth-User-Email") String email) {
+        return petService.adopt(id, Long.parseLong(userId), email);
     }
 
     @DeleteMapping("/{id}")

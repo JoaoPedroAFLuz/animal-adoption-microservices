@@ -1,5 +1,7 @@
 package br.com.joaopedroafluz.petservice.domain.service;
 
+import br.com.joaopedroafluz.petservice.config.RabbitProperties;
+import br.com.joaopedroafluz.petservice.domain.dtos.AdoptionMessage;
 import br.com.joaopedroafluz.petservice.domain.dtos.PetInputDTO;
 import br.com.joaopedroafluz.petservice.domain.enums.Gender;
 import br.com.joaopedroafluz.petservice.domain.enums.Size;
@@ -9,8 +11,11 @@ import br.com.joaopedroafluz.petservice.domain.exception.PetAlreadyAdoptedExcept
 import br.com.joaopedroafluz.petservice.domain.exception.PetNotFoundException;
 import br.com.joaopedroafluz.petservice.domain.model.Pet;
 import br.com.joaopedroafluz.petservice.domain.repository.PetRepository;
+import br.com.joaopedroafluz.petservice.util.JsonUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.amqp.core.Message;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,6 +25,8 @@ import java.util.Optional;
 public class PetService {
 
     private final PetRepository petRepository;
+    private final MessageProducer messageProducer;
+    private final RabbitProperties rabbitProperties;
 
     public Optional<Pet> findById(Long id) {
         return petRepository.findById(id);
@@ -37,16 +44,19 @@ public class PetService {
         return petRepository.findByOwnerId(ownerId);
     }
 
+    @Transactional
     public Pet save(PetInputDTO newPetDTO) {
         var pet = convertInputDTOToModel(newPetDTO);
 
         return save(pet);
     }
 
+    @Transactional
     public Pet save(Pet pet) {
         return petRepository.save(pet);
     }
 
+    @Transactional
     public Pet update(Long id, PetInputDTO petInputDTO) {
         var petFound = findByIdOrThrow(id);
 
@@ -62,7 +72,8 @@ public class PetService {
         return save(petFound);
     }
 
-    public Pet adopt(Long petId, Long ownerId) {
+    @Transactional
+    public Pet adopt(Long petId, Long ownerId, String ownerEmail) {
         var pet = findByIdOrThrow(petId);
 
         if (pet.getOwnerId() != null || Status.ADOPTED.equals(pet.getStatus())) {
@@ -72,7 +83,17 @@ public class PetService {
         pet.setOwnerId(ownerId);
         pet.setStatus(Status.ADOPTED);
 
-        return save(pet);
+        pet = save(pet);
+
+        sendAdoptionNotification(new AdoptionMessage(pet.getId(), pet.getName(), ownerId, ownerEmail));
+
+        return pet;
+    }
+
+    private void sendAdoptionNotification(AdoptionMessage adoptionMessage) {
+        var message = new Message(JsonUtils.toJson(adoptionMessage).getBytes());
+
+        messageProducer.sendMessage(rabbitProperties.getExchange(), rabbitProperties.getRoutingKey(), message);
     }
 
     public void deleteById(Long id) {

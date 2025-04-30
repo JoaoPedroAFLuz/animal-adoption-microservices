@@ -6,7 +6,7 @@ app:
     public-routes:
       - /auth/login
       - /auth/register
-    secret: ${JWT_SECRET}
+    secret: ${JWT_SECRET:74y3kWugDyVFqvEkGQCadDSYWEfqBuTRBAArqoaHfY588tng2ntb3WvvZEUvkfjb}
 
 spring:
   application:

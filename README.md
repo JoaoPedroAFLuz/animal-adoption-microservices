@@ -4,6 +4,8 @@ This project is a microservices-based architecture for managing the pet adoption
 
 ## Project Structure
 
+![Application Architecture Diagram](./assets/diagram.jpeg)
+
 ### 1. Eureka
 Eureka is used for service discovery, allowing microservices to locate and communicate with each other dynamically. The service registry is hosted at `http://localhost:8761/eureka/`.
 
@@ -13,30 +15,28 @@ The API Gateway manages incoming requests and handles JWT authentication. It val
 - **JWT Validation**: The API Gateway validates JWT tokens to ensure requests are authenticated.
 - **Routing**: It directs requests to the correct microservices based on the URL path.
 
-### 3. Pet Service
+### 3. User Service
+The User Service handles user registration and login. It validates the user's identity and issues a JWT token, which is used for authentication in other services.
+
+### 4. Pet Service
 This service is responsible for managing pets and their adoptions. The main functionalities include:
 
 - CRUD operations for pets (create, read, update, delete).
-- Pet adoption: A pet can be adopted by a user, and the system updates the pet's owner, status, and adoption date.
+- Adoption process: When a pet is adopted, the system updates the pet's status, assigns the owner, sets the adoption timestamp, and publishes an event to a RabbitMQ queue for further processing by other services.
 
-### 4. User Service
-The User Service handles user registration and login. It validates the user's identity and issues a JWT token, which is used for authentication in other services.
+### 5. Notification Service
+This service is responsible for notifying users when an adoption is completed. It listens to a RabbitMQ queue for adoption events, and upon receiving a message, it sends a confirmation email to the adopter informing them that the process has been successfully finalized. 
 
-### 5. Database
-Each microservice has its own database to ensure separation of concerns:
+### 6. Database
+Most microservices have their own dedicated databases to ensure separation of concerns and data encapsulation:
 
-- **Pet Service**: Database with information about pets.
-- **User Service**: Database with information about users.
+- **Pet Service**: Maintains a database with all information related to pets and their adoption status.
+- **User Service**: Contains a database with user registration and authentication details.
+- **Notification Service**: This service does not require a database, as it operates solely based on messages received through RabbitMQ.
 
 ## Next Steps
 
-### 1. Pet Adoption Notification Service
-The first feature to be implemented will be a notification service. Whenever a pet is adopted, the system should notify the user or any other interested systems. The idea is to create a service that sends notifications (via email, SMS, etc.) when an adoption occurs.
-
-### 2. Message Queue Integration (RabbitMQ)
-To improve communication between microservices, we will integrate RabbitMQ. This will allow one service to send messages to other interested services whenever an event occurs (like a pet adoption). The message queue will allow for better decoupling between services and improve scalability and reliability.
-
-### 3. Monitoring with Prometheus + Grafana
+### 1. Monitoring with Prometheus + Grafana
 We will integrate Prometheus to collect metrics about the performance of microservices and Grafana to create monitoring dashboards that help identify bottlenecks, failures, and understand the overall system behavior. With this setup, you will get real-time insights into the status of your microservices.
 
 ## How to Run the Project
@@ -45,9 +45,14 @@ We will integrate Prometheus to collect metrics about the performance of microse
 - Docker
 
 ### Step-by-Step
-1. Run `docker compose up --build -d`
-2. Await for containers to run
-3. Services are ready to go
+1. Clone the repository and navigate to the project root.
+2. Run docker compose up --build -d to start all containers.
+3. Wait until all services are up and running.
+4. The application is now ready to use.
+
+⚠️ If you're using an Apple Silicon (M1/M2) or any ARM64 architecture, MailHog may fail to start. To fix it, add platform: linux/amd64 to the MailHog service in docker-compose.yml.
+
+💡 A preconfigured insomnia.json file is available in the root directory. You can import it into Insomnia to easily test all available routes across the microservices.
 
 ## Technologies Used
 - **Spring Boot**: Framework for developing microservices.

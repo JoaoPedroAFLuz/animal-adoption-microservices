@@ -2,6 +2,7 @@ package br.com.joaopedroafluz.userservice.domain.service;
 
 import br.com.joaopedroafluz.userservice.domain.model.User;
 import br.com.joaopedroafluz.userservice.domain.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,8 +18,9 @@ public class UserService {
         return userRepository.findByEmail(email);
     }
 
-    public User save(User user) {
-        return userRepository.save(user);
+    @Transactional
+    public void save(User user) {
+        userRepository.save(user);
     }
 
 }
