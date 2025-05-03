@@ -27,9 +27,9 @@ public class AuthService {
         return jwtUtil.generateToken(user);
     }
 
-    public void register(User user) {
+    public User register(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userService.save(user);
+        return userService.save(user);
     }
 
 }

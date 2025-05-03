@@ -4,7 +4,9 @@ import br.com.joaopedroafluz.petservice.domain.dtos.PetInputDTO;
 import br.com.joaopedroafluz.petservice.domain.exception.UnauthorizedException;
 import br.com.joaopedroafluz.petservice.domain.model.Pet;
 import br.com.joaopedroafluz.petservice.domain.service.PetService;
+import br.com.joaopedroafluz.petservice.domain.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,6 +18,7 @@ import java.util.List;
 public class PetController {
 
     private final PetService petService;
+    private final UserService userService;
 
     @GetMapping("/{id}")
     public Pet findById(@PathVariable Long id) {
@@ -55,9 +58,8 @@ public class PetController {
 
     @PutMapping("/adopt/{id}")
     public Pet adopt(@PathVariable Long id,
-                     @RequestHeader("X-Auth-User-Id") String userId,
-                     @RequestHeader("X-Auth-User-Email") String email) {
-        return petService.adopt(id, Long.parseLong(userId), email);
+                     @RequestHeader(HttpHeaders.AUTHORIZATION) String authorization) {
+        return petService.adopt(id, authorization);
     }
 
     @DeleteMapping("/{id}")

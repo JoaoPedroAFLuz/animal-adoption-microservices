@@ -18,7 +18,8 @@ public class NotificationService {
         var adoptionMessage = JsonUtils.fromJson(message, AdoptionMessage.class);
 
         var subject = "Adoption notification";
-        var body = "Congratulations, you have successfully adopted: " + adoptionMessage.petName();
+        var body = String.format("Congratulations, %s, you have successfully adopted %s.", adoptionMessage.userName(),
+                adoptionMessage.petName());
 
         emailService.send(adoptionMessage.userEmail(), subject, body);
     }

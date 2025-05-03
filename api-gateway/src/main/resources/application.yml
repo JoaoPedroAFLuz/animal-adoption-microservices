@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: ${API_GATEWAY_PORT:8080}
 
 app:
   auth:
@@ -10,20 +10,20 @@ app:
 
 spring:
   application:
-    name: api-gateway
+    name: ${API_GATEWAY_NAME:api-gateway}
   cloud:
     gateway:
       routes:
-        - id: pet-service
-          uri: lb://pet-service
+        - id: ${PET_SERVICE_NAME:pet-service}
+          uri: lb://${PET_SERVICE_NAME:pet-service}
           predicates:
             - Path=/pets/**
-        - id: user-service
-          uri: lb://user-service
+        - id: ${USER_SERVICE_NAME:user-service}
+          uri: lb://${USER_SERVICE_NAME:user-service}
           predicates:
             - Path=/auth/**
 
 eureka:
   client:
     serviceUrl:
-      defaultZone: ${EUREKA_SERVER:http://localhost:8761/eureka/}
+      defaultZone: ${EUREKA_SERVER_URL:http://localhost:8761/eureka/}

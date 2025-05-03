@@ -3,13 +3,13 @@ server:
 
 app:
   auth:
-    secret: ${JWT_SECRET}
+    secret: ${JWT_SECRET:74y3kWugDyVFqvEkGQCadDSYWEfqBuTRBAArqoaHfY588tng2ntb3WvvZEUvkfjb}
 
 spring:
   datasource:
-    url: ${USER_SERVICE_DB_URL}
-    username: ${USER_SERVICE_DB_USERNAME}
-    password: ${USER_SERVICE_DB_PASSWORD}
+    url: ${USER_SERVICE_DB_URL:jdbc:postgresql://localhost:5433/userservicedb}
+    username: ${USER_SERVICE_DB_USERNAME:joaopedroafluz}
+    password: ${USER_SERVICE_DB_PASSWORD:docker}
   jpa:
     hibernate:
       ddl-auto: none
@@ -28,7 +28,7 @@ spring:
 eureka:
   client:
     service-url:
-      defaultZone: ${EUREKA_SERVER:http://localhost:8761/eureka/}
+      defaultZone: ${EUREKA_SERVER_URL:http://localhost:8761/eureka/}
     fetch-registry: true
     register-with-eureka: true
   instance:

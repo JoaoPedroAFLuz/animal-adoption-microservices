@@ -24,6 +24,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class PetService {
 
+    private final UserService userService;
     private final PetRepository petRepository;
     private final MessageProducer messageProducer;
     private final RabbitProperties rabbitProperties;
@@ -73,19 +74,21 @@ public class PetService {
     }
 
     @Transactional
-    public Pet adopt(Long petId, Long ownerId, String ownerEmail) {
+    public Pet adopt(Long petId, String authorization) {
         var pet = findByIdOrThrow(petId);
 
         if (pet.getOwnerId() != null || Status.ADOPTED.equals(pet.getStatus())) {
             throw new PetAlreadyAdoptedException();
         }
 
-        pet.setOwnerId(ownerId);
+        final var user = userService.findByAuthorization(authorization);
+
+        pet.setOwnerId(user.id());
         pet.setStatus(Status.ADOPTED);
 
         pet = save(pet);
 
-        sendAdoptionNotification(new AdoptionMessage(pet.getId(), pet.getName(), ownerId, ownerEmail));
+        sendAdoptionNotification(new AdoptionMessage(pet.getId(), pet.getName(), user.id(), user.name(), user.email()));
 
         return pet;
     }

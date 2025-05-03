@@ -4,6 +4,7 @@ public record AdoptionMessage(
         Long petId,
         String petName,
         Long userId,
+        String userName,
         String userEmail
 ) {
 }

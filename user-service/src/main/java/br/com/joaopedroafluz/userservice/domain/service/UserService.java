@@ -14,13 +14,18 @@ public class UserService {
 
     private final UserRepository userRepository;
 
+    public User findById(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow();
+    }
+
     public Optional<User> findByEmail(String email) {
         return userRepository.findByEmail(email);
     }
 
     @Transactional
-    public void save(User user) {
-        userRepository.save(user);
+    public User save(User user) {
+        return userRepository.save(user);
     }
 
 }
