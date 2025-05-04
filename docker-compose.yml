@@ -125,6 +125,32 @@ services:
     networks:
       - adoption-network
 
+  prometheus:
+    container_name: prometheus
+    build:
+      context: ./prometheus
+      dockerfile: Dockerfile
+    ports:
+      - "9090:9090"
+    depends_on:
+      - eureka-server
+      - pet-service
+      - user-service
+      - notification-service
+      - api-gateway
+    networks:
+      - adoption-network
+
+  grafana:
+    container_name: grafana
+    image: grafana/grafana
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
+    networks:
+      - adoption-network
+
 networks:
   adoption-network:
     driver: bridge

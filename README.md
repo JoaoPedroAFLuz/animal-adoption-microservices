@@ -1,10 +1,11 @@
 # Pet Adoption System
 
-This project is a microservices-based architecture for managing the pet adoption system. It consists of independent services, each responsible for a specific part of the process. The system was developed using Spring Boot and utilizes Eureka and API Gateway.
+This project is a microservices-based architecture for managing the pet adoption system. It consists of independent services, each responsible for a specific part of the process. The system was developed using Spring Boot and utilizes Eureka, API Gateway, Prometheus, Grafana and Docker.
 
 ## Project Structure
 
 ![Application Architecture Diagram](./assets/diagram.jpeg)
+![Dashboard](./assets/dashboard.png)
 
 ### 1. Eureka
 Eureka is used for service discovery, allowing microservices to locate and communicate with each other dynamically. The service registry is hosted at `http://localhost:8761/eureka/`.
@@ -27,17 +28,38 @@ This service is responsible for managing pets and their adoptions. The main func
 ### 5. Notification Service
 This service is responsible for notifying users when an adoption is completed. It listens to a RabbitMQ queue for adoption events, and upon receiving a message, it sends a confirmation email to the adopter informing them that the process has been successfully finalized. 
 
-### 6. Database
+### 6. Prometheus
+Prometheus is our monitoring system that collects and stores metrics from all microservices in real-time. Key features:
+
+- Metrics Collection: Pulls metrics from each service's /actuator/prometheus endpoint at regular intervals
+- Time-Series Database: Stores all metrics with timestamps for historical analysis
+- Service Health Monitoring: Tracks request rates, response times, error rates, and system resources
+- Alerting: Can trigger alerts when metrics exceed predefined thresholds
+
+All services expose Spring Boot Actuator metrics which Prometheus scrapes every 15 seconds.
+
+### 7. Grafana
+
+Grafana is our visualization platform that transforms Prometheus metrics into actionable insights:
+
+- Interactive Dashboards: Provides real-time visualizations of system performance
+- Service Monitoring: Displays key metrics like API response times, JVM memory usage, and database connections
+- Custom Alerts: Visual indicators when metrics cross warning/critical thresholds
+- Pre-built Dashboards: Includes optimized dashboards for Spring Boot applications
+
+The Grafana instance is preconfigured with:
+- A Spring Boot monitoring dashboard (ID: 4701)
+- A Microservices communication map
+- JVM and database performance dashboards
+
+Accessible at http://localhost:3000 (default credentials: admin/admin)
+
+### 8. Database
 Most microservices have their own dedicated databases to ensure separation of concerns and data encapsulation:
 
 - **Pet Service**: Maintains a database with all information related to pets and their adoption status.
 - **User Service**: Contains a database with user registration and authentication details.
 - **Notification Service**: This service does not require a database, as it operates solely based on messages received through RabbitMQ.
-
-## Next Steps
-
-### 1. Monitoring with Prometheus + Grafana
-We will integrate Prometheus to collect metrics about the performance of microservices and Grafana to create monitoring dashboards that help identify bottlenecks, failures, and understand the overall system behavior. With this setup, you will get real-time insights into the status of your microservices.
 
 ## How to Run the Project
 
@@ -55,7 +77,24 @@ We will integrate Prometheus to collect metrics about the performance of microse
 💡 A preconfigured insomnia.json file is available in the root directory. You can import it into Insomnia to easily test all available routes across the microservices.
 
 ## Technologies Used
-- **Spring Boot**: Framework for developing microservices.
-- **Spring Cloud Gateway**: Gateway for request routing and JWT validation.
-- **Spring Cloud Eureka**: Service discovery for communication between microservices.
-- **PostgreSQL**: Relational database for storing pet and user information.
+
+### Core Technologies
+
+- Spring Boot: Framework for developing microservices.
+- Spring Cloud Gateway: Gateway for request routing and JWT validation.
+- Spring Cloud Eureka: Service discovery for communication between microservices.
+- PostgreSQL: Relational database for storing pet and user information.
+- RabbitMQ: Message broker for handling adoption notifications.
+
+### Monitoring & Observability
+
+- Prometheus: Time-series database for collecting and storing metrics from all microservices.
+- Grafana: Visualization platform for real-time monitoring and alerting.
+
+### Supporting Libraries
+
+- Spring Security: Authentication and authorization.
+- JWT (JSON Web Tokens): Secure user authentication.
+- Lombok: Reducing boilerplate code.
+- Spring Data JPA: Database access and management.
+- Micrometer: Application metrics exporter for Prometheus.

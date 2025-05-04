@@ -20,7 +20,7 @@ spring:
     locations: classpath:database/migration
     baseline-on-migrate: true
   application:
-    name: user-service
+    name: ${USER_SERVICE_NAME:user-service}
   cloud:
     discovery:
       enabled: true
@@ -33,3 +33,12 @@ eureka:
     register-with-eureka: true
   instance:
     prefer-ip-address: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, prometheus
+  metrics:
+    tags:
+      application: ${spring.application.name}
