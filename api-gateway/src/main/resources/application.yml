@@ -1,12 +1,5 @@
 server:
-  port: ${API_GATEWAY_PORT:8080}
-
-app:
-  auth:
-    public-routes:
-      - /auth/login
-      - /auth/register
-    secret: ${JWT_SECRET:74y3kWugDyVFqvEkGQCadDSYWEfqBuTRBAArqoaHfY588tng2ntb3WvvZEUvkfjb}
+  port: ${API_GATEWAY_PORT:80}
 
 spring:
   application:
@@ -18,10 +11,6 @@ spring:
           uri: lb://${PET_SERVICE_NAME:pet-service}
           predicates:
             - Path=/pets/**
-        - id: ${USER_SERVICE_NAME:user-service}
-          uri: lb://${USER_SERVICE_NAME:user-service}
-          predicates:
-            - Path=/auth/**
 
 eureka:
   client:

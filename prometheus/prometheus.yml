@@ -10,14 +10,14 @@ scrape_configs:
   - job_name: 'api-gateway'
     metrics_path: '/actuator/prometheus'
     static_configs:
-      - targets: [ 'api-gateway:8080' ]
+      - targets: [ 'api-gateway:80' ]
+
+  - job_name: 'keycloak'
+    static_configs:
+      - targets: [ 'keycloak:8080' ]
+    metrics_path: /metrics
 
   - job_name: 'pet-service'
     metrics_path: '/actuator/prometheus'
     static_configs:
       - targets: [ 'pet-service:8081' ]
-
-  - job_name: 'user-service'
-    metrics_path: '/actuator/prometheus'
-    static_configs:
-      - targets: [ 'user-service:8082' ]

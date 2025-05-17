@@ -1,4 +1,4 @@
-package br.com.joaopedroafluz.notificationservice.domain;
+package br.com.joaopedroafluz.petservice.domain.dto;
 
 import java.util.UUID;
 

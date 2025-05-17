@@ -1,8 +1,9 @@
 package br.com.joaopedroafluz.petservice.domain.service;
 
 import br.com.joaopedroafluz.petservice.config.RabbitProperties;
-import br.com.joaopedroafluz.petservice.domain.dtos.AdoptionMessage;
-import br.com.joaopedroafluz.petservice.domain.dtos.PetInputDTO;
+import br.com.joaopedroafluz.petservice.domain.dto.AdoptionMessage;
+import br.com.joaopedroafluz.petservice.domain.dto.PetInputDTO;
+import br.com.joaopedroafluz.petservice.domain.dto.UserDTO;
 import br.com.joaopedroafluz.petservice.domain.enums.Gender;
 import br.com.joaopedroafluz.petservice.domain.enums.Size;
 import br.com.joaopedroafluz.petservice.domain.enums.Specie;
@@ -19,21 +20,21 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class PetService {
 
-    private final UserService userService;
     private final PetRepository petRepository;
     private final MessageProducer messageProducer;
     private final RabbitProperties rabbitProperties;
 
-    public Optional<Pet> findById(Long id) {
+    public Optional<Pet> findById(UUID id) {
         return petRepository.findById(id);
     }
 
-    public Pet findByIdOrThrow(Long id) {
+    public Pet findByIdOrThrow(UUID id) {
         return findById(id).orElseThrow(() -> new PetNotFoundException(id));
     }
 
@@ -41,8 +42,8 @@ public class PetService {
         return petRepository.findAll();
     }
 
-    public List<Pet> findByOwnerId(Long ownerId) {
-        return petRepository.findByOwnerId(ownerId);
+    public List<Pet> findByOwnerId(UUID userId) {
+        return petRepository.findByOwnerId(userId);
     }
 
     @Transactional
@@ -58,7 +59,7 @@ public class PetService {
     }
 
     @Transactional
-    public Pet update(Long id, PetInputDTO petInputDTO) {
+    public Pet update(UUID id, PetInputDTO petInputDTO) {
         var petFound = findByIdOrThrow(id);
 
         petFound.setName(petInputDTO.name());
@@ -74,21 +75,19 @@ public class PetService {
     }
 
     @Transactional
-    public Pet adopt(Long petId, String authorization) {
+    public Pet adopt(UUID petId, UserDTO user) {
         var pet = findByIdOrThrow(petId);
 
         if (pet.getOwnerId() != null || Status.ADOPTED.equals(pet.getStatus())) {
             throw new PetAlreadyAdoptedException();
         }
 
-        final var user = userService.findByAuthorization(authorization);
-
         pet.setOwnerId(user.id());
         pet.setStatus(Status.ADOPTED);
 
         pet = save(pet);
 
-        sendAdoptionNotification(new AdoptionMessage(pet.getId(), pet.getName(), user.id(), user.name(), user.email()));
+        sendAdoptionNotification(new AdoptionMessage(pet.getId(), pet.getName(), user));
 
         return pet;
     }
@@ -99,7 +98,7 @@ public class PetService {
         messageProducer.sendMessage(rabbitProperties.getExchange(), rabbitProperties.getRoutingKey(), message);
     }
 
-    public void deleteById(Long id) {
+    public void deleteById(UUID id) {
         petRepository.deleteById(id);
     }
 

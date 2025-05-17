@@ -1,16 +1,19 @@
 package br.com.joaopedroafluz.petservice.api.controller;
 
-import br.com.joaopedroafluz.petservice.domain.dtos.PetInputDTO;
-import br.com.joaopedroafluz.petservice.domain.exception.UnauthorizedException;
+import br.com.joaopedroafluz.petservice.config.AuthenticatedUserUtils;
+import br.com.joaopedroafluz.petservice.domain.dto.PetInputDTO;
+import br.com.joaopedroafluz.petservice.domain.dto.UserDTO;
 import br.com.joaopedroafluz.petservice.domain.model.Pet;
 import br.com.joaopedroafluz.petservice.domain.service.PetService;
-import br.com.joaopedroafluz.petservice.domain.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -18,53 +21,59 @@ import java.util.List;
 public class PetController {
 
     private final PetService petService;
-    private final UserService userService;
-
-    @GetMapping("/{id}")
-    public Pet findById(@PathVariable Long id) {
-        return petService.findByIdOrThrow(id);
-    }
+    private final AuthenticatedUserUtils authenticatedUserUtils;
 
     @GetMapping
     public List<Pet> findAll() {
         return petService.findAll();
     }
 
-    @GetMapping("/owner/{ownerId}")
-    public List<Pet> findByOwner(@PathVariable Long ownerId,
-                                 @RequestHeader("X-Auth-User-Role") String role) {
-        if (!"ADMIN".equals(role)) {
-            throw new UnauthorizedException();
-        }
+    @GetMapping("/{id}")
+    public Pet findById(@PathVariable UUID id) {
+        return petService.findByIdOrThrow(id);
+    }
 
+    @GetMapping("/mines")
+    public List<Pet> findByLoggedUser(@AuthenticationPrincipal Jwt jwt) {
+        String userId = jwt.getSubject();
+
+        return petService.findByOwnerId(UUID.fromString(userId));
+    }
+
+    @GetMapping("/owner/{ownerId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public List<Pet> findByOwner(@PathVariable UUID ownerId) {
         return petService.findByOwnerId(ownerId);
     }
 
-    @GetMapping("/me")
-    public List<Pet> findByLoggedUser(@RequestHeader("X-Auth-User-Id") String userId) {
-        return petService.findByOwnerId(Long.parseLong(userId));
-    }
-
     @PostMapping
+    @PreAuthorize("hasRole('REGISTER_PET')")
     @ResponseStatus(HttpStatus.CREATED)
     public Pet save(@RequestBody PetInputDTO petInputDTO) {
         return petService.save(petInputDTO);
     }
 
     @PutMapping("/{id}")
-    public Pet update(@PathVariable Long id, @RequestBody PetInputDTO petInputDTO) {
+    @PreAuthorize("hasRole('UPDATE_PET')")
+    public Pet update(@PathVariable UUID id, @RequestBody PetInputDTO petInputDTO) {
         return petService.update(id, petInputDTO);
     }
 
     @PutMapping("/adopt/{id}")
-    public Pet adopt(@PathVariable Long id,
-                     @RequestHeader(HttpHeaders.AUTHORIZATION) String authorization) {
-        return petService.adopt(id, authorization);
+    public Pet adopt(@PathVariable UUID id) {
+        final var userId = authenticatedUserUtils.getUserId();
+        final var email = authenticatedUserUtils.getEmail();
+        final var name = authenticatedUserUtils.getGivenName();
+
+        var user = new UserDTO(UUID.fromString(userId), name, email);
+
+        return petService.adopt(id, user);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable Long id) {
+    @PreAuthorize("hasRole('DELETE_PET')")
+    public void delete(@PathVariable UUID id) {
         petService.deleteById(id);
     }
 

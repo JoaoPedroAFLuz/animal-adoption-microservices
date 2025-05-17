@@ -1,9 +1,10 @@
-package br.com.joaopedroafluz.petservice.domain.dtos;
+package br.com.joaopedroafluz.petservice.domain.dto;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 public record PetInputDTO(
-        Long id,
+        UUID id,
         String name,
         String description,
         String specie,

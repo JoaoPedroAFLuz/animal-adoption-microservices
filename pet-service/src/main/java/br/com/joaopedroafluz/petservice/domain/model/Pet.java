@@ -6,9 +6,11 @@ import br.com.joaopedroafluz.petservice.domain.enums.Specie;
 import br.com.joaopedroafluz.petservice.domain.enums.Status;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.UuidGenerator;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -20,12 +22,13 @@ import java.time.LocalDateTime;
 public class Pet {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "pets_id_seq")
-    @SequenceGenerator(name = "pets_id_seq", sequenceName = "pets_id_seq", allocationSize = 1)
-    private Long id;
+    @GeneratedValue
+    @UuidGenerator
+    @Column(nullable = false, updatable = false)
+    private UUID id;
 
     @Column(name = "owner_id")
-    private Long ownerId;
+    private UUID ownerId;
 
     @Column(nullable = false)
     private String name;

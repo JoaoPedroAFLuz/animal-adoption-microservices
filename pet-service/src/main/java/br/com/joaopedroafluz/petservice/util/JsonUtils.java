@@ -21,7 +21,7 @@ public class JsonUtils {
             return OBJECT_MAPPER.writeValueAsString(object);
         } catch (JsonProcessingException e) {
             log.error("Error converting object to JSON: ", e);
-            throw new IllegalArgumentException("Error converting object to JSON");
+            throw new IllegalArgumentException("Error converting object to JSON.");
         }
     }
 

@@ -8,6 +8,7 @@ public enum ProblemType {
     BUSINESS_ERROR("Business rule violation.", "/business-error"),
     RESOURCE_NOT_FOUND("Resource not found.", "/resource-not-found"),
     UNAUTHORIZED("Unauthorized.", "/unauthorized"),
+    ACCESS_DENIED("Access denied.", "/access-denied"),
     SYSTEM_ERROR("System error.", "/system-error");
 
     private final String title;

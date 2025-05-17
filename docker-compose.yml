@@ -1,4 +1,37 @@
 services:
+  keycloak-db:
+    image: postgres:14.17
+    container_name: keycloak-db
+    environment:
+      - POSTGRES_USER=${KEYCLOAK_DB_USERNAME}
+      - POSTGRES_PASSWORD=${KEYCLOAK_DB_PASSWORD}
+      - POSTGRES_DB=${KEYCLOAK_DB}
+    ports:
+      - "5432:5432"
+    networks:
+      - adoption-network
+    volumes:
+      - keycloak-db-data:/var/lib/postgresql/data
+
+  keycloak:
+    container_name: keycloak
+    image: quay.io/keycloak/keycloak:24.0
+    ports:
+      - "8080:8080"
+    depends_on:
+      - keycloak-db
+    environment:
+      KC_METRICS_ENABLED: "true"
+      KEYCLOAK_ADMIN: ${KEYCLOAK_DB_USERNAME}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_DB_PASSWORD}
+      KC_DB: postgres
+      KC_DB_URL: ${KEYCLOAK_DB_URL}
+      KC_DB_USERNAME: ${KEYCLOAK_DB_USERNAME}
+      KC_DB_PASSWORD: ${KEYCLOAK_DB_PASSWORD}
+    command: start-dev
+    networks:
+      - adoption-network
+
   eureka-server:
     container_name: eureka-server
     build:
@@ -12,9 +45,9 @@ services:
       - adoption-network
 
   mailhog:
+    container_name: mailhog
     image: mailhog/mailhog:v1.0.1
     platform: linux/amd64
-    container_name: mailhog
     ports:
       - "1025:1025"
       - "8025:8025"
@@ -22,8 +55,8 @@ services:
       - adoption-network
 
   rabbitmq:
-    image: rabbitmq:4-management
     container_name: rabbitmq
+    image: rabbitmq:4-management
     environment:
       - RABBITMQ_DEFAULT_USER=${RABBIT_MQ_USER}
       - RABBITMQ_DEFAULT_PASS=${RABBIT_MQ_PASSWORD}
@@ -54,57 +87,28 @@ services:
       - POSTGRES_PASSWORD=${PET_SERVICE_DB_PASSWORD}
       - POSTGRES_DB=${PET_SERVICE_DB}
     ports:
-      - "5432:5432"
+      - "5433:5432"
     networks:
       - adoption-network
     volumes:
       - pet-db-data:/var/lib/postgresql/data
 
-  pet-service:
-    container_name: pet-service
-    build:
-      context: ./pet-service
-      dockerfile: Dockerfile
-    ports:
-      - "8081:8081"
-    env_file:
-      - .env
-    depends_on:
-      - eureka-server
-      - pet-db
-      - rabbitmq
-      - notification-service
-    networks:
-      - adoption-network
-
-  user-db:
-    image: postgres:14.17
-    container_name: user-db
-    environment:
-      - POSTGRES_USER=${USER_SERVICE_DB_USERNAME}
-      - POSTGRES_PASSWORD=${USER_SERVICE_DB_PASSWORD}
-      - POSTGRES_DB=${USER_SERVICE_DB}
-    ports:
-      - "5433:5432"
-    networks:
-      - adoption-network
-    volumes:
-      - user-db-data:/var/lib/postgresql/data
-
-  user-service:
-    container_name: user-service
-    build:
-      context: ./user-service
-      dockerfile: Dockerfile
-    ports:
-      - "8082:8082"
-    env_file:
-      - .env
-    depends_on:
-      - eureka-server
-      - user-db
-    networks:
-      - adoption-network
+  # This service must run locally to accept requests from localhost and to properly validate Keycloak tokens.
+  #  pet-service:
+  #    container_name: pet-service
+  #    build:
+  #      context: ./pet-service
+  #      dockerfile: Dockerfile
+  #    ports:
+  #      - "8081:8081"
+  #    env_file:
+  #      - .env
+  #    depends_on:
+  #      - eureka-server
+  #      - pet-db
+  #      - rabbitmq
+  #    networks:
+  #      - adoption-network
 
   api-gateway:
     container_name: api-gateway
@@ -112,7 +116,7 @@ services:
       context: ./api-gateway
       dockerfile: Dockerfile
     ports:
-      - "8080:8080"
+      - "80:80"
     env_file:
       - .env
     environment:
@@ -120,8 +124,7 @@ services:
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
     depends_on:
       - eureka-server
-      - pet-service
-      - user-service
+    #      - pet-service
     networks:
       - adoption-network
 
@@ -132,12 +135,6 @@ services:
       dockerfile: Dockerfile
     ports:
       - "9090:9090"
-    depends_on:
-      - eureka-server
-      - pet-service
-      - user-service
-      - notification-service
-      - api-gateway
     networks:
       - adoption-network
 
@@ -156,5 +153,5 @@ networks:
     driver: bridge
 
 volumes:
+  keycloak-db-data:
   pet-db-data:
-  user-db-data:

@@ -1,9 +1,9 @@
 server:
-  port: ${PET_SERVICE_PORT:8081}
+  port: ${PET_SERVICE_PORT:8082}
 
 spring:
   datasource:
-    url: ${PET_SERVICE_DB_URL:jdbc:postgresql://localhost:5432/petservicedb}
+    url: ${PET_SERVICE_DB_URL:jdbc:postgresql://localhost:5434/petservicedb}
     username: ${PET_SERVICE_DB_USERNAME:joaopedroafluz}
     password: ${PET_SERVICE_DB_PASSWORD:docker}
   jpa:
@@ -25,6 +25,12 @@ spring:
     port: ${RABBIT_MQ_PORT:5672}
     username: ${RABBIT_MQ_USER:joaopedroafluz}
     password: ${RABBIT_MQ_PASSWORD:docker}
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${KEYCLOAK_ANIMAL_ADOPTION_REALM_URI:http://localhost:8080/realms/animal-adoption}
+          jwk-set-uri: ${KEYCLOAK_ANIMAL_ADOPTION_REALM_OPENID_URI:http://localhost:8080/realms/animal-adoption/protocol/openid-connect/certs}
 
 rabbit:
   queue: ${RABBIT_MQ_QUEUE:pet.adoption.notification}
@@ -35,7 +41,7 @@ eureka:
   client:
     service-url:
       defaultZone: ${EUREKA_SERVER_URL:http://localhost:8761/eureka/}
-    api-gateway-url: ${API_GATEWAY_LB_URL:http://localhost:8080}
+    api-gateway-url: ${API_GATEWAY_URL:http://localhost:80}
     fetch-registry: true
     register-with-eureka: true
   instance:

@@ -9,15 +9,15 @@ collection:
     meta:
       id: fld_8ed3e91e2fc746ee8bc9583f59c83ecb
       created: 1745705654748
-      modified: 1745771984576
-      sortKey: -1745705654748
+      modified: 1747428605547
+      sortKey: -1745705654948
     children:
-      - url: "{{ _.baseUrl }}/pets"
+      - url: "{{ _.baseUrl }}"
         name: Register
         meta:
           id: req_60a21ff2d6f142ada6d37622ce3d3951
           created: 1745705688915
-          modified: 1745797331527
+          modified: 1747427930904
           isPrivate: false
           sortKey: -1745705688915
         method: POST
@@ -45,18 +45,34 @@ collection:
             send: true
             store: true
           rebuildPath: true
-      - url: "{{ _.baseUrl }}/pets"
+      - url: "{{ _.baseUrl }}"
         name: Find all
         meta:
           id: req_96e031c1227f4eb4beabae611791b705
           created: 1745705852430
-          modified: 1745766651998
+          modified: 1747428604360
           isPrivate: false
-          sortKey: -1745705852430
+          sortKey: -1745705852480
         method: GET
         headers:
           - name: User-Agent
             value: insomnia/11.0.2
+        authentication:
+          type: none
+        scripts:
+          afterResponse: |-
+            const jsonBody = insomnia.response.json();
+
+            const firstPet = jsonBody[0];
+
+            if (!!firstPet) {	
+            	const myFolder = insomnia.parentFolders.get('Pet');
+            	if (myFolder === undefined) {
+            		throw Error('Pet folder not found');
+            	}
+
+            	myFolder.environment.set('firstPetId', firstPet.id);
+            }
         settings:
           renderRequestBody: true
           encodeUrl: true
@@ -65,12 +81,12 @@ collection:
             send: true
             store: true
           rebuildPath: true
-      - url: "{{ _.baseUrl }}/pets/2"
+      - url: "{{ _.baseUrl }}/{{ _.firstPetId }}"
         name: Delete by id
         meta:
           id: req_3c3e495e436245e2884d7a7cc1a1ed41
           created: 1745705964531
-          modified: 1745762337928
+          modified: 1747427945681
           isPrivate: false
           sortKey: -1745705688815
         method: DELETE
@@ -85,12 +101,12 @@ collection:
             send: true
             store: true
           rebuildPath: true
-      - url: "{{ _.baseUrl }}/pets/3"
+      - url: "{{ _.baseUrl }}/{{ _.firstPetId }}"
         name: Find by id
         meta:
           id: req_6a9272663ca8450eacf222b06f71245c
           created: 1745705978178
-          modified: 1745796438792
+          modified: 1747428233656
           isPrivate: false
           sortKey: -1745705831990.625
         method: GET
@@ -105,12 +121,12 @@ collection:
             send: true
             store: true
           rebuildPath: true
-      - url: "{{ _.baseUrl }}/pets/1"
+      - url: "{{ _.baseUrl }}/{{ _.firstPetId }}"
         name: Update
         meta:
           id: req_31ec2e3ce4af4eb0aa287abaa4ade586
           created: 1745706137847
-          modified: 1745764779202
+          modified: 1747427838260
           isPrivate: false
           sortKey: -1745705688865
         method: PUT
@@ -118,8 +134,9 @@ collection:
           mimeType: application/json
           text: |-
             	{
-            		"name": "Bianca Fortunato",
+            "name": "Diana",
             		"description": null,
+            "specie": "DOG",
             		"breed": "Cane corso",
             		"size": "LARGE",
             		"status": "AVAILABLE",
@@ -141,12 +158,12 @@ collection:
             send: true
             store: true
           rebuildPath: true
-      - url: "{{ _.baseUrl }}/pets/adopt/1"
+      - url: "{{ _.baseUrl }}/adopt/{{ _.firstPetId }}"
         name: Adopt
         meta:
           id: req_099d9e5c45974df4a1596628a648f9b0
           created: 1745793025128
-          modified: 1745793033038
+          modified: 1747427893813
           isPrivate: false
           sortKey: -1745705688840
         method: PUT
@@ -177,12 +194,12 @@ collection:
             send: true
             store: true
           rebuildPath: true
-      - url: "{{ _.baseUrl }}/pets/owner/1"
+      - url: "{{ _.baseUrl }}/owner/83c06767-72f0-22ce-bf1c-76bcf9eb6766"
         name: Find by owner
         meta:
           id: req_89d42dccc41b467c91c3ec82409392d3
           created: 1745793166642
-          modified: 1745794439047
+          modified: 1747427849557
           isPrivate: false
           sortKey: -1745705811551.25
         method: GET
@@ -197,14 +214,14 @@ collection:
             send: true
             store: true
           rebuildPath: true
-      - url: "{{ _.baseUrl }}/pets/me"
+      - url: "{{ _.baseUrl }}/mines"
         name: Find mines
         meta:
           id: req_0bc055f53290466ca6710c4b850a9cfb
           created: 1745795177410
-          modified: 1745795184445
+          modified: 1747427847100
           isPrivate: false
-          sortKey: -1745705791111.875
+          sortKey: -1745705821770.9375
         method: GET
         headers:
           - name: User-Agent
@@ -218,106 +235,27 @@ collection:
             store: true
           rebuildPath: true
     authentication:
-      type: bearer
-      token: "{% response 'raw', 'req_88cf0a3e910c4e98bfa355f177874465', '', 'never',
-        60 %}"
-      disabled: false
+      type: oauth2
+      grantType: authorization_code
+      authorizationUrl: http://localhost:8080/realms/animal-adoption/protocol/openid-connect/auth
+      accessTokenUrl: http://localhost:8080/realms/animal-adoption/protocol/openid-connect/token
+      clientId: frontend
+      usePkce: true
+      redirectUrl: http://localhost:8080/callback
+      scope: openid profile email
     environment:
-      baseUrl: localhost:8080
-      token: "{% response 'raw', 'req_88cf0a3e910c4e98bfa355f177874465', '', 'never',
-        60 %}"
-  - name: User
-    meta:
-      id: fld_96e1fdaae30f45df80bee1fcc50db4d4
-      created: 1745716362350
-      modified: 1745790446913
-      sortKey: -1745716362350
-    children:
-      - url: "{{ _.baseUrl }}/auth/login"
-        name: Login
-        meta:
-          id: req_88cf0a3e910c4e98bfa355f177874465
-          created: 1745716366519
-          modified: 1745796148742
-          isPrivate: false
-          sortKey: -1745716366519
-        method: POST
-        parameters:
-          - id: pair_6088c8cf3fb8436caf26b0ed73a63c99
-            name: email
-            value: joao.pedro.luz25@hotmail.com
-            disabled: false
-          - id: pair_30fd4b9682b74ff091dbe5897954be06
-            name: password
-            value: teste123
-            disabled: false
-        headers:
-          - name: User-Agent
-            value: insomnia/11.0.2
-        authentication:
-          type: none
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.baseUrl }}/auth/register"
-        name: Register
-        meta:
-          id: req_c0c4b25908254986b0f448f8d97e7fb9
-          created: 1745721444452
-          modified: 1745794638168
-          isPrivate: false
-          sortKey: -1745711109474.5
-        method: POST
-        body:
-          mimeType: application/json
-          text: |-
-            {
-            	"email": "joao.pedro.luz@hotmail.com",
-            	"password": "teste123",
-            	"role": "USER"
-            }
-        headers:
-          - name: Content-Type
-            value: application/json
-          - name: User-Agent
-            value: insomnia/11.0.2
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-    environment:
-      baseUrl: localhost:8080
-      token: "{% response 'raw', 'req_88cf0a3e910c4e98bfa355f177874465', '',
-        'when-expired', 86400 %}"
+      baseUrl: localhost:80/pets
+      firstPetId: 0ab83d8d-3f8f-4936-8073-cd013dc69a74
 cookieJar:
   name: Default Jar
   meta:
     id: jar_c7c4abf08300a4d8c715521e529a715831d0ac2f
     created: 1745705640028
-    modified: 1745794556823
-  cookies:
-    - key: JSESSIONID
-      value: F89EE5146256EE61E0EBF1B588E388FA
-      domain: localhost
-      path: /
-      httpOnly: true
-      hostOnly: true
-      creation: 2025-04-27T01:13:07.253Z
-      lastAccessed: 2025-04-27T22:55:56.823Z
-      id: 8d8e600c-cf93-424c-b80c-b3de53c6e5e0
+    modified: 1747428605545
 environments:
   name: Base Environment
   meta:
     id: env_c7c4abf08300a4d8c715521e529a715831d0ac2f
     created: 1745705640027
-    modified: 1745705928782
+    modified: 1747428605545
     isPrivate: false

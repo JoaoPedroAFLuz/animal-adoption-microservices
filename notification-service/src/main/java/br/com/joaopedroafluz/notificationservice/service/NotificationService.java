@@ -17,11 +17,12 @@ public class NotificationService {
     public void handleAdoptionMessage(@Payload String message) {
         var adoptionMessage = JsonUtils.fromJson(message, AdoptionMessage.class);
 
-        var subject = "Adoption notification";
-        var body = String.format("Congratulations, %s, you have successfully adopted %s.", adoptionMessage.userName(),
+        var subject = "Adoption confirmation";
+        var body = String.format("Congratulations, %s, you have successfully adopted %s.",
+                adoptionMessage.user().name(),
                 adoptionMessage.petName());
 
-        emailService.send(adoptionMessage.userEmail(), subject, body);
+        emailService.send(adoptionMessage.user().email(), subject, body);
     }
 
 }
