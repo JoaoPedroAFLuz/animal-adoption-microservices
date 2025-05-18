@@ -1,4 +1,4 @@
-package br.com.joaopedroafluz.petservice.config;
+package br.com.joaopedroafluz.petservice.util;
 
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.lang.NonNull;

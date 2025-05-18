@@ -1,4 +1,4 @@
-package br.com.joaopedroafluz.petservice.config;
+package br.com.joaopedroafluz.petservice.util;
 
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;

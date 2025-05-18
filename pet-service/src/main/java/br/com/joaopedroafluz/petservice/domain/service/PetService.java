@@ -2,6 +2,7 @@ package br.com.joaopedroafluz.petservice.domain.service;
 
 import br.com.joaopedroafluz.petservice.config.RabbitProperties;
 import br.com.joaopedroafluz.petservice.domain.dto.AdoptionMessage;
+import br.com.joaopedroafluz.petservice.domain.dto.PetFilter;
 import br.com.joaopedroafluz.petservice.domain.dto.PetInputDTO;
 import br.com.joaopedroafluz.petservice.domain.dto.UserDTO;
 import br.com.joaopedroafluz.petservice.domain.enums.Gender;
@@ -12,12 +13,19 @@ import br.com.joaopedroafluz.petservice.domain.exception.PetAlreadyAdoptedExcept
 import br.com.joaopedroafluz.petservice.domain.exception.PetNotFoundException;
 import br.com.joaopedroafluz.petservice.domain.model.Pet;
 import br.com.joaopedroafluz.petservice.domain.repository.PetRepository;
+import br.com.joaopedroafluz.petservice.domain.repository.specification.PetSpecification;
 import br.com.joaopedroafluz.petservice.util.JsonUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.core.Message;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -30,6 +38,17 @@ public class PetService {
     private final MessageProducer messageProducer;
     private final RabbitProperties rabbitProperties;
 
+    public Page<Pet> findAll(PetFilter petFilter, Pageable pageable) {
+        final var petSpecification = PetSpecification.withFilters(petFilter);
+
+        return petRepository.findAll(petSpecification, pageable);
+    }
+
+    @Cacheable("featured-pets")
+    public List<Pet> findFeatured() {
+        return petRepository.findFeatured(PageRequest.of(0, 10));
+    }
+
     public Optional<Pet> findById(UUID id) {
         return petRepository.findById(id);
     }
@@ -38,15 +57,24 @@ public class PetService {
         return findById(id).orElseThrow(() -> new PetNotFoundException(id));
     }
 
-    public List<Pet> findAll() {
-        return petRepository.findAll();
-    }
-
     public List<Pet> findByOwnerId(UUID userId) {
         return petRepository.findByOwnerId(userId);
     }
 
+    public List<String> findSpecies() {
+        return Arrays.stream(Specie.values())
+                .map(Enum::name)
+                .toList();
+    }
+
+    public List<String> findSizes() {
+        return Arrays.stream(Size.values())
+                .map(Enum::name)
+                .toList();
+    }
+
     @Transactional
+    @CacheEvict(value = "featured-pets", allEntries = true)
     public Pet save(PetInputDTO newPetDTO) {
         var pet = convertInputDTOToModel(newPetDTO);
 
@@ -59,6 +87,7 @@ public class PetService {
     }
 
     @Transactional
+    @CacheEvict(value = "featured-pets", allEntries = true)
     public Pet update(UUID id, PetInputDTO petInputDTO) {
         var petFound = findByIdOrThrow(id);
 
@@ -67,7 +96,6 @@ public class PetService {
         petFound.setSpecie(Specie.valueOf(petInputDTO.specie()));
         petFound.setBreed(petInputDTO.breed());
         petFound.setSize(Size.valueOf(petInputDTO.size()));
-        petFound.setStatus(Status.valueOf(petInputDTO.status()));
         petFound.setGender(Gender.valueOf(petInputDTO.gender()));
         petFound.setBirthDate(petInputDTO.birthDate());
 
@@ -75,6 +103,7 @@ public class PetService {
     }
 
     @Transactional
+    @CacheEvict(value = "featured-pets", allEntries = true)
     public Pet adopt(UUID petId, UserDTO user) {
         var pet = findByIdOrThrow(petId);
 
@@ -98,6 +127,7 @@ public class PetService {
         messageProducer.sendMessage(rabbitProperties.getExchange(), rabbitProperties.getRoutingKey(), message);
     }
 
+    @CacheEvict(value = "featured-pets", allEntries = true)
     public void deleteById(UUID id) {
         petRepository.deleteById(id);
     }
@@ -110,7 +140,7 @@ public class PetService {
                 .specie(Specie.valueOf(petInputDTO.specie()))
                 .breed(petInputDTO.breed())
                 .size(Size.valueOf(petInputDTO.size()))
-                .status(Status.AVAILABLE)
+                .status(Status.valueOf(petInputDTO.status()))
                 .gender(Gender.valueOf(petInputDTO.gender()))
                 .birthDate(petInputDTO.birthDate())
                 .build();

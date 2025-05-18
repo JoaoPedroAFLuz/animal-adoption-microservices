@@ -31,6 +31,8 @@ spring:
         jwt:
           issuer-uri: ${KEYCLOAK_ANIMAL_ADOPTION_REALM_URI:http://localhost:8080/realms/animal-adoption}
           jwk-set-uri: ${KEYCLOAK_ANIMAL_ADOPTION_REALM_OPENID_URI:http://localhost:8080/realms/animal-adoption/protocol/openid-connect/certs}
+  cache:
+    type: redis
 
 rabbit:
   queue: ${RABBIT_MQ_QUEUE:pet.adoption.notification}
@@ -41,7 +43,6 @@ eureka:
   client:
     service-url:
       defaultZone: ${EUREKA_SERVER_URL:http://localhost:8761/eureka/}
-    api-gateway-url: ${API_GATEWAY_URL:http://localhost:80}
     fetch-registry: true
     register-with-eureka: true
   instance:
@@ -55,3 +56,7 @@ management:
   metrics:
     tags:
       application: ${spring.application.name}
+
+redis:
+  host: redis
+  port: 6379

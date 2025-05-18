@@ -9,6 +9,7 @@ public enum ProblemType {
     RESOURCE_NOT_FOUND("Resource not found.", "/resource-not-found"),
     UNAUTHORIZED("Unauthorized.", "/unauthorized"),
     ACCESS_DENIED("Access denied.", "/access-denied"),
+    INVALID_PARAMETER("Invalid parameter.", "/invalid-parameter"),
     SYSTEM_ERROR("System error.", "/system-error");
 
     private final String title;

@@ -66,6 +66,25 @@ services:
     networks:
       - adoption-network
 
+  redis:
+    image: redis:7.2
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - adoption-network
+
+  redisinsight:
+    image: redislabs/redisinsight:1.14.0
+    container_name: redisinsight
+    ports:
+      - "8001:8001"
+    networks:
+      - adoption-network
+
+
   notification-service:
     container_name: notification-service
     build:
@@ -154,4 +173,5 @@ networks:
 
 volumes:
   keycloak-db-data:
+  redis-data:
   pet-db-data:

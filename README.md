@@ -43,6 +43,9 @@ This service is responsible for managing pets and their adoptions. The main func
   * Only users with specific roles can create, update, or delete pets.
   * Access to certain data, such as viewing adopted pets from other users, is restricted based on user roles.
 
+* **Caching with Redis**: To improve performance and reduce database load, frequently accessed data like the 10 featured
+  pets is cached using Redis with a configurable TTL (time-to-live).
+
 ### 5. Notification Service
 
 This service is responsible for notifying users when an adoption is completed. It listens to a RabbitMQ queue for
@@ -75,7 +78,16 @@ The Grafana instance is preconfigured with:
 * A Microservices communication map
 * JVM and database performance dashboards
 
-### 8. Database
+### 8. Redis Cache & RedisInsight UI
+
+* **Redis** is used as a distributed cache to store frequently accessed data such as featured pets to improve response
+  time and reduce database queries.
+* Cache entries have configurable TTLs to ensure data freshness.
+* **RedisInsight** is deployed alongside Redis to provide a powerful visual interface to monitor Redis keys, memory
+  usage, and performance metrics.
+* RedisInsight runs at `http://localhost:8001` and connects to the Redis database at the default port (`6379`).
+
+### 9. Database
 
 Most microservices have their own dedicated databases to ensure separation of concerns and data encapsulation:
 
@@ -111,11 +123,13 @@ test all available routes across the microservices.
 * RabbitMQ: Message broker for handling adoption notifications.
 * **Keycloak**: Identity and access management system.
 * **OAuth 2.0**: Protocol for secure authorization between services.
+* **Redis**: Distributed cache to improve performance and scalability.
 
 ### Monitoring & Observability
 
 * Prometheus: Time-series database for collecting and storing metrics from all microservices.
 * Grafana: Visualization platform for real-time monitoring and alerting.
+* **RedisInsight**: Visual UI for monitoring Redis performance and cache state.
 
 ### Supporting Libraries
 
