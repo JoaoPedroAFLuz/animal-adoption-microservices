@@ -1,6 +1,5 @@
 package br.com.joaopedroafluz.petservice.domain.service;
 
-import br.com.joaopedroafluz.petservice.config.RabbitProperties;
 import br.com.joaopedroafluz.petservice.domain.dto.AdoptionMessage;
 import br.com.joaopedroafluz.petservice.domain.dto.PetFilter;
 import br.com.joaopedroafluz.petservice.domain.dto.PetInputDTO;
@@ -14,9 +13,7 @@ import br.com.joaopedroafluz.petservice.domain.exception.PetNotFoundException;
 import br.com.joaopedroafluz.petservice.domain.model.Pet;
 import br.com.joaopedroafluz.petservice.domain.repository.PetRepository;
 import br.com.joaopedroafluz.petservice.domain.repository.specification.PetSpecification;
-import br.com.joaopedroafluz.petservice.util.JsonUtils;
 import lombok.RequiredArgsConstructor;
-import org.springframework.amqp.core.Message;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
@@ -35,8 +32,7 @@ import java.util.UUID;
 public class PetService {
 
     private final PetRepository petRepository;
-    private final MessageProducer messageProducer;
-    private final RabbitProperties rabbitProperties;
+    private final NotificationService notificationService;
 
     public Page<Pet> findAll(PetFilter petFilter, Pageable pageable) {
         final var petSpecification = PetSpecification.withFilters(petFilter);
@@ -116,15 +112,9 @@ public class PetService {
 
         pet = save(pet);
 
-        sendAdoptionNotification(new AdoptionMessage(pet.getId(), pet.getName(), user));
+        notificationService.sendAdoptionNotification(new AdoptionMessage(pet.getId(), pet.getName(), user));
 
         return pet;
-    }
-
-    private void sendAdoptionNotification(AdoptionMessage adoptionMessage) {
-        var message = new Message(JsonUtils.toJson(adoptionMessage).getBytes());
-
-        messageProducer.sendMessage(rabbitProperties.getExchange(), rabbitProperties.getRoutingKey(), message);
     }
 
     @CacheEvict(value = "featured-pets", allEntries = true)
