@@ -3,7 +3,6 @@ package br.com.joaopedroafluz.petservice.domain.service;
 import br.com.joaopedroafluz.petservice.domain.dto.AdoptionMessage;
 import br.com.joaopedroafluz.petservice.domain.dto.PetFilter;
 import br.com.joaopedroafluz.petservice.domain.dto.UserDTO;
-import br.com.joaopedroafluz.petservice.domain.enums.Gender;
 import br.com.joaopedroafluz.petservice.domain.enums.Size;
 import br.com.joaopedroafluz.petservice.domain.enums.Specie;
 import br.com.joaopedroafluz.petservice.domain.enums.Status;
@@ -163,7 +162,7 @@ public class PetServiceTest {
 
     @Test
     void shouldSavePetFromDTO() {
-        final var inputDTO = PetFactory.createDefaultPetInputDTO();
+        final var inputDTO = PetFactory.createDefaultPetRegistrationInputDTO();
         final var pet = new Pet();
 
         when(petRepository.save(any(Pet.class))).thenReturn(pet);
@@ -193,7 +192,7 @@ public class PetServiceTest {
         final var existingPet = PetFactory.createDefaultPet();
         existingPet.setId(id);
 
-        final var petInputDTO = PetFactory.createDefaultPetInputDTO();
+        final var petInputDTO = PetFactory.createDefaultPetUpdateInputDTO();
 
         doReturn(existingPet).when(petService).findByIdOrThrow(id);
         when(petRepository.save(existingPet)).thenReturn(existingPet);
@@ -202,10 +201,10 @@ public class PetServiceTest {
 
         assertEquals(petInputDTO.name(), result.getName());
         assertEquals(petInputDTO.description(), result.getDescription());
-        assertEquals(Specie.valueOf(petInputDTO.specie()), result.getSpecie());
+        assertEquals(petInputDTO.specie(), result.getSpecie());
         assertEquals(petInputDTO.breed(), result.getBreed());
-        assertEquals(Size.valueOf(petInputDTO.size()), result.getSize());
-        assertEquals(Gender.valueOf(petInputDTO.gender()), result.getGender());
+        assertEquals(petInputDTO.size(), result.getSize());
+        assertEquals(petInputDTO.gender(), result.getGender());
         assertEquals(petInputDTO.birthDate(), result.getBirthDate());
         verify(petRepository, times(1)).save(existingPet);
     }

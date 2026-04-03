@@ -7,14 +7,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
@@ -134,6 +133,24 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(ex, problem, headers, status, request);
     }
 
+    @Override
+    public ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex,
+                                                               HttpHeaders headers, HttpStatusCode status,
+                                                               WebRequest request) {
+        var problemType = ProblemType.INVALID_PARAMETER;
+        var detail = "One or more parameters are invalid.";
+
+        var cause = ex.getMostSpecificCause().getMessage();
+        if (cause != null && cause.contains("from String")) {
+            detail = "Invalid value for enum field: " + extractEnumFieldMessage(cause);
+        }
+        var problem = createProblemBuilder(status, problemType, detail)
+                .userMessage(detail)
+                .build();
+
+        return handleExceptionInternal(ex, problem, headers, status, request);
+    }
+
     protected ResponseEntity<Object> handleExceptionInternal(Exception ex, Object body, HttpHeaders headers,
                                                              HttpStatus status, WebRequest request) {
         if (Objects.isNull(body)) {
@@ -162,6 +179,17 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                 .title(problemType.getTitle())
                 .detail(detail)
                 .timestamp(OffsetDateTime.now());
+    }
+
+    private String extractEnumFieldMessage(String message) {
+        // Exemplo de mensagem:
+        // Cannot deserialize value of type `Status` from String "INVALID": not one of the values accepted...
+        int start = message.indexOf("\"");
+        int end = message.indexOf("\"", start + 1);
+        if (start != -1 && end != -1) {
+            return message.substring(start + 1, end);
+        }
+        return "Unknown";
     }
 
 }

@@ -10,6 +10,7 @@ public enum ProblemType {
     UNAUTHORIZED("Unauthorized.", "/unauthorized"),
     ACCESS_DENIED("Access denied.", "/access-denied"),
     INVALID_PARAMETER("Invalid parameter.", "/invalid-parameter"),
+    INVALID_ARGUMENT("Invalid argument.", "/invalid-argument"),
     SYSTEM_ERROR("System error.", "/system-error");
 
     private final String title;

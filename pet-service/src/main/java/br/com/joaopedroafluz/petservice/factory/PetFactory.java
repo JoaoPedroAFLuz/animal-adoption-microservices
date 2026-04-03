@@ -1,6 +1,7 @@
 package br.com.joaopedroafluz.petservice.factory;
 
-import br.com.joaopedroafluz.petservice.domain.dto.PetInputDTO;
+import br.com.joaopedroafluz.petservice.domain.dto.PetRegistrationInputDTO;
+import br.com.joaopedroafluz.petservice.domain.dto.PetUpdateInputDTO;
 import br.com.joaopedroafluz.petservice.domain.enums.Gender;
 import br.com.joaopedroafluz.petservice.domain.enums.Size;
 import br.com.joaopedroafluz.petservice.domain.enums.Specie;
@@ -48,16 +49,26 @@ public class PetFactory {
                 .build();
     }
 
-    public static PetInputDTO createDefaultPetInputDTO() {
-        return new PetInputDTO(
-                UUID.randomUUID(),
+    public static PetRegistrationInputDTO createDefaultPetRegistrationInputDTO() {
+        return new PetRegistrationInputDTO(
                 "Bob",
                 "A friendly dog",
-                "DOG",
+                Specie.DOG,
                 "Labrador",
-                "MEDIUM",
-                "AVAILABLE",
-                "MALE",
+                Size.MEDIUM,
+                Gender.MALE,
+                LocalDate.of(2020, 1, 1)
+        );
+    }
+
+    public static PetUpdateInputDTO createDefaultPetUpdateInputDTO() {
+        return new PetUpdateInputDTO(
+                "Bob",
+                "A friendly dog",
+                Specie.DOG,
+                "Labrador",
+                Size.MEDIUM,
+                Gender.MALE,
                 LocalDate.of(2020, 1, 1)
         );
     }

@@ -1,9 +1,6 @@
 package br.com.joaopedroafluz.petservice.domain.service;
 
-import br.com.joaopedroafluz.petservice.domain.dto.AdoptionMessage;
-import br.com.joaopedroafluz.petservice.domain.dto.PetFilter;
-import br.com.joaopedroafluz.petservice.domain.dto.PetInputDTO;
-import br.com.joaopedroafluz.petservice.domain.dto.UserDTO;
+import br.com.joaopedroafluz.petservice.domain.dto.*;
 import br.com.joaopedroafluz.petservice.domain.enums.Gender;
 import br.com.joaopedroafluz.petservice.domain.enums.Size;
 import br.com.joaopedroafluz.petservice.domain.enums.Specie;
@@ -71,7 +68,7 @@ public class PetService {
 
     @Transactional
     @CacheEvict(value = "featured-pets", allEntries = true)
-    public Pet save(PetInputDTO newPetDTO) {
+    public Pet save(PetRegistrationInputDTO newPetDTO) {
         var pet = convertInputDTOToModel(newPetDTO);
 
         return save(pet);
@@ -84,16 +81,16 @@ public class PetService {
 
     @Transactional
     @CacheEvict(value = "featured-pets", allEntries = true)
-    public Pet update(UUID id, PetInputDTO petInputDTO) {
+    public Pet update(UUID id, PetUpdateInputDTO petUpdateInputDTO) {
         var petFound = findByIdOrThrow(id);
 
-        petFound.setName(petInputDTO.name());
-        petFound.setDescription(petInputDTO.description());
-        petFound.setSpecie(Specie.valueOf(petInputDTO.specie()));
-        petFound.setBreed(petInputDTO.breed());
-        petFound.setSize(Size.valueOf(petInputDTO.size()));
-        petFound.setGender(Gender.valueOf(petInputDTO.gender()));
-        petFound.setBirthDate(petInputDTO.birthDate());
+        petFound.setName(petUpdateInputDTO.name());
+        petFound.setDescription(petUpdateInputDTO.description());
+        petFound.setSpecie(petUpdateInputDTO.specie());
+        petFound.setBreed(petUpdateInputDTO.breed());
+        petFound.setSize(petUpdateInputDTO.size());
+        petFound.setGender(petUpdateInputDTO.gender());
+        petFound.setBirthDate(petUpdateInputDTO.birthDate());
 
         return save(petFound);
     }
@@ -122,17 +119,15 @@ public class PetService {
         petRepository.deleteById(id);
     }
 
-    private Pet convertInputDTOToModel(PetInputDTO petInputDTO) {
+    private Pet convertInputDTOToModel(PetRegistrationInputDTO petRegistrationInputDTO) {
         return Pet.builder()
-                .id(petInputDTO.id())
-                .name(petInputDTO.name())
-                .description(petInputDTO.description())
-                .specie(Specie.valueOf(petInputDTO.specie()))
-                .breed(petInputDTO.breed())
-                .size(Size.valueOf(petInputDTO.size()))
-                .status(Status.valueOf(petInputDTO.status()))
-                .gender(Gender.valueOf(petInputDTO.gender()))
-                .birthDate(petInputDTO.birthDate())
+                .name(petRegistrationInputDTO.name())
+                .description(petRegistrationInputDTO.description())
+                .specie(petRegistrationInputDTO.specie())
+                .breed(petRegistrationInputDTO.breed())
+                .size(petRegistrationInputDTO.size())
+                .gender(petRegistrationInputDTO.gender())
+                .birthDate(petRegistrationInputDTO.birthDate())
                 .build();
     }
 

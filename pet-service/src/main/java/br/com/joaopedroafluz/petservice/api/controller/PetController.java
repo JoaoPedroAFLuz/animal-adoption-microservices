@@ -1,11 +1,13 @@
 package br.com.joaopedroafluz.petservice.api.controller;
 
 import br.com.joaopedroafluz.petservice.domain.dto.PetFilter;
-import br.com.joaopedroafluz.petservice.domain.dto.PetInputDTO;
+import br.com.joaopedroafluz.petservice.domain.dto.PetRegistrationInputDTO;
+import br.com.joaopedroafluz.petservice.domain.dto.PetUpdateInputDTO;
 import br.com.joaopedroafluz.petservice.domain.dto.UserDTO;
 import br.com.joaopedroafluz.petservice.domain.model.Pet;
 import br.com.joaopedroafluz.petservice.domain.service.PetService;
 import br.com.joaopedroafluz.petservice.util.AuthenticatedUserUtils;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -68,14 +70,14 @@ public class PetController {
     @PostMapping
     @PreAuthorize("hasRole('REGISTER_PET')")
     @ResponseStatus(HttpStatus.CREATED)
-    public Pet save(@RequestBody PetInputDTO petInputDTO) {
-        return petService.save(petInputDTO);
+    public Pet save(@RequestBody @Valid PetRegistrationInputDTO petRegistrationInputDTO) {
+        return petService.save(petRegistrationInputDTO);
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('UPDATE_PET')")
-    public Pet update(@PathVariable UUID id, @RequestBody PetInputDTO petInputDTO) {
-        return petService.update(id, petInputDTO);
+    public Pet update(@PathVariable UUID id, @RequestBody @Valid PetUpdateInputDTO petUpdateInputDTO) {
+        return petService.update(id, petUpdateInputDTO);
     }
 
     @PutMapping("/adopt/{id}")
