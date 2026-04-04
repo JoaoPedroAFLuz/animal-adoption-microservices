@@ -6,6 +6,7 @@
 - Always run tests before considering a task done
 - Review changes before finalizing (check for missed edge cases, unused imports, consistency)
 - When suggesting commits, follow the existing commit message pattern: lowercase, English, no conventional commit prefixes, descriptive of the action
+- When the user grants trust to a tool, add it to `.kiro/agents/pet-adoption.json` allowedTools
 
 ## Code Style & Patterns
 
