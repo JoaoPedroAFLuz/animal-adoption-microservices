@@ -24,7 +24,24 @@
   ],
   "toolsSettings": {
     "execute_bash": {
-      "allowedCommands": ["echo", "ls", "cd", "git", "./mvnw", "cat", "docker", "docker-compose", "ssh-add", "curl"],
+      "allowedCommands": [
+        "echo",
+        "ls",
+        "cd",
+        "git",
+        "./mvnw",
+        "cat",
+        "docker",
+        "docker-compose",
+        "curl",
+        "grep",
+        "find",
+        "sed",
+        "cp",
+        "mkdir",
+        "wc",
+        "which"
+      ],
       "autoAllowReadonly": true
     }
   },

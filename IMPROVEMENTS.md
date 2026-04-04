@@ -41,4 +41,4 @@
 - [x] Standardize Dockerfiles — all using JRE
 - [x] Add `.dockerignore` to pet-service and notification-service
 - [x] Extract duplicated code (`JsonUtils`, `RabbitProperties`, `AdoptionMessage`, `UserDTO`) into a shared module
-- [ ] Review and improve `README.md`
+- [x] Review and improve `README.md`

@@ -1,140 +1,167 @@
 # Pet Adoption System
 
-This project is a microservices-based architecture for managing the pet adoption system. It consists of independent
-services, each responsible for a specific part of the process. The system was developed using Spring Boot and utilizes
-Eureka, API Gateway, Prometheus, Grafana, Docker — and now Keycloak with OAuth 2.0 for identity and access management.
+A microservices-based system for managing pet adoptions, built with Spring Boot and Spring Cloud. The project uses
+Keycloak for identity management, RabbitMQ for async messaging, Redis for caching, and is fully containerized with
+Docker Compose.
 
-## Project Structure
+## Architecture
 
 ![Application Architecture Diagram](./assets/diagram.jpeg)
 ![Dashboard](./assets/dashboard.png)
 
-### 1. Eureka
+### Eureka Server (port 8761)
 
-Eureka is used for service discovery, allowing microservices to locate and communicate with each other dynamically. The service registry is hosted at `http://localhost:8761/eureka/`.
+Service discovery server. All microservices register themselves and discover each other dynamically through Eureka,
+enabling load-balanced communication without hardcoded URLs.
 
-### 2. API Gateway
+### API Gateway (port 80)
 
-The API Gateway manages incoming requests and handles routing. It directs requests to the appropriate microservices (
-such as Pet Service) based on the URL path.
+Single entry point for all client requests. Routes traffic to downstream services via Eureka and provides:
 
-### 3. Keycloak Integration
+* JWT validation — rejects invalid/expired tokens before they reach downstream services
+* Rate limiting — Redis-based token bucket algorithm (10 req/s sustained, 20 burst)
+* Circuit breaker — Resilience4j with fallback response when downstream services are unavailable
+* CORS — configured for cross-origin requests
 
-Keycloak has replaced the previous custom User/Auth Service. It acts as a centralized identity and access management
-solution:
+### Keycloak (port 8080)
 
-* Microservices now authenticate using **OAuth 2.0** tokens provided by Keycloak.
-* Services can retrieve user information directly from Keycloak using its admin endpoints.
-* User management (registration, login, roles) is handled externally through the Keycloak UI or API.
-* JWT tokens issued by Keycloak are used by the microservices to authenticate and authorize requests.
+Centralized identity and access management:
 
-This update brings increased security, standardization, and ease of integration with external identity providers in the
-future.
+* Realm: `animal-adoption` with OAuth 2.0 / OpenID Connect
+* Backend client (`animal-adoption`) with roles: `REGISTER_PET`, `UPDATE_PET`, `DELETE_PET`, `ADMIN`
+* Frontend client (`frontend`) with Authorization Code + PKCE flow for Insomnia/UI testing
+* JWT tokens used by all services for authentication and authorization
 
-### 4. Pet Service
+### Pet Service (port 8081)
 
-This service is responsible for managing pets and their adoptions. The main functionalities include:
+Core service for managing pets and adoptions:
 
-* CRUD operations for pets (create, read, update, delete).
-* Adoption process: When a pet is adopted, the system updates the pet's status, assigns the owner, sets the adoption
-  timestamp, and publishes an event to a RabbitMQ queue for further processing by other services.
-* **Role-Based Access Control (RBAC)**: The service uses roles defined in Keycloak to enforce permissions:
+* CRUD operations with role-based access control (`@PreAuthorize`)
+* Adoption flow: updates pet status, assigns owner, publishes event to RabbitMQ
+* Optimistic locking (`@Version`) to prevent race conditions on adoption
+* Redis caching on featured pets with 1h TTL
+* Pagination and filtering with JPA Specifications (by species, gender, size, status)
+* Flyway for database migrations
+* Response DTOs to avoid exposing JPA entities
 
-  * Only users with specific roles can create, update, or delete pets.
-  * Access to certain data, such as viewing adopted pets from other users, is restricted based on user roles.
+### Notification Service (port 8082)
 
-* **Caching with Redis**: To improve performance and reduce database load, frequently accessed data like the 10 featured
-  pets is cached using Redis with a configurable TTL (time-to-live).
+Event-driven service for adoption notifications:
 
-### 5. Notification Service
+* Consumes adoption events from RabbitMQ queue (`pet.adoption.notification`)
+* Sends styled HTML emails using Thymeleaf templates
+* Retry mechanism (3 attempts with exponential backoff) + Dead Letter Queue
+* DLQ retry endpoint (`POST /dlq/retry`) to reprocess failed messages
 
-This service is responsible for notifying users when an adoption is completed. It listens to a RabbitMQ queue for
-adoption events, and upon receiving a message, it sends a confirmation email to the adopter informing them that the
-process has been successfully finalized.
+### Shared Module
 
-### 6. Prometheus
+Common library used by pet-service and notification-service:
 
-Prometheus is our monitoring system that collects and stores metrics from all microservices in real-time. Key features:
+* `AdoptionMessage` and `UserDTO` — shared domain records (event contract between services)
+* `JsonUtils` — JSON serialization/deserialization utility
 
-* Metrics Collection: Pulls metrics from each service's /actuator/prometheus endpoint at regular intervals
-* Time-Series Database: Stores all metrics with timestamps for historical analysis
-* Service Health Monitoring: Tracks request rates, response times, error rates, and system resources
-* Alerting: Can trigger alerts when metrics exceed predefined thresholds
+### Monitoring
 
-All services expose Spring Boot Actuator metrics which Prometheus scrapes every 15 seconds.
+* **Prometheus** — scrapes metrics from all services via `/actuator/prometheus` every 15 seconds
+* **Grafana** (port 3000) — dashboards for Spring Boot metrics, JVM performance, and service health
+* **RedisInsight** (port 8001) — visual UI for monitoring Redis keys, memory, and performance
 
-### 7. Grafana
+### Databases
 
-Grafana is our visualization platform that transforms Prometheus metrics into actionable insights:
+Each service has its own dedicated database (database-per-service pattern):
 
-* Interactive Dashboards: Provides real-time visualizations of system performance
-* Service Monitoring: Displays key metrics like API response times, JVM memory usage, and database connections
-* Custom Alerts: Visual indicators when metrics cross warning/critical thresholds
-* Pre-built Dashboards: Includes optimized dashboards for Spring Boot applications
+* **Pet Service** — PostgreSQL (port 5433) with Flyway migrations
+* **Keycloak** — PostgreSQL (port 5432) for users, roles, sessions, and tokens
+* **Notification Service** — no database (purely event-driven)
 
-The Grafana instance is preconfigured with:
-
-* A Spring Boot monitoring dashboard (ID: 4701)
-* A Microservices communication map
-* JVM and database performance dashboards
-
-### 8. Redis Cache & RedisInsight UI
-
-* **Redis** is used as a distributed cache to store frequently accessed data such as featured pets to improve response
-  time and reduce database queries.
-* Cache entries have configurable TTLs to ensure data freshness.
-* **RedisInsight** is deployed alongside Redis to provide a powerful visual interface to monitor Redis keys, memory
-  usage, and performance metrics.
-* RedisInsight runs at `http://localhost:8001` and connects to the Redis database at the default port (`6379`).
-
-### 9. Database
-
-Most microservices have their own dedicated databases to ensure separation of concerns and data encapsulation:
-
-* **Pet Service**: Maintains a database with all information related to pets and their adoption status.
-* **Keycloak**: Uses its own database to store user credentials, roles, groups, sessions, and tokens.
-* **Notification Service**: This service does not require a database, as it operates solely based on messages received
-  through RabbitMQ.
-
-## How to Run the Project
+## How to Run
 
 ### Prerequisites
 
 * Docker
 
-### Step-by-Step
+### Running the Project
 
-1. Clone the repository and navigate to the project root.
-2. Run `docker compose up --build -d` to start all containers.
-3. Wait until all services are up and running.
-4. The application is now ready to use.
+```bash
+# Copy the environment file
+cp .env.example .env
 
-💡 A preconfigured `insomnia.json` file is available in the root directory. You can import it into Insomnia to easily
-test all available routes across the microservices.
+# Start all infrastructure + notification-service (pet-service runs locally via IntelliJ)
+docker compose up --build -d
 
-## Technologies Used
+# Or start everything including pet-service in Docker
+docker compose --profile full up --build -d
+```
 
-### Core Technologies
+Wait until all services are healthy, then the application is ready.
 
-* Spring Boot: Framework for developing microservices.
-* Spring Cloud Gateway: Gateway for request routing.
-* Spring Cloud Eureka: Service discovery for communication between microservices.
-* PostgreSQL: Relational database for storing pet and user information.
-* RabbitMQ: Message broker for handling adoption notifications.
-* **Keycloak**: Identity and access management system.
-* **OAuth 2.0**: Protocol for secure authorization between services.
-* **Redis**: Distributed cache to improve performance and scalability.
+### Keycloak Setup (first time only)
 
-### Monitoring & Observability
+The `animal-adoption` realm is automatically imported on first startup (via `keycloak/animal-adoption-realm.json`).
+It includes the clients and roles pre-configured. You only need to:
 
-* Prometheus: Time-series database for collecting and storing metrics from all microservices.
-* Grafana: Visualization platform for real-time monitoring and alerting.
-* **RedisInsight**: Visual UI for monitoring Redis performance and cache state.
+1. Open `http://localhost:8080` and log in to the admin console (credentials from `.env`)
+2. Create a test user in the `animal-adoption` realm and assign the desired roles
 
-### Supporting Libraries
+### Development Workflow
 
-* Spring Security: Authentication and authorization.
-* JWT (JSON Web Tokens): Secure user authentication.
-* Lombok: Reducing boilerplate code.
-* Spring Data JPA: Database access and management.
-* Micrometer: Application metrics exporter for Prometheus.
+For day-to-day development, run pet-service locally via IntelliJ (with hot reload) and everything else in Docker:
+
+1. `docker compose up -d` — starts infrastructure + notification-service
+2. Run pet-service from IntelliJ (default profile uses `localhost` for all dependencies)
+3. Access the API through the gateway at `http://localhost`
+
+### Remote Debugging
+
+Both services expose debug ports when running in Docker:
+
+* Pet Service: `localhost:5005`
+* Notification Service: `localhost:5006`
+
+In IntelliJ: **Run** → **Edit Configurations** → **Remote JVM Debug** → set the host and port.
+
+### Useful URLs
+
+| Service       | URL                          |
+|---------------|------------------------------|
+| API Gateway   | http://localhost              |
+| Pet Service   | http://localhost:8081         |
+| Eureka        | http://localhost:8761         |
+| Keycloak      | http://localhost:8080         |
+| RabbitMQ      | http://localhost:15672        |
+| MailHog       | http://localhost:8025         |
+| Grafana       | http://localhost:3000         |
+| Prometheus    | http://localhost:9090         |
+| RedisInsight  | http://localhost:8001         |
+
+💡 A preconfigured `insomnia.json` file is available in the root directory. Import it into Insomnia to test all
+available routes.
+
+## Technologies
+
+### Core
+
+* Java 21, Spring Boot 3.5, Spring Cloud 2025.0
+* Spring Cloud Gateway — routing, rate limiting, circuit breaker
+* Spring Cloud Eureka — service discovery
+* Spring Security + OAuth 2.0 — authentication and authorization
+* Keycloak — identity and access management
+* PostgreSQL + Flyway — relational database with versioned migrations
+* RabbitMQ — async messaging with DLQ support
+* Redis — distributed caching
+
+### Libraries
+
+* Spring Data JPA — database access
+* Resilience4j — circuit breaker and time limiter
+* Thymeleaf — HTML email templates
+* Lombok — boilerplate reduction
+* Micrometer — metrics exporter for Prometheus
+* Jackson — JSON serialization
+
+### Infrastructure
+
+* Docker Compose — container orchestration with health checks
+* Prometheus + Grafana — monitoring and dashboards
+* MailHog — email testing (dev)
+* RedisInsight — Redis monitoring UI
