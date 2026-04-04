@@ -2,6 +2,7 @@
 
 ## Workflow Rules
 
+- Before implementing, always plan and explain first — wait for approval before writing code
 - Never commit automatically — always wait for explicit confirmation
 - Always run tests before considering a task done
 - Review changes before finalizing (check for missed edge cases, unused imports, consistency)

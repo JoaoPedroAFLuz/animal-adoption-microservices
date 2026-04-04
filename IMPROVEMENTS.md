@@ -8,7 +8,7 @@
 
 ## Testing
 
-- [ ] Add integration tests with Testcontainers (PostgreSQL, RabbitMQ, Redis)
+- [x] Add integration tests with Testcontainers (PostgreSQL, RabbitMQ, Redis)
 
 ## Frontend
 
