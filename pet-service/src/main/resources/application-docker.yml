@@ -1,0 +1,13 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://pet-db:5432/petservicedb
+  rabbitmq:
+    host: rabbitmq
+  data:
+    redis:
+      host: redis
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://eureka-server:8761/eureka/

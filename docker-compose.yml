@@ -114,22 +114,24 @@ services:
     volumes:
       - pet-db-data:/var/lib/postgresql/data
 
-  # This service must run locally to accept requests from localhost and to properly validate Keycloak tokens.
-  #  pet-service:
-  #    container_name: pet-service
-  #    build:
-  #      context: ./pet-service
-  #      dockerfile: Dockerfile
-  #    ports:
-  #      - "8081:8081"
-  #    env_file:
-  #      - .env
-  #    depends_on:
-  #      - eureka-server
-  #      - pet-db
-  #      - rabbitmq
-  #    networks:
-  #      - adoption-network
+  pet-service:
+    container_name: pet-service
+    build:
+      context: ./pet-service
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8081"
+    env_file:
+      - .env
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - eureka-server
+      - pet-db
+      - rabbitmq
+      - keycloak
+    networks:
+      - adoption-network
 
   api-gateway:
     container_name: api-gateway
@@ -145,7 +147,7 @@ services:
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
     depends_on:
       - eureka-server
-    #      - pet-service
+      - pet-service
     networks:
       - adoption-network
 
