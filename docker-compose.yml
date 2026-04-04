@@ -8,6 +8,11 @@ services:
       - POSTGRES_DB=${KEYCLOAK_DB}
     ports:
       - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     networks:
       - adoption-network
     volumes:
@@ -19,9 +24,11 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      - keycloak-db
+      keycloak-db:
+        condition: service_healthy
     environment:
       KC_METRICS_ENABLED: "true"
+      KC_HEALTH_ENABLED: "true"
       KC_HOSTNAME_STRICT: "false"
       KC_HTTP_ENABLED: "true"
       KEYCLOAK_ADMIN: ${KEYCLOAK_DB_USERNAME}
@@ -31,6 +38,12 @@ services:
       KC_DB_USERNAME: ${KEYCLOAK_DB_USERNAME}
       KC_DB_PASSWORD: ${KEYCLOAK_DB_PASSWORD}
     command: start-dev
+    healthcheck:
+      test: ["CMD-SHELL", "exec 3<>/dev/tcp/localhost/8080"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
     networks:
       - adoption-network
 
@@ -43,6 +56,12 @@ services:
       - "8761:8761"
     environment:
       - SPRING_PROFILES_ACTIVE=docker
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c 'exec 3<>/dev/tcp/localhost/8761'"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
     networks:
       - adoption-network
 
@@ -65,6 +84,11 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     networks:
       - adoption-network
 
@@ -73,6 +97,11 @@ services:
     container_name: redis
     ports:
       - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
     volumes:
       - redis-data:/data
     networks:
@@ -86,7 +115,6 @@ services:
     networks:
       - adoption-network
 
-
   notification-service:
     container_name: notification-service
     build:
@@ -99,8 +127,8 @@ services:
     environment:
       - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5006
     depends_on:
-      - rabbitmq
-      - mailhog
+      rabbitmq:
+        condition: service_healthy
     networks:
       - adoption-network
 
@@ -113,6 +141,11 @@ services:
       - POSTGRES_DB=${PET_SERVICE_DB}
     ports:
       - "5433:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     networks:
       - adoption-network
     volumes:
@@ -134,10 +167,14 @@ services:
       - SPRING_PROFILES_ACTIVE=docker
       - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
     depends_on:
-      - eureka-server
-      - pet-db
-      - rabbitmq
-      - keycloak
+      eureka-server:
+        condition: service_healthy
+      pet-db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      keycloak:
+        condition: service_healthy
     networks:
       - adoption-network
 
@@ -154,7 +191,8 @@ services:
       - SPRING_PROFILES_ACTIVE=docker
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
     depends_on:
-      - eureka-server
+      eureka-server:
+        condition: service_healthy
     networks:
       - adoption-network
 

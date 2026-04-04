@@ -2,16 +2,16 @@
 
 ## Eureka Server
 
-- [ ] Change Dockerfile base image from JDK to JRE (`eclipse-temurin:21-jre`)
-- [ ] Add health check in `docker-compose.yml`
+- [x] Change Dockerfile base image from JDK to JRE (`eclipse-temurin:21-jre`)
+- [x] Add health check in `docker-compose.yml`
 
 ## API Gateway
 
 - [ ] Add rate limiting
 - [ ] Add circuit breaker (Resilience4j) with fallback
 - [ ] Configure CORS
-- [ ] Change Dockerfile base image from JDK to JRE
-- [ ] Remove leftover `compose.yaml` (Spring Initializr artifact)
+- [x] Change Dockerfile base image from JDK to JRE
+- [x] Remove leftover `compose.yaml` (Spring Initializr artifact)
 - [ ] Evaluate JWT validation at the gateway level to reject invalid requests before reaching downstream services
 
 ## Pet Service
@@ -36,9 +36,9 @@
 
 ## Infrastructure (Docker Compose + Prometheus)
 
-- [ ] Add `healthcheck` to compose services and use `depends_on` with `condition: service_healthy`
+- [x] Add `healthcheck` to compose services and use `depends_on` with `condition: service_healthy`
 - [x] Fix commented-out pet-service in compose (configure Keycloak hostname accessible both inside and outside Docker)
-- [ ] Standardize Dockerfiles — all using JRE
-- [ ] Add `.dockerignore` to pet-service and notification-service
+- [x] Standardize Dockerfiles — all using JRE
+- [x] Add `.dockerignore` to pet-service and notification-service
 - [ ] Extract duplicated code (`JsonUtils`, `RabbitProperties`, `AdoptionMessage`, `UserDTO`) into a shared module
 - [ ] Review and improve `README.md`

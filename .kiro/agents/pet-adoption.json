@@ -23,7 +23,7 @@
   ],
   "toolsSettings": {
     "execute_bash": {
-      "allowedCommands": ["echo", "ls", "cd", "git", "mvnw"],
+      "allowedCommands": ["echo", "ls", "cd", "git", "mvnw", "cat"],
       "autoAllowReadonly": true
     }
   },

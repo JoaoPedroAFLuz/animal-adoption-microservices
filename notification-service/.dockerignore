@@ -1,0 +1,16 @@
+**/.DS_Store
+**/.git
+**/.gitignore
+**/.idea
+**/.vscode
+**/.env
+**/target
+**/*.class
+**/*.iml
+**/*.log
+.mvn/timing.properties
+Dockerfile
+docker-compose*
+compose.y*ml
+README.md
+LICENSE
