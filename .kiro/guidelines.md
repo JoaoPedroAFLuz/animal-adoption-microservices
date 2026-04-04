@@ -4,10 +4,12 @@
 
 - Before implementing, always plan and explain first — wait for approval before writing code
 - Never commit automatically — always wait for explicit confirmation
+- Before committing, check if README.md needs updating and update it if necessary
 - Always run tests before considering a task done
 - Review changes before finalizing (check for missed edge cases, unused imports, consistency)
 - When suggesting commits, follow the existing commit message pattern: lowercase, English, no conventional commit prefixes, descriptive of the action
 - When the user grants trust to a tool, add it to `.kiro/agents/pet-adoption.json` allowedTools
+- Create `.md` context files in `.kiro/` whenever useful to preserve decisions, plans, or task context — delete them once the implementation is complete if they're no longer needed
 - Never add destructive commands (`rm`, `rmdir`) to allowedCommands — always ask for confirmation
 
 ## Autonomy Rules

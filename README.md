@@ -67,7 +67,7 @@ Common library used by pet-service and notification-service:
 ### Monitoring
 
 * **Prometheus** — scrapes metrics from all services via `/actuator/prometheus` every 15 seconds
-* **Grafana** (port 3000) — dashboards for Spring Boot metrics, JVM performance, and service health
+* **Grafana** (port 3001) — dashboards for Spring Boot metrics, JVM performance, and service health
 * **RedisInsight** (port 8001) — visual UI for monitoring Redis keys, memory, and performance
 
 ### Databases
@@ -134,7 +134,7 @@ In IntelliJ: **Run** → **Edit Configurations** → **Remote JVM Debug** → se
 | Keycloak      | http://localhost:8080         |
 | RabbitMQ      | http://localhost:15672        |
 | MailHog       | http://localhost:8025         |
-| Grafana       | http://localhost:3000         |
+| Grafana       | http://localhost:3001         |
 | Prometheus    | http://localhost:9090         |
 | RedisInsight  | http://localhost:8001         |
 

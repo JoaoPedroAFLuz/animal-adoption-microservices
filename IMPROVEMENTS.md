@@ -1,11 +1,13 @@
 # Improvements
 
-## Infrastructure
-
-- [x] Test full end-to-end flow in Docker (create pet → adopt → HTML email → DLQ retry)
-- [x] Clean up `.env.example` (remove stale variables, unused configs)
-- [x] Add `.dockerignore` to project root (build context is `.` for pet-service and notification-service)
-
 ## Frontend
 
-- [ ] Add a simple frontend for the pet adoption system
+- [x] Project scaffolding — Next.js 16, TypeScript, Tailwind v4, ESLint + Prettier, Vitest + MSW, types, API client
+- [x] Layout and home page — header, footer, featured pets, pet card component, tests
+- [ ] Browse pets page — filters, pagination, URL search params, tests
+- [ ] Pet details page — full pet info, adopt button placeholder, tests
+- [ ] Keycloak authentication — next-auth v5, login/logout, JWT in API calls, tests
+- [ ] Adopt flow + my pets — adopt button, /my-pets page, tests
+- [ ] Admin register pet — form, validation, role protection, tests
+- [ ] Admin edit and delete — edit form, delete with confirmation, tests
+- [ ] Docker setup — Dockerfile, docker-compose, env vars, README update
