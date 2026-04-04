@@ -1,24 +1,41 @@
 package br.com.joaopedroafluz.notificationservice.service;
 
+import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
+
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
 public class EmailService {
 
     private final JavaMailSender mailSender;
+    private final TemplateEngine templateEngine;
 
-    public void send(String to, String subject, String body) {
-        SimpleMailMessage message = new SimpleMailMessage();
+    public void sendHtml(String to, String subject, String template, Map<String, Object> variables) {
+        var context = new Context();
+        context.setVariables(variables);
 
-        message.setTo(to);
-        message.setSubject(subject);
-        message.setText(body);
-        message.setFrom("no-reply@adoption.com.br");
+        var html = templateEngine.process(template, context);
 
-        mailSender.send(message);
+        try {
+            var mimeMessage = mailSender.createMimeMessage();
+            var helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+
+            helper.setTo(to);
+            helper.setSubject(subject);
+            helper.setText(html, true);
+            helper.setFrom("no-reply@adoption.com.br");
+
+            mailSender.send(mimeMessage);
+        } catch (MessagingException e) {
+            throw new RuntimeException("Failed to send email", e);
+        }
     }
+
 }

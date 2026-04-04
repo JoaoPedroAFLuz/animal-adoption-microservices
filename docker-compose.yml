@@ -121,6 +121,7 @@ services:
       context: ./notification-service
       dockerfile: Dockerfile
     ports:
+      - "8082:8082"
       - "5006:5006"
     env_file:
       - .env

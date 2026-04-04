@@ -30,9 +30,9 @@
 
 - [x] Add error handling in the listener (retry + Dead Letter Queue)
 - [x] Add logging (success and failure)
-- [ ] Evaluate HTML email templates
-- [ ] Add DLQ retry endpoint (`POST /dlq/retry`) to reprocess failed messages
-- [ ] Add unit tests for `NotificationService` and `EmailService`
+- [x] Evaluate HTML email templates
+- [x] Add DLQ retry endpoint (`POST /dlq/retry`) to reprocess failed messages
+- [x] Add unit tests for `NotificationService` and `EmailService`
 
 ## Infrastructure (Docker Compose + Prometheus)
 

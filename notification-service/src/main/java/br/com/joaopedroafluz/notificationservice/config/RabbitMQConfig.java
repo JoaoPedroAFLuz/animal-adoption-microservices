@@ -13,7 +13,8 @@ public class RabbitMQConfig {
 
     @Bean
     public Queue petAdoptedQueue() {
-        return QueueBuilder.durable(rabbitMQProperties.getQueue())
+        return QueueBuilder
+                .durable(rabbitMQProperties.getQueue())
                 .withArgument("x-dead-letter-exchange", rabbitMQProperties.getExchange())
                 .withArgument("x-dead-letter-routing-key", rabbitMQProperties.getRoutingKey() + ".dlq")
                 .build();
