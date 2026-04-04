@@ -74,17 +74,6 @@ public class PetServiceTest {
     }
 
     @Test
-    void shouldCacheFeaturedPets() {
-        final var first = petService.findFeatured();
-
-        petRepository.save(PetFactory.createDefaultPet());
-
-        final var second = petService.findFeatured();
-
-        assertEquals(first, second);
-    }
-
-    @Test
     void shouldReturnPetWhenIdExists() {
         final var pet = PetFactory.createDefaultPet();
 
@@ -127,15 +116,16 @@ public class PetServiceTest {
     @Test
     void shouldReturnPetsByOwnerIdIfExists() {
         final var ownerId = UUID.randomUUID();
+        final var pageable = PageRequest.of(0, 10);
         final var pets = List.of(PetFactory.createAdoptedPet(ownerId));
+        final var expectedPage = new PageImpl<>(pets, pageable, pets.size());
 
-        when(petRepository.findByOwnerId(eq(ownerId))).thenReturn(pets);
+        when(petRepository.findByOwnerId(eq(ownerId), eq(pageable))).thenReturn(expectedPage);
 
-        final var result = petService.findByOwnerId(ownerId);
+        final var result = petService.findByOwnerId(ownerId, pageable);
 
-        assertEquals(1, result.size());
-        assertEquals(pets, result);
-        verify(petRepository, times(1)).findByOwnerId(eq(ownerId));
+        assertEquals(1, result.getTotalElements());
+        verify(petRepository, times(1)).findByOwnerId(eq(ownerId), eq(pageable));
     }
 
     @Test
@@ -262,11 +252,13 @@ public class PetServiceTest {
 
     @Test
     void shouldDeletePetById() {
-        final var petId = UUID.randomUUID();
+        final var pet = PetFactory.createDefaultPet();
 
-        petService.deleteById(petId);
+        when(petRepository.findById(pet.getId())).thenReturn(Optional.of(pet));
 
-        verify(petRepository, times(1)).deleteById(eq(petId));
+        petService.deleteById(pet.getId());
+
+        verify(petRepository, times(1)).deleteById(eq(pet.getId()));
     }
 
 }

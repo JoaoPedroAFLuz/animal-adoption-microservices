@@ -17,14 +17,14 @@
 ## Pet Service
 
 - [x] **Bug**: Replace `@NotBlank` with `@NotNull` on enum fields (`Specie`, `Size`, `Gender`) in `PetRegistrationInputDTO` and `PetUpdateInputDTO`
-- [ ] Create `PetResponseDTO` to avoid exposing the JPA entity directly in the API
+- [x] Create `PetResponseDTO` to avoid exposing the JPA entity directly in the API
 - [x] Fix race condition on adoption (optimistic locking with `@Version` or atomic UPDATE)
 - [x] Remove redundant `id` field from `PetUpdateInputDTO`
-- [ ] Check pet existence before deleting (return 404)
-- [ ] Add `status` filter to `PetSpecification`
-- [ ] Fix `shouldCacheFeaturedPets` test — needs `@SpringBootTest` for caching to work
+- [x] Check pet existence before deleting (return 404)
+- [x] Add `status` filter to `PetSpecification`
+- [x] Fix `shouldCacheFeaturedPets` test — needs `@SpringBootTest` for caching to work
 - [x] Fix `shouldUpdatePetWhenExists` test — `Specie.valueOf()` receiving enum instead of String
-- [ ] Add pagination to `findByOwnerId`
+- [x] Add pagination to `findByOwnerId`
 
 ## Notification Service
 

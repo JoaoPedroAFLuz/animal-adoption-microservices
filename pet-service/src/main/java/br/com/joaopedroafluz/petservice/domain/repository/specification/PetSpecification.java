@@ -25,6 +25,9 @@ public class PetSpecification {
             if (filter.getPetSize() != null) {
                 predicates.add(builder.equal(root.get("size"), filter.getPetSize()));
             }
+            if (filter.getStatus() != null) {
+                predicates.add(builder.equal(root.get("status"), filter.getStatus()));
+            }
 
             return builder.and(predicates.toArray(new Predicate[0]));
         };

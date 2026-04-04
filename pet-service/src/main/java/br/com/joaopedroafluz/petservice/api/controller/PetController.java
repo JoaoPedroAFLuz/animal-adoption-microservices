@@ -1,10 +1,6 @@
 package br.com.joaopedroafluz.petservice.api.controller;
 
-import br.com.joaopedroafluz.petservice.domain.dto.PetFilter;
-import br.com.joaopedroafluz.petservice.domain.dto.PetRegistrationInputDTO;
-import br.com.joaopedroafluz.petservice.domain.dto.PetUpdateInputDTO;
-import br.com.joaopedroafluz.petservice.domain.dto.UserDTO;
-import br.com.joaopedroafluz.petservice.domain.model.Pet;
+import br.com.joaopedroafluz.petservice.domain.dto.*;
 import br.com.joaopedroafluz.petservice.domain.service.PetService;
 import br.com.joaopedroafluz.petservice.util.AuthenticatedUserUtils;
 import jakarta.validation.Valid;
@@ -30,25 +26,26 @@ public class PetController {
     private final AuthenticatedUserUtils authenticatedUserUtils;
 
     @GetMapping
-    public Page<Pet> findAll(PetFilter petFilter, @PageableDefault(sort = "createdAt") Pageable pageable) {
-        return petService.findAll(petFilter, pageable);
+    public Page<PetResponseDTO> findAll(PetFilter petFilter, @PageableDefault(sort = "createdAt") Pageable pageable) {
+        return petService.findAll(petFilter, pageable).map(PetResponseDTO::from);
     }
 
     @GetMapping("/featured")
-    public List<Pet> findFeatured() {
-        return petService.findFeatured();
+    public List<PetResponseDTO> findFeatured() {
+        return petService.findFeatured().stream().map(PetResponseDTO::from).toList();
     }
 
     @GetMapping("/{id}")
-    public Pet findById(@PathVariable UUID id) {
-        return petService.findByIdOrThrow(id);
+    public PetResponseDTO findById(@PathVariable UUID id) {
+        return PetResponseDTO.from(petService.findByIdOrThrow(id));
     }
 
     @GetMapping("/mines")
-    public List<Pet> findByLoggedUser(@AuthenticationPrincipal Jwt jwt) {
+    public Page<PetResponseDTO> findByLoggedUser(@AuthenticationPrincipal Jwt jwt,
+                                                 @PageableDefault(sort = "createdAt") Pageable pageable) {
         String userId = jwt.getSubject();
 
-        return petService.findByOwnerId(UUID.fromString(userId));
+        return petService.findByOwnerId(UUID.fromString(userId), pageable).map(PetResponseDTO::from);
     }
 
     @GetMapping("/species")
@@ -63,32 +60,33 @@ public class PetController {
 
     @GetMapping("/owner/{ownerId}")
     @PreAuthorize("hasRole('ADMIN')")
-    public List<Pet> findByOwner(@PathVariable UUID ownerId) {
-        return petService.findByOwnerId(ownerId);
+    public Page<PetResponseDTO> findByOwner(@PathVariable UUID ownerId,
+                                            @PageableDefault(sort = "createdAt") Pageable pageable) {
+        return petService.findByOwnerId(ownerId, pageable).map(PetResponseDTO::from);
     }
 
     @PostMapping
     @PreAuthorize("hasRole('REGISTER_PET')")
     @ResponseStatus(HttpStatus.CREATED)
-    public Pet save(@RequestBody @Valid PetRegistrationInputDTO petRegistrationInputDTO) {
-        return petService.save(petRegistrationInputDTO);
+    public PetResponseDTO save(@RequestBody @Valid PetRegistrationInputDTO petRegistrationInputDTO) {
+        return PetResponseDTO.from(petService.save(petRegistrationInputDTO));
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('UPDATE_PET')")
-    public Pet update(@PathVariable UUID id, @RequestBody @Valid PetUpdateInputDTO petUpdateInputDTO) {
-        return petService.update(id, petUpdateInputDTO);
+    public PetResponseDTO update(@PathVariable UUID id, @RequestBody @Valid PetUpdateInputDTO petUpdateInputDTO) {
+        return PetResponseDTO.from(petService.update(id, petUpdateInputDTO));
     }
 
     @PutMapping("/adopt/{id}")
-    public Pet adopt(@PathVariable UUID id) {
+    public PetResponseDTO adopt(@PathVariable UUID id) {
         final var userId = authenticatedUserUtils.getUserId();
         final var email = authenticatedUserUtils.getEmail();
         final var name = authenticatedUserUtils.getGivenName();
 
         var user = new UserDTO(UUID.fromString(userId), name, email);
 
-        return petService.adopt(id, user);
+        return PetResponseDTO.from(petService.adopt(id, user));
     }
 
     @DeleteMapping("/{id}")

@@ -1,7 +1,6 @@
 package br.com.joaopedroafluz.petservice.domain.service;
 
 import br.com.joaopedroafluz.petservice.domain.dto.*;
-import br.com.joaopedroafluz.petservice.domain.enums.Gender;
 import br.com.joaopedroafluz.petservice.domain.enums.Size;
 import br.com.joaopedroafluz.petservice.domain.enums.Specie;
 import br.com.joaopedroafluz.petservice.domain.enums.Status;
@@ -50,8 +49,8 @@ public class PetService {
         return findById(id).orElseThrow(() -> new PetNotFoundException(id));
     }
 
-    public List<Pet> findByOwnerId(UUID userId) {
-        return petRepository.findByOwnerId(userId);
+    public Page<Pet> findByOwnerId(UUID userId, Pageable pageable) {
+        return petRepository.findByOwnerId(userId, pageable);
     }
 
     public List<String> findSpecies() {
@@ -116,6 +115,7 @@ public class PetService {
 
     @CacheEvict(value = "featured-pets", allEntries = true)
     public void deleteById(UUID id) {
+        findByIdOrThrow(id);
         petRepository.deleteById(id);
     }
 

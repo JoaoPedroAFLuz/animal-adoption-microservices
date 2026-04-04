@@ -3,6 +3,7 @@ package br.com.joaopedroafluz.petservice.domain.dto;
 import br.com.joaopedroafluz.petservice.domain.enums.Gender;
 import br.com.joaopedroafluz.petservice.domain.enums.Size;
 import br.com.joaopedroafluz.petservice.domain.enums.Specie;
+import br.com.joaopedroafluz.petservice.domain.enums.Status;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,5 +14,6 @@ public class PetFilter {
     private Specie specie;
     private Gender gender;
     private Size petSize;
+    private Status status;
 
 }

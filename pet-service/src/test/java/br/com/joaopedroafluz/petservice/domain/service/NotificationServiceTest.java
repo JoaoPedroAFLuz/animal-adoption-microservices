@@ -30,7 +30,6 @@ class NotificationServiceTest {
 
     @Test
     void shouldSendAdoptionNotification() {
-        // given
         final var userId = UUID.randomUUID();
         final var petId = UUID.randomUUID();
         final var user = new UserDTO(userId, "João", "joao@email.com");
@@ -42,10 +41,8 @@ class NotificationServiceTest {
         when(rabbitProperties.getExchange()).thenReturn(exchange);
         when(rabbitProperties.getRoutingKey()).thenReturn(routingKey);
 
-        // when
         notificationService.sendAdoptionNotification(adoptionMessage);
 
-        // then
         final var expectedMessage = new Message(JsonUtils.toJson(adoptionMessage).getBytes());
 
         verify(messageProducer, times(1)).sendMessage(
