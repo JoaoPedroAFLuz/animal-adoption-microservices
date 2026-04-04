@@ -1,13 +1,13 @@
-package br.com.joaopedroafluz.petservice.util;
+package br.com.joaopedroafluz.shared.util;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.experimental.UtilityClass;
-import lombok.extern.log4j.Log4j2;
 
-@Log4j2
+import java.io.IOException;
+
 @UtilityClass
 public class JsonUtils {
 
@@ -20,8 +20,17 @@ public class JsonUtils {
         try {
             return OBJECT_MAPPER.writeValueAsString(object);
         } catch (JsonProcessingException e) {
-            log.error("Error converting object to JSON: ", e);
-            throw new IllegalArgumentException("Error converting object to JSON.");
+            throw new IllegalArgumentException("Error converting object to JSON", e);
+        }
+    }
+
+    public static <T> T fromJson(String json, Class<T> resultClass) {
+        try {
+            return OBJECT_MAPPER.readValue(json, resultClass);
+        } catch (IOException e) {
+            var message = String.format("Error converting %s to %s", json, resultClass.getSimpleName());
+
+            throw new IllegalArgumentException(message, e);
         }
     }
 

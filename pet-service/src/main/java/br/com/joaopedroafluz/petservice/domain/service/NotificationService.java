@@ -1,8 +1,8 @@
 package br.com.joaopedroafluz.petservice.domain.service;
 
 import br.com.joaopedroafluz.petservice.config.RabbitProperties;
-import br.com.joaopedroafluz.petservice.domain.dto.AdoptionMessage;
-import br.com.joaopedroafluz.petservice.util.JsonUtils;
+import br.com.joaopedroafluz.shared.domain.AdoptionMessage;
+import br.com.joaopedroafluz.shared.util.JsonUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.core.Message;
 import org.springframework.stereotype.Service;

@@ -1,9 +1,9 @@
 package br.com.joaopedroafluz.petservice.domain.service;
 
 import br.com.joaopedroafluz.petservice.config.RabbitProperties;
-import br.com.joaopedroafluz.petservice.domain.dto.AdoptionMessage;
-import br.com.joaopedroafluz.petservice.domain.dto.UserDTO;
-import br.com.joaopedroafluz.petservice.util.JsonUtils;
+import br.com.joaopedroafluz.shared.domain.AdoptionMessage;
+import br.com.joaopedroafluz.shared.domain.UserDTO;
+import br.com.joaopedroafluz.shared.util.JsonUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

@@ -1,8 +1,8 @@
 package br.com.joaopedroafluz.petservice.domain.service;
 
-import br.com.joaopedroafluz.petservice.domain.dto.AdoptionMessage;
+import br.com.joaopedroafluz.shared.domain.AdoptionMessage;
 import br.com.joaopedroafluz.petservice.domain.dto.PetFilter;
-import br.com.joaopedroafluz.petservice.domain.dto.UserDTO;
+import br.com.joaopedroafluz.shared.domain.UserDTO;
 import br.com.joaopedroafluz.petservice.domain.enums.Size;
 import br.com.joaopedroafluz.petservice.domain.enums.Specie;
 import br.com.joaopedroafluz.petservice.domain.enums.Status;

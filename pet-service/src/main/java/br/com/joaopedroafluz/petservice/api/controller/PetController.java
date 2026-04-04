@@ -1,6 +1,7 @@
 package br.com.joaopedroafluz.petservice.api.controller;
 
 import br.com.joaopedroafluz.petservice.domain.dto.*;
+import br.com.joaopedroafluz.shared.domain.UserDTO;
 import br.com.joaopedroafluz.petservice.domain.service.PetService;
 import br.com.joaopedroafluz.petservice.util.AuthenticatedUserUtils;
 import jakarta.validation.Valid;

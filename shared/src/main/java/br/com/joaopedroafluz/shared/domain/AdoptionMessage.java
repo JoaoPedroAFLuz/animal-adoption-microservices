@@ -1,4 +1,4 @@
-package br.com.joaopedroafluz.petservice.domain.dto;
+package br.com.joaopedroafluz.shared.domain;
 
 import java.util.UUID;
 
@@ -7,4 +7,5 @@ public record AdoptionMessage(
         String petName,
         UserDTO user
 ) {
+
 }

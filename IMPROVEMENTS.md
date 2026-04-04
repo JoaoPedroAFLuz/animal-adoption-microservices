@@ -40,5 +40,5 @@
 - [x] Fix commented-out pet-service in compose (configure Keycloak hostname accessible both inside and outside Docker)
 - [x] Standardize Dockerfiles — all using JRE
 - [x] Add `.dockerignore` to pet-service and notification-service
-- [ ] Extract duplicated code (`JsonUtils`, `RabbitProperties`, `AdoptionMessage`, `UserDTO`) into a shared module
+- [x] Extract duplicated code (`JsonUtils`, `RabbitProperties`, `AdoptionMessage`, `UserDTO`) into a shared module
 - [ ] Review and improve `README.md`
