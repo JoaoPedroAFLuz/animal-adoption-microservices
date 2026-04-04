@@ -28,6 +28,6 @@ spring:
         default-requeue-rejected: false
 
 rabbit:
-  queue: ${RABBIT_MQ_QUEUE:pet.adoption.notification}
+  queue: ${RABBIT_MQ_QUEUE:pet.adopted.notification}
   exchange: ${RABBIT_MQ_EXCHANGE:pet.exchange}
   routing-key: ${RABBIT_MQ_ROUTING_KEY:pet.adopted}

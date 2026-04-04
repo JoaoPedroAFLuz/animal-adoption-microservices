@@ -102,8 +102,8 @@ return Pet.builder()
 
 ### Notification Service (port 8082)
 - No database — purely event-driven
-- Consumes RabbitMQ queue `pet.adoption.notification`
-- DLQ: `pet.adoption.notification.dlq` with retry endpoint `POST /dlq/retry`
+- Consumes RabbitMQ queue `pet.adopted.notification`
+- DLQ: `pet.adopted.notification.dlq` with retry endpoint `POST /dlq/retry`
 - Sends HTML emails via Thymeleaf + MailHog (dev) on port 1025, UI on 8025
 
 ### API Gateway (port 80)

@@ -43,7 +43,8 @@
         "which",
         "python3",
         "sleep",
-        "lsof"
+        "lsof",
+        "sort"
       ],
       "autoAllowReadonly": true
     }

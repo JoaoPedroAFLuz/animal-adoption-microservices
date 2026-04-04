@@ -48,7 +48,7 @@ Core service for managing pets and adoptions:
 
 Event-driven service for adoption notifications:
 
-* Consumes adoption events from RabbitMQ queue (`pet.adoption.notification`)
+* Consumes adoption events from RabbitMQ queue (`pet.adopted.notification`)
 * Sends styled HTML emails using Thymeleaf templates
 * Retry mechanism (3 attempts with exponential backoff) + Dead Letter Queue
 * DLQ retry endpoint (`POST /dlq/retry`) to reprocess failed messages
