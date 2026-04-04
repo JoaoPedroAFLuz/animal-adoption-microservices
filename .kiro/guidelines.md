@@ -46,7 +46,9 @@
 ## Service-Specific Notes
 
 ### Pet Service (port 8081)
-- Runs locally (outside Docker) because JWT validation requires Keycloak via localhost:8080
+- Runs locally via IntelliJ for hot reload; stop Docker container first (`docker stop pet-service`)
+- For full integration testing, run everything in Docker (`docker compose up --build -d`)
+- Docker profile available with `SPRING_PROFILES_ACTIVE=docker` + custom JwtDecoder for internal Keycloak access
 - Flyway migrations in `classpath:database/migration`
 - Redis cache on `findFeatured()` with 1h TTL
 - Keycloak client: `animal-adoption` (roles: REGISTER_PET, UPDATE_PET, DELETE_PET, ADMIN)

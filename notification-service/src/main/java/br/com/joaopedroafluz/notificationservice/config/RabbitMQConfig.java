@@ -1,10 +1,7 @@
 package br.com.joaopedroafluz.notificationservice.config;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.amqp.core.Binding;
-import org.springframework.amqp.core.BindingBuilder;
-import org.springframework.amqp.core.Queue;
-import org.springframework.amqp.core.TopicExchange;
+import org.springframework.amqp.core.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -16,7 +13,15 @@ public class RabbitMQConfig {
 
     @Bean
     public Queue petAdoptedQueue() {
-        return new Queue(rabbitMQProperties.getQueue(), true);
+        return QueueBuilder.durable(rabbitMQProperties.getQueue())
+                .withArgument("x-dead-letter-exchange", rabbitMQProperties.getExchange())
+                .withArgument("x-dead-letter-routing-key", rabbitMQProperties.getRoutingKey() + ".dlq")
+                .build();
+    }
+
+    @Bean
+    public Queue deadLetterQueue() {
+        return QueueBuilder.durable(rabbitMQProperties.getQueue() + ".dlq").build();
     }
 
     @Bean
@@ -32,5 +37,12 @@ public class RabbitMQConfig {
                 .with(rabbitMQProperties.getRoutingKey());
     }
 
-}
+    @Bean
+    public Binding deadLetterBinding(Queue deadLetterQueue, TopicExchange petExchange) {
+        return BindingBuilder
+                .bind(deadLetterQueue)
+                .to(petExchange)
+                .with(rabbitMQProperties.getRoutingKey() + ".dlq");
+    }
 
+}

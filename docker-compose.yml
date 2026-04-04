@@ -92,8 +92,12 @@ services:
     build:
       context: ./notification-service
       dockerfile: Dockerfile
+    ports:
+      - "5006:5006"
     env_file:
       - .env
+    environment:
+      - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5006
     depends_on:
       - rabbitmq
       - mailhog
@@ -115,16 +119,20 @@ services:
       - pet-db-data:/var/lib/postgresql/data
 
   pet-service:
+    profiles:
+      - full
     container_name: pet-service
     build:
       context: ./pet-service
       dockerfile: Dockerfile
     ports:
       - "8081:8081"
+      - "5005:5005"
     env_file:
       - .env
     environment:
       - SPRING_PROFILES_ACTIVE=docker
+      - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
     depends_on:
       - eureka-server
       - pet-db
@@ -147,7 +155,6 @@ services:
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
     depends_on:
       - eureka-server
-      - pet-service
     networks:
       - adoption-network
 

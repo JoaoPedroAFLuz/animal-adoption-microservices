@@ -28,15 +28,17 @@
 
 ## Notification Service
 
-- [ ] Add error handling in the listener (retry + Dead Letter Queue)
-- [ ] Add logging (success and failure)
+- [x] Add error handling in the listener (retry + Dead Letter Queue)
+- [x] Add logging (success and failure)
 - [ ] Evaluate HTML email templates
+- [ ] Add DLQ retry endpoint (`POST /dlq/retry`) to reprocess failed messages
 - [ ] Add unit tests for `NotificationService` and `EmailService`
 
 ## Infrastructure (Docker Compose + Prometheus)
 
 - [ ] Add `healthcheck` to compose services and use `depends_on` with `condition: service_healthy`
-- [ ] Fix commented-out pet-service in compose (configure Keycloak hostname accessible both inside and outside Docker)
+- [x] Fix commented-out pet-service in compose (configure Keycloak hostname accessible both inside and outside Docker)
 - [ ] Standardize Dockerfiles — all using JRE
 - [ ] Add `.dockerignore` to pet-service and notification-service
 - [ ] Extract duplicated code (`JsonUtils`, `RabbitProperties`, `AdoptionMessage`, `UserDTO`) into a shared module
+- [ ] Review and improve `README.md`

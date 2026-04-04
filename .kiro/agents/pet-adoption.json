@@ -14,11 +14,19 @@
   ],
   "allowedTools": [
     "fs_read",
+    "fs_write",
     "grep",
     "glob",
     "code",
-    "thinking"
+    "thinking",
+    "todo_list"
   ],
+  "toolsSettings": {
+    "execute_bash": {
+      "allowedCommands": ["echo", "ls", "cd", "git", "mvnw"],
+      "autoAllowReadonly": true
+    }
+  },
   "resources": [
     "file://README.md",
     "file://IMPROVEMENTS.md",

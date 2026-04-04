@@ -15,6 +15,14 @@ spring:
     port: ${RABBIT_MQ_PORT:5672}
     username: ${RABBIT_MQ_USER:joaopedroafluz}
     password: ${RABBIT_MQ_PASSWORD:docker}
+    listener:
+      simple:
+        retry:
+          enabled: true
+          initial-interval: 2000
+          multiplier: 2
+          max-attempts: 3
+        default-requeue-rejected: false
 
 rabbit:
   queue: ${RABBIT_MQ_QUEUE:pet.adoption.notification}
