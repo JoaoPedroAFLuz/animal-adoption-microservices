@@ -38,6 +38,7 @@ Core service for managing pets and adoptions:
 
 * CRUD operations with role-based access control (`@PreAuthorize`)
 * Adoption flow: updates pet status, assigns owner, publishes event to RabbitMQ
+* Publishes events to RabbitMQ on pet registration and deletion (admin notifications)
 * Optimistic locking (`@Version`) to prevent race conditions on adoption
 * Redis caching on featured pets with 1h TTL
 * Pagination and filtering with JPA Specifications (by species, gender, size, status)
@@ -46,18 +47,21 @@ Core service for managing pets and adoptions:
 
 ### Notification Service (port 8082)
 
-Event-driven service for adoption notifications:
+Event-driven service for email notifications:
 
-* Consumes adoption events from RabbitMQ queue (`pet.adopted.notification`)
+* Consumes events from 3 RabbitMQ queues:
+    * `pet.adopted.notification` — sends adoption confirmation email to the adopter
+    * `pet.registered.notification` — sends notification email to admins when a new pet is registered
+    * `pet.deleted.notification` — sends notification email to admins when a pet is deleted
 * Sends styled HTML emails using Thymeleaf templates
-* Retry mechanism (3 attempts with exponential backoff) + Dead Letter Queue
-* DLQ retry endpoint (`POST /dlq/retry`) to reprocess failed messages
+* Retry mechanism (3 attempts with exponential backoff) + Dead Letter Queue per queue
+* DLQ retry endpoint (`POST /dlq/retry?queue={queueName}`) to reprocess failed messages
 
 ### Shared Module
 
 Common library used by pet-service and notification-service:
 
-* `AdoptionMessage` and `UserDTO` — shared domain records (event contract between services)
+* `AdoptionMessage`, `PetRegisteredMessage`, `PetDeletedMessage`, and `UserDTO` — shared domain records (event contract between services)
 * `JsonUtils` — JSON serialization/deserialization utility
 
 ### Monitoring
@@ -158,6 +162,7 @@ available routes.
 * Lombok — boilerplate reduction
 * Micrometer — metrics exporter for Prometheus
 * Jackson — JSON serialization
+* Testcontainers — integration testing with real databases
 
 ### Infrastructure
 
