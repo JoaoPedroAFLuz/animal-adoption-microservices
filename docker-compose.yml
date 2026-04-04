@@ -193,6 +193,8 @@ services:
     depends_on:
       eureka-server:
         condition: service_healthy
+      redis:
+        condition: service_healthy
     networks:
       - adoption-network
 

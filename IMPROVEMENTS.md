@@ -12,7 +12,7 @@
 - [x] Configure CORS
 - [x] Change Dockerfile base image from JDK to JRE
 - [x] Remove leftover `compose.yaml` (Spring Initializr artifact)
-- [ ] Evaluate JWT validation at the gateway level to reject invalid requests before reaching downstream services
+- [x] Evaluate JWT validation at the gateway level to reject invalid requests before reaching downstream services
 
 ## Pet Service
 

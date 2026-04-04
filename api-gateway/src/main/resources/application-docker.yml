@@ -1,0 +1,9 @@
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: http://keycloak:8080/realms/animal-adoption/protocol/openid-connect/certs
+  data:
+    redis:
+      host: redis
