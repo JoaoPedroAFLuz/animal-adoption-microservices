@@ -3,6 +3,7 @@ package br.com.joaopedroafluz.petservice.api.exceptionhandler;
 import br.com.joaopedroafluz.petservice.domain.exception.BusinessException;
 import br.com.joaopedroafluz.petservice.domain.exception.EntityNotFoundException;
 import br.com.joaopedroafluz.petservice.domain.exception.UnauthorizedException;
+import jakarta.persistence.OptimisticLockException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.context.MessageSource;
@@ -79,6 +80,19 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
         var problem = createProblemBuilder(status, problemType, detail)
                 .userMessage(ex.getMessage())
+                .build();
+
+        return handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);
+    }
+
+    @ExceptionHandler(OptimisticLockException.class)
+    public ResponseEntity<Object> handleOptimisticLockException(OptimisticLockException ex, WebRequest request) {
+        var status = HttpStatus.CONFLICT;
+        var problemType = ProblemType.BUSINESS_ERROR;
+        var detail = "This record was updated by another request. Please try again.";
+
+        var problem = createProblemBuilder(status, problemType, detail)
+                .userMessage(detail)
                 .build();
 
         return handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);

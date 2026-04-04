@@ -27,6 +27,9 @@ public class Pet {
     @Column(nullable = false, updatable = false)
     private UUID id;
 
+    @Version
+    private Long version;
+
     @Column(name = "owner_id")
     private UUID ownerId;
 

@@ -128,6 +128,7 @@ public class PetService {
                 .size(petRegistrationInputDTO.size())
                 .gender(petRegistrationInputDTO.gender())
                 .birthDate(petRegistrationInputDTO.birthDate())
+                .status(Status.AVAILABLE)
                 .build();
     }
 

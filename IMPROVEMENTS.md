@@ -18,7 +18,7 @@
 
 - [x] **Bug**: Replace `@NotBlank` with `@NotNull` on enum fields (`Specie`, `Size`, `Gender`) in `PetRegistrationInputDTO` and `PetUpdateInputDTO`
 - [ ] Create `PetResponseDTO` to avoid exposing the JPA entity directly in the API
-- [ ] Fix race condition on adoption (optimistic locking with `@Version` or atomic UPDATE)
+- [x] Fix race condition on adoption (optimistic locking with `@Version` or atomic UPDATE)
 - [x] Remove redundant `id` field from `PetUpdateInputDTO`
 - [ ] Check pet existence before deleting (return 404)
 - [ ] Add `status` filter to `PetSpecification`

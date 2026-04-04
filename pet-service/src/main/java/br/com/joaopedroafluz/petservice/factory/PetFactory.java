@@ -29,6 +29,7 @@ public class PetFactory {
                 .birthDate(LocalDate.of(2025, 1, 1))
                 .createdAt(LocalDateTime.now())
                 .updatedAt(null)
+                .version(0L)
                 .build();
     }
 
@@ -46,6 +47,7 @@ public class PetFactory {
                 .ownerId(ownerId)
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
+                .version(1L)
                 .build();
     }
 

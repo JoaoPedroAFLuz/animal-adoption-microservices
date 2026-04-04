@@ -22,6 +22,8 @@ services:
       - keycloak-db
     environment:
       KC_METRICS_ENABLED: "true"
+      KC_HOSTNAME_STRICT: "false"
+      KC_HTTP_ENABLED: "true"
       KEYCLOAK_ADMIN: ${KEYCLOAK_DB_USERNAME}
       KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_DB_PASSWORD}
       KC_DB: postgres
