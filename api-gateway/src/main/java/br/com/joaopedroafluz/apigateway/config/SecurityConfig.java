@@ -19,8 +19,7 @@ public class SecurityConfig {
                         .pathMatchers(HttpMethod.GET, GET_PUBLIC_ENDPOINTS).permitAll()
                         .pathMatchers("/fallback").permitAll()
                         .anyExchange().authenticated())
-                .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> {
-                }))
+                .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> {}))
                 .build();
     }
 
@@ -29,6 +28,7 @@ public class SecurityConfig {
             "/pets/featured",
             "/pets/species",
             "/pets/sizes",
+            "/pets/{id}",
             "/actuator/prometheus"
     };
 

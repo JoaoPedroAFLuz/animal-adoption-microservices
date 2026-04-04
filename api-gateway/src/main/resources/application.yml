@@ -15,33 +15,35 @@ spring:
           issuer-uri: http://localhost:8080/realms/animal-adoption
   cloud:
     gateway:
-      routes:
-        - id: ${PET_SERVICE_NAME:pet-service}
-          uri: lb://${PET_SERVICE_NAME:pet-service}
-          predicates:
-            - Path=/pets/**
-          filters:
-            - name: RequestRateLimiter
-              args:
-                redis-rate-limiter.replenishRate: 10
-                redis-rate-limiter.burstCapacity: 20
-                redis-rate-limiter.requestedTokens: 1
-            - name: CircuitBreaker
-              args:
-                name: petServiceCircuitBreaker
-                fallbackUri: forward:/fallback
-      globalcors:
-        cors-configurations:
-          '[/**]':
-            allowedOrigins: "*"
-            allowedMethods:
-              - GET
-              - POST
-              - PUT
-              - DELETE
-              - OPTIONS
-            allowedHeaders: "*"
-            maxAge: 3600
+      server:
+        webflux:
+          routes:
+            - id: ${PET_SERVICE_NAME:pet-service}
+              uri: lb://${PET_SERVICE_NAME:pet-service}
+              predicates:
+                - Path=/pets/**
+              filters:
+                - name: RequestRateLimiter
+                  args:
+                    redis-rate-limiter.replenishRate: 10
+                    redis-rate-limiter.burstCapacity: 20
+                    redis-rate-limiter.requestedTokens: 1
+                - name: CircuitBreaker
+                  args:
+                    name: petServiceCircuitBreaker
+                    fallbackUri: forward:/fallback
+          globalcors:
+            cors-configurations:
+              '[/**]':
+                allowedOrigins: "*"
+                allowedMethods:
+                  - GET
+                  - POST
+                  - PUT
+                  - DELETE
+                  - OPTIONS
+                allowedHeaders: "*"
+                maxAge: 3600
 
 resilience4j:
   circuitbreaker:

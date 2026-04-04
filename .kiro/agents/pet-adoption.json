@@ -40,7 +40,10 @@
         "cp",
         "mkdir",
         "wc",
-        "which"
+        "which",
+        "python3",
+        "sleep",
+        "lsof"
       ],
       "autoAllowReadonly": true
     }
