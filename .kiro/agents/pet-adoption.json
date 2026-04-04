@@ -1,0 +1,28 @@
+{
+  "name": "pet-adoption",
+  "description": "Agent for the pet adoption microservices project (Spring Boot, Keycloak, RabbitMQ, Redis, PostgreSQL)",
+  "prompt": "file://.kiro/prompts/pet-adoption-system.md",
+  "tools": [
+    "fs_read",
+    "fs_write",
+    "execute_bash",
+    "grep",
+    "glob",
+    "code",
+    "thinking",
+    "todo_list"
+  ],
+  "allowedTools": [
+    "fs_read",
+    "grep",
+    "glob",
+    "code",
+    "thinking"
+  ],
+  "resources": [
+    "file://README.md",
+    "file://IMPROVEMENTS.md",
+    "file://.kiro/guidelines.md",
+    "file://docker-compose.yml"
+  ]
+}
