@@ -19,11 +19,12 @@
     "glob",
     "code",
     "thinking",
-    "todo_list"
+    "todo_list",
+    "execute_bash"
   ],
   "toolsSettings": {
     "execute_bash": {
-      "allowedCommands": ["echo", "ls", "cd", "git", "mvnw", "cat"],
+      "allowedCommands": ["echo", "ls", "cd", "git", "./mvnw", "cat", "docker", "docker-compose", "ssh-add", "curl"],
       "autoAllowReadonly": true
     }
   },
