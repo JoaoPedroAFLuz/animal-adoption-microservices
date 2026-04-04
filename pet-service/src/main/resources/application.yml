@@ -35,9 +35,10 @@ spring:
     type: redis
 
 rabbit:
-  queue: ${RABBIT_MQ_QUEUE:pet.adopted.notification}
   exchange: ${RABBIT_MQ_EXCHANGE:pet.exchange}
-  routing-key: ${RABBIT_MQ_ROUTING_KEY:pet.adopted}
+  adopted-routing-key: ${RABBIT_MQ_ADOPTED_ROUTING_KEY:pet.adopted}
+  registered-routing-key: ${RABBIT_MQ_REGISTERED_ROUTING_KEY:pet.registered}
+  deleted-routing-key: ${RABBIT_MQ_DELETED_ROUTING_KEY:pet.deleted}
 
 eureka:
   client:

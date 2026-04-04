@@ -11,8 +11,9 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix = "rabbit")
 public class RabbitProperties {
 
-    private String queue;
     private String exchange;
-    private String routingKey;
+    private String adoptedRoutingKey;
+    private String registeredRoutingKey;
+    private String deletedRoutingKey;
 
 }

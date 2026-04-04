@@ -11,8 +11,18 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix = "rabbit")
 public class RabbitMQProperties {
 
-    private String queue;
     private String exchange;
-    private String routingKey;
+    private QueueConfig adopted;
+    private QueueConfig registered;
+    private QueueConfig deleted;
+
+    @Getter
+    @Setter
+    public static class QueueConfig {
+
+        private String queue;
+        private String routingKey;
+
+    }
 
 }

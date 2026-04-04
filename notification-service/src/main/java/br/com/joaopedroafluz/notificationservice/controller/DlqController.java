@@ -7,6 +7,7 @@ import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
@@ -21,21 +22,38 @@ public class DlqController {
     private final RabbitMQProperties properties;
 
     @PostMapping("/retry")
-    public Map<String, Integer> retryMessages() {
-        var dlqName = properties.getQueue() + ".dlq";
+    public Map<String, Object> retryMessages(@RequestParam String queue) {
+        var dlqName = queue + ".dlq";
+        var routingKey = resolveRoutingKey(queue);
         var count = 0;
 
         Message message;
 
         while ((message = rabbitTemplate.receive(dlqName)) != null) {
-            rabbitTemplate.send(properties.getExchange(), properties.getRoutingKey(), message);
+            rabbitTemplate.send(properties.getExchange(), routingKey, message);
             count++;
-            log.info("Reprocessed message from DLQ: {}", new String(message.getBody()));
+            log.info("Reprocessed message from {}: {}", dlqName, new String(message.getBody()));
         }
 
-        log.info("Reprocessed {} messages from DLQ", count);
+        log.info("Reprocessed {} messages from {}", count, dlqName);
 
-        return Map.of("reprocessed", count);
+        return Map.of("queue", dlqName, "reprocessed", count);
+    }
+
+    private String resolveRoutingKey(String queue) {
+        if (queue.equals(properties.getAdopted().getQueue())) {
+            return properties.getAdopted().getRoutingKey();
+        }
+
+        if (queue.equals(properties.getRegistered().getQueue())) {
+            return properties.getRegistered().getRoutingKey();
+        }
+
+        if (queue.equals(properties.getDeleted().getQueue())) {
+            return properties.getDeleted().getRoutingKey();
+        }
+
+        throw new IllegalArgumentException("Unknown queue: " + queue);
     }
 
 }

@@ -2,6 +2,8 @@ package br.com.joaopedroafluz.petservice.domain.service;
 
 import br.com.joaopedroafluz.petservice.config.RabbitProperties;
 import br.com.joaopedroafluz.shared.domain.AdoptionMessage;
+import br.com.joaopedroafluz.shared.domain.PetDeletedMessage;
+import br.com.joaopedroafluz.shared.domain.PetRegisteredMessage;
 import br.com.joaopedroafluz.shared.domain.UserDTO;
 import br.com.joaopedroafluz.shared.util.JsonUtils;
 import org.junit.jupiter.api.Test;
@@ -30,25 +32,51 @@ class NotificationServiceTest {
 
     @Test
     void shouldSendAdoptionNotification() {
-        final var userId = UUID.randomUUID();
-        final var petId = UUID.randomUUID();
-        final var user = new UserDTO(userId, "João", "joao@email.com");
-        final var adoptionMessage = new AdoptionMessage(petId, "Rex", user);
+        var adoptionMessage = new AdoptionMessage(UUID.randomUUID(), "Rex",
+                new UserDTO(UUID.randomUUID(), "João", "joao@email.com"));
 
-        final var exchange = "test.exchange";
-        final var routingKey = "test.routing.key";
-
-        when(rabbitProperties.getExchange()).thenReturn(exchange);
-        when(rabbitProperties.getRoutingKey()).thenReturn(routingKey);
+        when(rabbitProperties.getExchange()).thenReturn("pet.exchange");
+        when(rabbitProperties.getAdoptedRoutingKey()).thenReturn("pet.adopted");
 
         notificationService.sendAdoptionNotification(adoptionMessage);
 
-        final var expectedMessage = new Message(JsonUtils.toJson(adoptionMessage).getBytes());
-
         verify(messageProducer, times(1)).sendMessage(
-                eq(exchange),
-                eq(routingKey),
-                argThat(msg -> Arrays.equals(msg.getBody(), expectedMessage.getBody()))
+                eq("pet.exchange"),
+                eq("pet.adopted"),
+                argThat(msg -> Arrays.equals(msg.getBody(), new Message(JsonUtils.toJson(adoptionMessage).getBytes()).getBody()))
         );
     }
+
+    @Test
+    void shouldSendRegisteredNotification() {
+        var message = new PetRegisteredMessage(UUID.randomUUID(), "Luna", "DOG", "Golden Retriever");
+
+        when(rabbitProperties.getExchange()).thenReturn("pet.exchange");
+        when(rabbitProperties.getRegisteredRoutingKey()).thenReturn("pet.registered");
+
+        notificationService.sendRegisteredNotification(message);
+
+        verify(messageProducer, times(1)).sendMessage(
+                eq("pet.exchange"),
+                eq("pet.registered"),
+                argThat(msg -> Arrays.equals(msg.getBody(), new Message(JsonUtils.toJson(message).getBytes()).getBody()))
+        );
+    }
+
+    @Test
+    void shouldSendDeletedNotification() {
+        var message = new PetDeletedMessage(UUID.randomUUID(), "Luna");
+
+        when(rabbitProperties.getExchange()).thenReturn("pet.exchange");
+        when(rabbitProperties.getDeletedRoutingKey()).thenReturn("pet.deleted");
+
+        notificationService.sendDeletedNotification(message);
+
+        verify(messageProducer, times(1)).sendMessage(
+                eq("pet.exchange"),
+                eq("pet.deleted"),
+                argThat(msg -> Arrays.equals(msg.getBody(), new Message(JsonUtils.toJson(message).getBytes()).getBody()))
+        );
+    }
+
 }

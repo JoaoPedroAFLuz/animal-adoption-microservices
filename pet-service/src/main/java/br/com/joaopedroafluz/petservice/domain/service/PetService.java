@@ -2,6 +2,8 @@ package br.com.joaopedroafluz.petservice.domain.service;
 
 import br.com.joaopedroafluz.petservice.domain.dto.*;
 import br.com.joaopedroafluz.shared.domain.AdoptionMessage;
+import br.com.joaopedroafluz.shared.domain.PetDeletedMessage;
+import br.com.joaopedroafluz.shared.domain.PetRegisteredMessage;
 import br.com.joaopedroafluz.shared.domain.UserDTO;
 import br.com.joaopedroafluz.petservice.domain.enums.Size;
 import br.com.joaopedroafluz.petservice.domain.enums.Specie;
@@ -71,8 +73,13 @@ public class PetService {
     @CacheEvict(value = "featured-pets", allEntries = true)
     public Pet save(PetRegistrationInputDTO newPetDTO) {
         var pet = convertInputDTOToModel(newPetDTO);
+        pet = save(pet);
 
-        return save(pet);
+        notificationService.sendRegisteredNotification(
+                new PetRegisteredMessage(pet.getId(), pet.getName(), pet.getSpecie().name(), pet.getBreed())
+        );
+
+        return pet;
     }
 
     @Transactional
@@ -117,8 +124,11 @@ public class PetService {
 
     @CacheEvict(value = "featured-pets", allEntries = true)
     public void deleteById(UUID id) {
-        findByIdOrThrow(id);
+        var pet = findByIdOrThrow(id);
+
         petRepository.deleteById(id);
+
+        notificationService.sendDeletedNotification(new PetDeletedMessage(pet.getId(), pet.getName()));
     }
 
     private Pet convertInputDTOToModel(PetRegistrationInputDTO petRegistrationInputDTO) {

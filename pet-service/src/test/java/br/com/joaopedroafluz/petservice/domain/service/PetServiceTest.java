@@ -153,7 +153,7 @@ public class PetServiceTest {
     @Test
     void shouldSavePetFromDTO() {
         final var inputDTO = PetFactory.createDefaultPetRegistrationInputDTO();
-        final var pet = new Pet();
+        final var pet = PetFactory.createDefaultPet();
 
         when(petRepository.save(any(Pet.class))).thenReturn(pet);
 
@@ -161,6 +161,7 @@ public class PetServiceTest {
 
         assertNotNull(savedPet);
         verify(petRepository, times(1)).save(any(Pet.class));
+        verify(notificationService, times(1)).sendRegisteredNotification(any());
     }
 
     @Test
@@ -259,6 +260,7 @@ public class PetServiceTest {
         petService.deleteById(pet.getId());
 
         verify(petRepository, times(1)).deleteById(eq(pet.getId()));
+        verify(notificationService, times(1)).sendDeletedNotification(any());
     }
 
 }

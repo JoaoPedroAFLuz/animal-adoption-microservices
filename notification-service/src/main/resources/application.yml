@@ -28,6 +28,16 @@ spring:
         default-requeue-rejected: false
 
 rabbit:
-  queue: ${RABBIT_MQ_QUEUE:pet.adopted.notification}
   exchange: ${RABBIT_MQ_EXCHANGE:pet.exchange}
-  routing-key: ${RABBIT_MQ_ROUTING_KEY:pet.adopted}
+  adopted:
+    queue: pet.adopted.notification
+    routing-key: pet.adopted
+  registered:
+    queue: pet.registered.notification
+    routing-key: pet.registered
+  deleted:
+    queue: pet.deleted.notification
+    routing-key: pet.deleted
+
+notification:
+  admin-email: ${NOTIFICATION_ADMIN_EMAIL:admin@adoption.com.br}
