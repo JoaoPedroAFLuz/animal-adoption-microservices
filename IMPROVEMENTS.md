@@ -7,9 +7,9 @@
 
 ## API Gateway
 
-- [ ] Add rate limiting
-- [ ] Add circuit breaker (Resilience4j) with fallback
-- [ ] Configure CORS
+- [x] Add rate limiting
+- [x] Add circuit breaker (Resilience4j) with fallback
+- [x] Configure CORS
 - [x] Change Dockerfile base image from JDK to JRE
 - [x] Remove leftover `compose.yaml` (Spring Initializr artifact)
 - [ ] Evaluate JWT validation at the gateway level to reject invalid requests before reaching downstream services
