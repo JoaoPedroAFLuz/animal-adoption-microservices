@@ -92,6 +92,14 @@ return Pet.builder()
 
 <!-- Add new preferences and learnings below as they come up -->
 
+### Frontend Import Order (enforced by ESLint `import/order`)
+1. React/Node imports (`react`, `next/*`)
+2. Library imports (external packages)
+3. _(blank line)_
+4. Source imports (`@/components/*`, `@/lib/*`, `@/app/*`)
+5. _(blank line)_
+6. Types, utils, assets (`@/types`, `@/tests/*`)
+
 ## Service-Specific Notes
 
 ### Pet Service (port 8081)

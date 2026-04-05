@@ -44,7 +44,11 @@
         "python3",
         "sleep",
         "lsof",
-        "sort"
+        "sort",
+        "npm",
+        "npx",
+        "kill",
+        "chmod"
       ],
       "autoAllowReadonly": true
     }

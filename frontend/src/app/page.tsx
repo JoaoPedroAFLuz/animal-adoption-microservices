@@ -1,7 +1,9 @@
+import Link from 'next/link';
+
 import { PetCard } from '@/components/PetCard';
 import { api } from '@/lib/api';
+
 import type { Pet } from '@/types';
-import Link from 'next/link';
 
 export default async function Home() {
   const pets = await api.get<Pet[]>('/pets/featured');
@@ -31,7 +33,7 @@ export default async function Home() {
       <div className="mt-10 text-center">
         <Link
           href="/pets"
-          className="inline-block rounded-lg bg-brand px-6 py-3 text-sm font-medium text-gray-900 hover:bg-brand-dark"
+          className="bg-brand hover:bg-brand-dark inline-block rounded-lg px-6 py-3 text-sm font-medium text-gray-900"
         >
           Browse All Pets
         </Link>

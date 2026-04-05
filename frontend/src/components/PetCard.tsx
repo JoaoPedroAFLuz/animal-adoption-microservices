@@ -1,4 +1,5 @@
 import Link from 'next/link';
+
 import type { Pet } from '@/types';
 
 interface PetCardProps {
@@ -14,15 +15,13 @@ export function PetCard({ pet }: PetCardProps) {
   return (
     <Link
       href={`/pets/${pet.id}`}
-      className="block rounded-lg border border-gray-200 bg-white p-5 shadow-sm transition hover:border-brand hover:shadow-md"
+      className="hover:border-brand block rounded-lg border border-gray-200 bg-white p-5 shadow-sm transition hover:shadow-md"
     >
       <div className="mb-3 flex items-center justify-between">
         <span className="text-2xl">{specieEmoji[pet.specie] || '🐾'}</span>
         <span
           className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${
-            pet.status === 'AVAILABLE'
-              ? 'bg-brand/20 text-gray-800'
-              : 'bg-gray-100 text-gray-600'
+            pet.status === 'AVAILABLE' ? 'bg-brand/20 text-gray-800' : 'bg-gray-100 text-gray-600'
           }`}
         >
           {pet.status}
