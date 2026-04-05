@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 import { auth } from '@/auth';
 
-const protectedPaths = ['/my-pets', '/admin'];
+const protectedPaths = ['/my-pets', '/admin', '/profile'];
 
 export async function proxy(request: NextRequest) {
   const session = await auth();

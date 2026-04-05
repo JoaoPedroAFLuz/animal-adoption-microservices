@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import Link from 'next/link';
 
 import { auth, signIn, signOut } from '@/auth';
@@ -26,7 +27,22 @@ export async function Header() {
 
           {session ? (
             <>
-              <span className="text-sm text-gray-800">{session.displayName}</span>
+              <Link href="/profile" className="flex items-center gap-2">
+                {session.picture ? (
+                  <Image
+                    src={session.picture}
+                    alt={session.displayName || ''}
+                    width={32}
+                    height={32}
+                    className="rounded-full"
+                  />
+                ) : (
+                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-900 text-sm font-medium text-white">
+                    {session.displayName?.charAt(0) || '?'}
+                  </div>
+                )}
+                <span className="text-sm text-gray-800">{session.displayName}</span>
+              </Link>
 
               <form
                 action={async () => {

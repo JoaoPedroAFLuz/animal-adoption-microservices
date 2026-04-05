@@ -14,6 +14,10 @@ const nextConfig: NextConfig = {
         hostname: 'localhost',
         port: '9000',
       },
+      {
+        protocol: 'https',
+        hostname: 'lh3.googleusercontent.com',
+      },
     ],
     dangerouslyAllowLocalIP: true,
   },

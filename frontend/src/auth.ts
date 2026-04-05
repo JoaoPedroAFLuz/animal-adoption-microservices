@@ -9,6 +9,7 @@ declare module 'next-auth' {
     idToken?: string;
     roles?: string[];
     displayName?: string;
+    picture?: string;
     error?: string;
   }
 }
@@ -38,6 +39,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         token.idToken = account.id_token;
         token.expiresAt = account.expires_at;
         token.displayName = buildDisplayName(profile);
+        token.picture = (profile?.picture as string) || undefined;
 
         try {
           const payload = decodeJwtPayload(account.access_token as string);
@@ -62,6 +64,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       session.idToken = token.idToken as string;
       session.roles = token.roles;
       session.displayName = token.displayName as string;
+      session.picture = token.picture as string;
       session.error = token.error;
 
       return session;
@@ -72,11 +75,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 function buildDisplayName(profile?: Record<string, unknown>) {
   if (!profile) return '';
 
-  const firstName = (profile.given_name as string) || '';
-  const lastName = (profile.family_name as string) || '';
-  const lastWord = lastName.trim().split(/\s+/).pop() || '';
-
-  return `${firstName} ${lastWord}`.trim();
+  return ((profile.given_name as string) || '').split(/\s+/)[0];
 }
 
 async function refreshAccessToken(token: import('@auth/core/jwt').JWT) {
