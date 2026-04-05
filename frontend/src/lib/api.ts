@@ -1,4 +1,7 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost';
+const isServer = typeof window === 'undefined';
+const API_BASE_URL = isServer
+  ? process.env.API_URL || 'http://localhost'
+  : process.env.NEXT_PUBLIC_API_URL || 'http://localhost';
 
 interface RequestOptions extends RequestInit {
   token?: string;

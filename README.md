@@ -57,6 +57,17 @@ Event-driven service for email notifications:
 * Retry mechanism (3 attempts with exponential backoff) + Dead Letter Queue per queue
 * DLQ retry endpoint (`POST /dlq/retry?queue={queueName}`) to reprocess failed messages
 
+### Frontend (port 3000)
+
+Next.js application for browsing and managing pets:
+
+* Browse and filter pets by species, gender, size, and status with pagination
+* Pet details page with adoption flow
+* Keycloak authentication with NextAuth.js v5 (Authorization Code + PKCE)
+* Admin pages for registering, editing, and deleting pets (role-based)
+* Server actions for secure API calls (tokens never exposed to the client)
+* Zod validation on forms matching backend constraints
+
 ### Shared Module
 
 Common library used by pet-service and notification-service:
@@ -128,6 +139,7 @@ In IntelliJ: **Run** → **Edit Configurations** → **Remote JVM Debug** → se
 
 | Service       | URL                          |
 |---------------|------------------------------|
+| Frontend      | http://localhost:3000         |
 | API Gateway   | http://localhost              |
 | Pet Service   | http://localhost:8081         |
 | Eureka        | http://localhost:8761         |

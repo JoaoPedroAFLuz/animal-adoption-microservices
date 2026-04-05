@@ -10,4 +10,4 @@
 - [x] Adopt flow + my pets — adopt button, /my-pets page, tests
 - [x] Admin register pet — form, validation, role protection, tests
 - [x] Admin edit and delete — edit form, delete with confirmation, tests
-- [ ] Docker setup — Dockerfile, docker-compose, env vars, README update
+- [x] Docker setup — Dockerfile, docker-compose, env vars, README update

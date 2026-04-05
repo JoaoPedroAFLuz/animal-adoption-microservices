@@ -203,6 +203,34 @@ services:
     networks:
       - adoption-network
 
+  frontend:
+    profiles:
+      - full
+    container_name: frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        - NEXT_PUBLIC_API_URL=http://localhost
+    ports:
+      - "3000:3000"
+    extra_hosts:
+      - "localhost:host-gateway"
+    environment:
+      - API_URL=http://api-gateway:80
+      - AUTH_KEYCLOAK_ID=frontend
+      - AUTH_KEYCLOAK_ISSUER=http://localhost:8080/realms/animal-adoption
+      - AUTH_SECRET=${AUTH_SECRET}
+      - AUTH_TRUST_HOST=true
+      - NEXTAUTH_URL=http://localhost:3000
+    depends_on:
+      api-gateway:
+        condition: service_started
+      keycloak:
+        condition: service_healthy
+    networks:
+      - adoption-network
+
   prometheus:
     container_name: prometheus
     build:
