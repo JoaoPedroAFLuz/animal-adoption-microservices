@@ -3,20 +3,19 @@
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
 
-import { api } from '@/lib/api';
+import { adoptPet } from '@/lib/actions';
 
 interface AdoptButtonProps {
   petId: string;
   petName: string;
-  token: string;
 }
 
-export function AdoptButton({ petId, petName, token }: AdoptButtonProps) {
+export function AdoptButton({ petId, petName }: AdoptButtonProps) {
   const router = useRouter();
 
   async function handleAdopt() {
     try {
-      await api.put(`/pets/adopt/${petId}`, null, { token });
+      await adoptPet(petId);
 
       toast.success(`You adopted ${petName}!`);
 

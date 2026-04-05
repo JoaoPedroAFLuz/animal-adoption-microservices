@@ -64,8 +64,8 @@ export default async function PetDetailsPage({ params }: PetDetailsPageProps) {
 
         {pet.status === 'AVAILABLE' && (
           <div className="mt-8">
-            {session?.accessToken ? (
-              <AdoptButton petId={pet.id} petName={pet.name} token={session.accessToken} />
+            {session ? (
+              <AdoptButton petId={pet.id} petName={pet.name} />
             ) : (
               <>
                 <button
@@ -81,7 +81,7 @@ export default async function PetDetailsPage({ params }: PetDetailsPageProps) {
           </div>
         )}
 
-        {session?.accessToken && (roles.includes('UPDATE_PET') || roles.includes('DELETE_PET')) && (
+        {session && (roles.includes('UPDATE_PET') || roles.includes('DELETE_PET')) && (
           <div className="mt-6 flex gap-3 border-t border-gray-200 pt-6">
             {roles.includes('UPDATE_PET') && (
               <Link
@@ -92,9 +92,7 @@ export default async function PetDetailsPage({ params }: PetDetailsPageProps) {
               </Link>
             )}
 
-            {roles.includes('DELETE_PET') && (
-              <DeleteButton petId={pet.id} petName={pet.name} token={session.accessToken} />
-            )}
+            {roles.includes('DELETE_PET') && <DeleteButton petId={pet.id} petName={pet.name} />}
           </div>
         )}
       </div>

@@ -1,21 +1,20 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
 
 import { Field, SelectField } from '@/components/FormFields';
-import { api } from '@/lib/api';
+import { createPet, updatePet } from '@/lib/actions';
 import { petFormSchema } from '@/lib/schemas';
 
 import type { Pet } from '@/types';
 
 interface PetFormProps {
-  token: string;
   pet?: Pet;
 }
 
-export function PetForm({ token, pet }: PetFormProps) {
+export function PetForm({ pet }: PetFormProps) {
   const router = useRouter();
   const [errors, setErrors] = useState<Record<string, string>>({});
   const isEdit = !!pet;
@@ -44,11 +43,11 @@ export function PetForm({ token, pet }: PetFormProps) {
 
     try {
       if (isEdit) {
-        const updated = await api.put<Pet>(`/pets/${pet.id}`, result.data, { token });
+        await updatePet(pet.id, result.data);
 
-        toast.success(`${updated.name} updated successfully!`);
+        toast.success(`${result.data.name} updated successfully!`);
       } else {
-        const created = await api.post<Pet>('/pets', result.data, { token });
+        const created = await createPet(result.data);
 
         toast.success(`${created.name} registered successfully!`);
 

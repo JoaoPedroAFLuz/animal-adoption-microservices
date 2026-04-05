@@ -31,7 +31,7 @@ export default async function EditPetPage({ params }: EditPetPageProps) {
       <h1 className="mb-8 text-3xl font-bold text-gray-900">Edit {pet.name}</h1>
 
       <div className="rounded-lg border border-gray-200 bg-white p-8 shadow-sm">
-        <PetForm token={session.accessToken!} pet={pet} />
+        <PetForm pet={pet} />
       </div>
     </div>
   );

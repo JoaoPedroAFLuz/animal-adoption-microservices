@@ -13,9 +13,14 @@ vi.mock('react-toastify', () => ({
   toast: { success: vi.fn(), error: vi.fn() },
 }));
 
+vi.mock('@/lib/actions', () => ({
+  createPet: vi.fn(),
+  updatePet: vi.fn(),
+}));
+
 describe('PetForm', () => {
   it('should render all form fields', () => {
-    render(<PetForm token="test-token" />);
+    render(<PetForm />);
 
     expect(screen.getByLabelText(/name/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/description/i)).toBeInTheDocument();
@@ -29,7 +34,7 @@ describe('PetForm', () => {
   it('should show validation errors on empty submit', async () => {
     const user = userEvent.setup();
 
-    render(<PetForm token="test-token" />);
+    render(<PetForm />);
 
     await user.click(screen.getByRole('button', { name: /register pet/i }));
 
@@ -42,7 +47,7 @@ describe('PetForm', () => {
   });
 
   it('should pre-fill values and show update button in edit mode', () => {
-    render(<PetForm token="test-token" pet={mockPet} />);
+    render(<PetForm pet={mockPet} />);
 
     expect(screen.getByLabelText(/name/i)).toHaveValue('Luna');
     expect(screen.getByLabelText(/breed/i)).toHaveValue('Golden Retriever');

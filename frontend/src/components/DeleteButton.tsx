@@ -3,22 +3,21 @@
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
 
-import { api } from '@/lib/api';
+import { deletePet } from '@/lib/actions';
 
 interface DeleteButtonProps {
   petId: string;
   petName: string;
-  token: string;
 }
 
-export function DeleteButton({ petId, petName, token }: DeleteButtonProps) {
+export function DeleteButton({ petId, petName }: DeleteButtonProps) {
   const router = useRouter();
 
   async function handleDelete() {
     if (!confirm(`Are you sure you want to delete ${petName}?`)) return;
 
     try {
-      await api.delete(`/pets/${petId}`, { token });
+      await deletePet(petId);
 
       toast.success(`${petName} deleted successfully.`);
 

@@ -15,7 +15,7 @@ export default async function NewPetPage() {
       <h1 className="mb-8 text-3xl font-bold text-gray-900">Register New Pet</h1>
 
       <div className="rounded-lg border border-gray-200 bg-white p-8 shadow-sm">
-        <PetForm token={session.accessToken!} />
+        <PetForm />
       </div>
     </div>
   );
