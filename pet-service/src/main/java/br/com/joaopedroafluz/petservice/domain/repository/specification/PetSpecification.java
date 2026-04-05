@@ -17,8 +17,10 @@ public class PetSpecification {
             List<Predicate> predicates = new ArrayList<>();
 
             if (filter.getName() != null && !filter.getName().isBlank()) {
-                predicates.add(builder.like(builder.lower(root.get("name")),
-                        "%" + filter.getName().toLowerCase() + "%"));
+                var unaccentName = builder.function("unaccent", String.class, builder.lower(root.get("name")));
+                var unaccentSearch = builder.function("unaccent", String.class, builder.lower(builder.literal("%" + filter.getName() + "%")));
+
+                predicates.add(builder.like(unaccentName, unaccentSearch));
             }
             if (filter.getSpecie() != null) {
                 predicates.add(builder.equal(root.get("specie"), filter.getSpecie()));

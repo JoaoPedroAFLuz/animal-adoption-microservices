@@ -6,7 +6,7 @@ import { toast } from 'react-toastify';
 
 import { Field, SelectField } from '@/components/FormFields';
 import { createPet, updatePet, uploadPetImage } from '@/lib/actions';
-import { petFormSchema } from '@/lib/schemas';
+import { imageSchema, petFormSchema } from '@/lib/schemas';
 
 import type { Pet } from '@/types';
 
@@ -45,6 +45,15 @@ export function PetForm({ pet }: PetFormProps) {
 
     try {
       let savedPet: Pet;
+
+      if (imageFile && imageFile.size > 0) {
+        const imageResult = imageSchema.safeParse(imageFile);
+
+        if (!imageResult.success) {
+          setErrors({ image: imageResult.error.issues[0].message });
+          return;
+        }
+      }
 
       if (isEdit) {
         savedPet = await updatePet(pet.id, result.data);
@@ -131,6 +140,7 @@ export function PetForm({ pet }: PetFormProps) {
           accept="image/jpeg,image/png,image/webp"
           className="file:bg-brand w-full rounded-lg border border-gray-300 px-4 py-2 text-sm file:mr-4 file:rounded-lg file:border-0 file:px-4 file:py-2 file:text-sm file:font-medium"
         />
+        {errors.image && <p className="mt-1 text-sm text-red-500">{errors.image}</p>}
       </div>
 
       <button

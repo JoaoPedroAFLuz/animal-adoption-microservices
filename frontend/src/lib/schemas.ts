@@ -17,3 +17,14 @@ export const petFormSchema = z.object({
 });
 
 export type PetFormData = z.infer<typeof petFormSchema>;
+
+const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
+const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+
+export const imageSchema = z
+  .instanceof(File)
+  .refine((file) => file.size <= MAX_IMAGE_SIZE, 'Image must be less than 5MB')
+  .refine(
+    (file) => ACCEPTED_IMAGE_TYPES.includes(file.type),
+    'Only JPEG, PNG, and WebP images are allowed',
+  );

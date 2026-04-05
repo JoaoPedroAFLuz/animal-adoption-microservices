@@ -1,5 +1,6 @@
 'use client';
 
+import { useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 import type { Gender, Size, Specie, Status } from '@/types';
@@ -12,6 +13,7 @@ const statuses: Status[] = ['AVAILABLE', 'ADOPTED'];
 export function PetFilters() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const debounceRef = useRef<ReturnType<typeof setTimeout>>(null);
 
   function handleChange(key: string, value: string) {
     const params = new URLSearchParams(searchParams.toString());
@@ -26,13 +28,19 @@ export function PetFilters() {
     router.push(`/pets?${params.toString()}`);
   }
 
+  function handleSearchChange(value: string) {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+
+    debounceRef.current = setTimeout(() => handleChange('name', value), 1000);
+  }
+
   return (
     <div className="flex flex-wrap gap-3">
       <input
         type="text"
         placeholder="Search by name..."
         defaultValue={searchParams.get('name') || ''}
-        onChange={(e) => handleChange('name', e.target.value)}
+        onChange={(e) => handleSearchChange(e.target.value)}
         className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700"
       />
       <FilterSelect
