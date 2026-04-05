@@ -16,6 +16,7 @@ export default async function PetsPage({ searchParams }: PetsPageProps) {
 
   const query = new URLSearchParams();
 
+  if (params.name) query.set('name', params.name);
   if (params.specie) query.set('specie', params.specie);
   if (params.gender) query.set('gender', params.gender);
   if (params.petSize) query.set('petSize', params.petSize);

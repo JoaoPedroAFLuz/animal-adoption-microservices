@@ -11,6 +11,7 @@ import lombok.Setter;
 @Setter
 public class PetFilter {
 
+    private String name;
     private Specie specie;
     private Gender gender;
     private Size petSize;

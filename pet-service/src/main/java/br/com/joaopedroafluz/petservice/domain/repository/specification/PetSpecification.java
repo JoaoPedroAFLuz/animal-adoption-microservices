@@ -16,6 +16,10 @@ public class PetSpecification {
         return (root, query, builder) -> {
             List<Predicate> predicates = new ArrayList<>();
 
+            if (filter.getName() != null && !filter.getName().isBlank()) {
+                predicates.add(builder.like(builder.lower(root.get("name")),
+                        "%" + filter.getName().toLowerCase() + "%"));
+            }
             if (filter.getSpecie() != null) {
                 predicates.add(builder.equal(root.get("specie"), filter.getSpecie()));
             }
