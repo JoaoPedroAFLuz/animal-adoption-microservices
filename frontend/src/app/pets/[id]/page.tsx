@@ -5,6 +5,7 @@ import { notFound } from 'next/navigation';
 import { auth } from '@/auth';
 import { AdoptButton } from '@/components/AdoptButton';
 import { DeleteButton } from '@/components/DeleteButton';
+import { FeaturedButton } from '@/components/FeaturedButton';
 import { api } from '@/lib/api';
 import { formatDate } from '@/utils/format';
 
@@ -101,6 +102,10 @@ export default async function PetDetailsPage({ params }: PetDetailsPageProps) {
 
         {session && (roles.includes('UPDATE_PET') || roles.includes('DELETE_PET')) && (
           <div className="mt-6 flex gap-3 border-t border-gray-200 pt-6">
+            {roles.includes('UPDATE_PET') && pet.status === 'AVAILABLE' && (
+              <FeaturedButton petId={pet.id} featured={pet.featured} />
+            )}
+
             {roles.includes('UPDATE_PET') && (
               <Link
                 href={`/admin/pets/${pet.id}/edit`}

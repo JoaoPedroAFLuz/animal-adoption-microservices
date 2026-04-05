@@ -16,6 +16,7 @@ describe('types', () => {
       gender: 'FEMALE',
       birthDate: '2023-06-15',
       imageUrl: null,
+      featured: false,
       createdAt: '2024-01-01T00:00:00',
       updatedAt: '2024-01-01T00:00:00',
     };

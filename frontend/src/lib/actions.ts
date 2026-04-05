@@ -41,6 +41,12 @@ export async function adoptPet(id: string): Promise<Pet> {
   return api.put<Pet>(`/pets/adopt/${id}`, null, { token });
 }
 
+export async function toggleFeatured(id: string): Promise<Pet> {
+  const token = await getToken();
+
+  return api.put<Pet>(`/pets/${id}/featured`, null, { token });
+}
+
 export async function uploadPetImage(petId: string, formData: FormData): Promise<Pet> {
   const token = await getToken();
   const apiUrl = process.env.API_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost';

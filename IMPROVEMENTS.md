@@ -6,7 +6,7 @@
 - [x] Loading skeletons — placeholder shapes while pages load
 - [x] Search by name — text input to search pets by name
 - [x] Error pages — friendly error boundaries with retry button when API is unavailable
-- [ ] Featured pets — boolean flag on pets, admin toggle, home page shows only featured pets
+- [x] Featured pets — boolean flag on pets, admin toggle, home page shows only featured pets
 
 ## Auth & Users
 
