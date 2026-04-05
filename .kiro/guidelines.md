@@ -114,12 +114,11 @@ return Pet.builder()
 ```
 
 ### Frontend Import Order (enforced by ESLint `import/order`)
-1. React/Node imports (`react`, `next/*`)
-2. Library imports (external packages)
-3. _(blank line)_
-4. Source imports (`@/components/*`, `@/lib/*`, `@/app/*`)
-5. _(blank line)_
-6. Types, utils, assets (`@/types`, `@/tests/*`)
+1. React/Node imports (`react`, `next/*`) and library imports (external packages)
+2. _(blank line)_
+3. Source imports (`@/components/*`, `@/lib/*`, `@/app/*`)
+4. _(blank line)_
+5. Types, utils, assets (`@/types`, `@/tests/*`)
 
 ## Service-Specific Notes
 

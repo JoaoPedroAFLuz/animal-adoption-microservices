@@ -14,10 +14,8 @@ const eslintConfig = defineConfig([
       'import/order': [
         'error',
         {
-          groups: ['builtin', 'external', 'internal', 'type'],
+          groups: [['builtin', 'external'], 'internal', 'type'],
           pathGroups: [
-            { pattern: '{react,react-dom/**}', group: 'builtin', position: 'before' },
-            { pattern: 'next/**', group: 'builtin', position: 'after' },
             { pattern: '@/types', group: 'type', position: 'before' },
             { pattern: '@/types/**', group: 'type', position: 'before' },
           ],

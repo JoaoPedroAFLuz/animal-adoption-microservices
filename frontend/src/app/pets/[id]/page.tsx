@@ -1,6 +1,8 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
+import { auth } from '@/auth';
+import { AdoptButton } from '@/components/AdoptButton';
 import { api } from '@/lib/api';
 import { formatDate } from '@/utils/format';
 
@@ -17,6 +19,7 @@ interface PetDetailsPageProps {
 
 export default async function PetDetailsPage({ params }: PetDetailsPageProps) {
   const { id } = await params;
+  const session = await auth();
 
   let pet: Pet;
 
@@ -59,14 +62,20 @@ export default async function PetDetailsPage({ params }: PetDetailsPageProps) {
 
         {pet.status === 'AVAILABLE' && (
           <div className="mt-8">
-            <button
-              disabled
-              className="bg-brand w-full rounded-lg px-6 py-3 font-medium text-gray-900 opacity-50"
-            >
-              Adopt {pet.name}
-            </button>
+            {session?.accessToken ? (
+              <AdoptButton petId={pet.id} petName={pet.name} token={session.accessToken} />
+            ) : (
+              <>
+                <button
+                  disabled
+                  className="bg-brand w-full rounded-lg px-6 py-3 font-medium text-gray-900 opacity-50"
+                >
+                  Adopt {pet.name}
+                </button>
 
-            <p className="mt-2 text-center text-sm text-gray-500">Sign in to adopt this pet</p>
+                <p className="mt-2 text-center text-sm text-gray-500">Sign in to adopt this pet</p>
+              </>
+            )}
           </div>
         )}
       </div>

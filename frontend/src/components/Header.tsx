@@ -19,7 +19,14 @@ export async function Header() {
 
           {session ? (
             <>
-              <span className="text-sm text-gray-800">{session.user?.name}</span>
+              <Link
+                href="/my-pets"
+                className="text-sm font-medium text-gray-800 hover:text-gray-950"
+              >
+                My Pets
+              </Link>
+
+              <span className="text-sm text-gray-800">{session.displayName}</span>
 
               <form
                 action={async () => {
