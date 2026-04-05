@@ -40,9 +40,12 @@ class PetServiceCacheTest {
     @MockitoBean
     private NotificationService notificationService;
 
+    @MockitoBean
+    private AuditLogService auditLogService;
+
     @Test
     void shouldCacheFeaturedPets() {
-        var pets = List.of(PetFactory.createDefaultPet());
+        final var pets = List.of(PetFactory.createDefaultPet());
         when(petRepository.findFeatured(any())).thenReturn(pets);
 
         petService.findFeatured();

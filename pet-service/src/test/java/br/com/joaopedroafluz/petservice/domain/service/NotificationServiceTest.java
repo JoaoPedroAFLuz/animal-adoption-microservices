@@ -32,7 +32,7 @@ class NotificationServiceTest {
 
     @Test
     void shouldSendAdoptionNotification() {
-        var adoptionMessage = new AdoptionMessage(UUID.randomUUID(), "Rex",
+        final var adoptionMessage = new AdoptionMessage(UUID.randomUUID(), "Rex",
                 new UserDTO(UUID.randomUUID(), "João", "joao@email.com"));
 
         when(rabbitProperties.getExchange()).thenReturn("pet.exchange");
@@ -49,7 +49,7 @@ class NotificationServiceTest {
 
     @Test
     void shouldSendRegisteredNotification() {
-        var message = new PetRegisteredMessage(UUID.randomUUID(), "Luna", "DOG", "Golden Retriever");
+        final var message = new PetRegisteredMessage(UUID.randomUUID(), "Luna", "DOG", "Golden Retriever");
 
         when(rabbitProperties.getExchange()).thenReturn("pet.exchange");
         when(rabbitProperties.getRegisteredRoutingKey()).thenReturn("pet.registered");
@@ -65,7 +65,7 @@ class NotificationServiceTest {
 
     @Test
     void shouldSendDeletedNotification() {
-        var message = new PetDeletedMessage(UUID.randomUUID(), "Luna");
+        final var message = new PetDeletedMessage(UUID.randomUUID(), "Luna");
 
         when(rabbitProperties.getExchange()).thenReturn("pet.exchange");
         when(rabbitProperties.getDeletedRoutingKey()).thenReturn("pet.deleted");

@@ -23,8 +23,8 @@ public class DlqController {
 
     @PostMapping("/retry")
     public Map<String, Object> retryMessages(@RequestParam String queue) {
-        var dlqName = queue + ".dlq";
-        var routingKey = resolveRoutingKey(queue);
+        final var dlqName = queue + ".dlq";
+        final var routingKey = resolveRoutingKey(queue);
         var count = 0;
 
         Message message;

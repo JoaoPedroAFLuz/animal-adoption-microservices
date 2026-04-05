@@ -20,7 +20,7 @@ public class AuthenticatedUserUtils {
     }
 
     public String getClaim(String claimName) {
-        var jwt = getJwt();
+        final var jwt = getJwt();
         if (jwt != null) {
             return jwt.getClaim(claimName);
         }
@@ -28,7 +28,7 @@ public class AuthenticatedUserUtils {
     }
 
     public Jwt getJwt() {
-        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        final var authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.getPrincipal() instanceof Jwt jwt) {
             return jwt;
         }

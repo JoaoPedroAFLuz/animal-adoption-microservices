@@ -22,11 +22,11 @@ public class S3ImageStorageService implements ImageStorageService {
 
     @Override
     public String upload(MultipartFile file) {
-        var extension = getExtension(file.getOriginalFilename());
-        var key = UUID.randomUUID() + extension;
+        final var extension = getExtension(file.getOriginalFilename());
+        final var key = UUID.randomUUID() + extension;
 
         try {
-            var request = PutObjectRequest.builder()
+            final var request = PutObjectRequest.builder()
                                           .bucket(minioProperties.getBucket())
                                           .key(key)
                                           .contentType(file.getContentType())
@@ -42,9 +42,9 @@ public class S3ImageStorageService implements ImageStorageService {
 
     @Override
     public void delete(String imageUrl) {
-        var key = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
+        final var key = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
 
-        var request = DeleteObjectRequest.builder()
+        final var request = DeleteObjectRequest.builder()
                                          .bucket(minioProperties.getBucket())
                                          .key(key)
                                          .build();

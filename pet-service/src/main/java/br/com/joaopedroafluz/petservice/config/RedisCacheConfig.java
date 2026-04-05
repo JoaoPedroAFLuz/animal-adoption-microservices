@@ -16,7 +16,7 @@ public class RedisCacheConfig {
 
     @Bean
     public RedisCacheConfiguration cacheConfiguration() {
-        var objectMapper = new ObjectMapper();
+        final var objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         objectMapper.activateDefaultTyping(
@@ -24,7 +24,7 @@ public class RedisCacheConfig {
                 ObjectMapper.DefaultTyping.NON_FINAL
         );
 
-        var serializer = new GenericJackson2JsonRedisSerializer(objectMapper);
+        final var serializer = new GenericJackson2JsonRedisSerializer(objectMapper);
 
         return RedisCacheConfiguration.defaultCacheConfig()
                 .entryTtl(Duration.ofHours(1))

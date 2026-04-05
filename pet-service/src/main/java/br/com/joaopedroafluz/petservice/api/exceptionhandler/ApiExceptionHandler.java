@@ -34,11 +34,11 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<Object> handleBusinessException(BusinessException ex, WebRequest request) {
-        var status = HttpStatus.BAD_REQUEST;
-        var problemType = ProblemType.BUSINESS_ERROR;
-        var detail = ex.getMessage();
+        final var status = HttpStatus.BAD_REQUEST;
+        final var problemType = ProblemType.BUSINESS_ERROR;
+        final var detail = ex.getMessage();
 
-        var problem = createProblemBuilder(status, problemType, detail)
+        final var problem = createProblemBuilder(status, problemType, detail)
                 .userMessage(ex.getMessage())
                 .build();
 
@@ -47,11 +47,11 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<Object> handleEntityNotFoundException(EntityNotFoundException ex, WebRequest request) {
-        var status = HttpStatus.NOT_FOUND;
-        var problemType = ProblemType.RESOURCE_NOT_FOUND;
-        var detail = ex.getMessage();
+        final var status = HttpStatus.NOT_FOUND;
+        final var problemType = ProblemType.RESOURCE_NOT_FOUND;
+        final var detail = ex.getMessage();
 
-        var problem = createProblemBuilder(status, problemType, detail)
+        final var problem = createProblemBuilder(status, problemType, detail)
                 .userMessage(ex.getMessage())
                 .build();
 
@@ -60,11 +60,11 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(UnauthorizedException.class)
     public ResponseEntity<Object> handleUnauthorizedException(UnauthorizedException ex, WebRequest request) {
-        var status = HttpStatus.UNAUTHORIZED;
-        var problemType = ProblemType.UNAUTHORIZED;
-        var detail = ex.getMessage();
+        final var status = HttpStatus.UNAUTHORIZED;
+        final var problemType = ProblemType.UNAUTHORIZED;
+        final var detail = ex.getMessage();
 
-        var problem = createProblemBuilder(status, problemType, detail)
+        final var problem = createProblemBuilder(status, problemType, detail)
                 .userMessage(ex.getMessage())
                 .build();
 
@@ -74,11 +74,11 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(AuthorizationDeniedException.class)
     public ResponseEntity<Object> handleAuthorizationDeniedException(AuthorizationDeniedException ex,
                                                                      WebRequest request) {
-        var status = HttpStatus.FORBIDDEN;
-        var problemType = ProblemType.ACCESS_DENIED;
-        var detail = "You are not authorized to perform this action.";
+        final var status = HttpStatus.FORBIDDEN;
+        final var problemType = ProblemType.ACCESS_DENIED;
+        final var detail = "You are not authorized to perform this action.";
 
-        var problem = createProblemBuilder(status, problemType, detail)
+        final var problem = createProblemBuilder(status, problemType, detail)
                 .userMessage(ex.getMessage())
                 .build();
 
@@ -87,11 +87,11 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(OptimisticLockException.class)
     public ResponseEntity<Object> handleOptimisticLockException(OptimisticLockException ex, WebRequest request) {
-        var status = HttpStatus.CONFLICT;
-        var problemType = ProblemType.BUSINESS_ERROR;
-        var detail = "This record was updated by another request. Please try again.";
+        final var status = HttpStatus.CONFLICT;
+        final var problemType = ProblemType.BUSINESS_ERROR;
+        final var detail = "This record was updated by another request. Please try again.";
 
-        var problem = createProblemBuilder(status, problemType, detail)
+        final var problem = createProblemBuilder(status, problemType, detail)
                 .userMessage(detail)
                 .build();
 
@@ -102,11 +102,11 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> handleUncaught(Exception ex, WebRequest request) {
         log.error(ex.getMessage(), ex);
 
-        var status = HttpStatus.INTERNAL_SERVER_ERROR;
-        var problemType = ProblemType.SYSTEM_ERROR;
-        var detail = GENERIC_MESSAGE;
+        final var status = HttpStatus.INTERNAL_SERVER_ERROR;
+        final var problemType = ProblemType.SYSTEM_ERROR;
+        final var detail = GENERIC_MESSAGE;
 
-        var problem = createProblemBuilder(status, problemType, detail)
+        final var problem = createProblemBuilder(status, problemType, detail)
                 .userMessage(detail)
                 .build();
 
@@ -118,20 +118,20 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                                                                   HttpHeaders headers,
                                                                   HttpStatusCode status,
                                                                   WebRequest request) {
-        var problemType = ProblemType.INVALID_PARAMETER;
-        var detail = "One or more parameters are invalid.";
+        final var problemType = ProblemType.INVALID_PARAMETER;
+        final var detail = "One or more parameters are invalid.";
 
-        var problemObjects = ex.getBindingResult()
+        final var problemObjects = ex.getBindingResult()
                 .getAllErrors()
                 .stream()
                 .map(objectError -> {
                     String name = objectError.getObjectName();
                     String message = messageSource.getMessage(objectError, LocaleContextHolder.getLocale());
-
+        
                     if (objectError instanceof FieldError) {
                         name = ((FieldError) objectError).getField();
                     }
-
+        
                     return Problem.Object.builder()
                             .name(name)
                             .userMessage(message)
@@ -139,7 +139,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                 })
                 .collect(Collectors.toList());
 
-        var problem = createProblemBuilder(status, problemType, detail)
+        final var problem = createProblemBuilder(status, problemType, detail)
                 .userMessage(detail)
                 .objects(problemObjects)
                 .build();
@@ -151,14 +151,14 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex,
                                                                HttpHeaders headers, HttpStatusCode status,
                                                                WebRequest request) {
-        var problemType = ProblemType.INVALID_PARAMETER;
+        final var problemType = ProblemType.INVALID_PARAMETER;
         var detail = "One or more parameters are invalid.";
 
-        var cause = ex.getMostSpecificCause().getMessage();
+        final var cause = ex.getMostSpecificCause().getMessage();
         if (cause != null && cause.contains("from String")) {
             detail = "Invalid value for enum field: " + extractEnumFieldMessage(cause);
         }
-        var problem = createProblemBuilder(status, problemType, detail)
+        final var problem = createProblemBuilder(status, problemType, detail)
                 .userMessage(detail)
                 .build();
 

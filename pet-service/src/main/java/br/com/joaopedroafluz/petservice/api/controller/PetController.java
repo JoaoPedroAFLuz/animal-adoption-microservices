@@ -86,7 +86,7 @@ public class PetController {
         final var email = authenticatedUserUtils.getEmail();
         final var name = authenticatedUserUtils.getGivenName();
 
-        var user = new UserDTO(UUID.fromString(userId), name, email);
+        final var user = new UserDTO(UUID.fromString(userId), name, email);
 
         return PetResponseDTO.from(petService.adopt(id, user));
     }

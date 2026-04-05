@@ -18,14 +18,14 @@ public class EmailService {
     private final TemplateEngine templateEngine;
 
     public void sendHtml(String to, String subject, String template, Map<String, Object> variables) {
-        var context = new Context();
+        final var context = new Context();
         context.setVariables(variables);
 
-        var html = templateEngine.process(template, context);
+        final var html = templateEngine.process(template, context);
 
         try {
-            var mimeMessage = mailSender.createMimeMessage();
-            var helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+            final var mimeMessage = mailSender.createMimeMessage();
+            final var helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
 
             helper.setTo(to);
             helper.setSubject(subject);

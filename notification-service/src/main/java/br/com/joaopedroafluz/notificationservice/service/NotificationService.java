@@ -25,7 +25,7 @@ public class NotificationService {
     public void handleAdoptionMessage(@Payload String message) {
         log.info("Received adoption message: {}", message);
 
-        var adoptionMessage = JsonUtils.fromJson(message, AdoptionMessage.class);
+        final var adoptionMessage = JsonUtils.fromJson(message, AdoptionMessage.class);
 
         emailService.sendHtml(
                 adoptionMessage.user().email(),
@@ -41,7 +41,7 @@ public class NotificationService {
     public void handleRegisteredMessage(@Payload String message) {
         log.info("Received pet registered message: {}", message);
 
-        var petRegisteredMessage = JsonUtils.fromJson(message, PetRegisteredMessage.class);
+        final var petRegisteredMessage = JsonUtils.fromJson(message, PetRegisteredMessage.class);
 
         emailService.sendHtml(
                 notificationProperties.getAdminEmail(),
@@ -61,7 +61,7 @@ public class NotificationService {
     public void handleDeletedMessage(@Payload String message) {
         log.info("Received pet deleted message: {}", message);
 
-        var petDeletedMessage = JsonUtils.fromJson(message, PetDeletedMessage.class);
+        final var petDeletedMessage = JsonUtils.fromJson(message, PetDeletedMessage.class);
 
         emailService.sendHtml(
                 notificationProperties.getAdminEmail(),

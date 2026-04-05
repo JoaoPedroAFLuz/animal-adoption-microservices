@@ -29,7 +29,7 @@ public class NotificationService {
     }
 
     private void send(String routingKey, Object payload) {
-        var message = new Message(JsonUtils.toJson(payload).getBytes());
+        final var message = new Message(JsonUtils.toJson(payload).getBytes());
 
         messageProducer.sendMessage(rabbitProperties.getExchange(), routingKey, message);
     }

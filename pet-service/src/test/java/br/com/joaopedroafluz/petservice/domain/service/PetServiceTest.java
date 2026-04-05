@@ -40,6 +40,9 @@ public class PetServiceTest {
     @Mock
     private ImageStorageService imageStorageService;
 
+    @Mock
+    private AuditLogService auditLogService;
+
     @Spy
     @InjectMocks
     private PetService petService;

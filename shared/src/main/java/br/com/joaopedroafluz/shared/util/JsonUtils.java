@@ -28,7 +28,7 @@ public class JsonUtils {
         try {
             return OBJECT_MAPPER.readValue(json, resultClass);
         } catch (IOException e) {
-            var message = String.format("Error converting %s to %s", json, resultClass.getSimpleName());
+            final var message = String.format("Error converting %s to %s", json, resultClass.getSimpleName());
 
             throw new IllegalArgumentException(message, e);
         }

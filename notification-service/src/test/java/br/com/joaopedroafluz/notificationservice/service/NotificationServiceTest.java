@@ -21,7 +21,7 @@ class NotificationServiceTest {
 
     @Test
     void shouldSendEmailWhenAdoptionMessageReceived() {
-        var message = """
+        final var message = """
                 {"petId":"123e4567-e89b-12d3-a456-426614174000","petName":"Rex","user":{"id":"123e4567-e89b-12d3-a456-426614174001","name":"João","email":"joao@email.com"}}""";
 
         notificationService.handleAdoptionMessage(message);
@@ -36,7 +36,7 @@ class NotificationServiceTest {
 
     @Test
     void shouldThrowExceptionWhenMessageIsInvalid() {
-        var invalidMessage = "invalid json";
+        final var invalidMessage = "invalid json";
 
         org.junit.jupiter.api.Assertions.assertThrows(
                 IllegalArgumentException.class,

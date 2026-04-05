@@ -62,7 +62,7 @@ class PetControllerIntegrationTest {
 
     @Test
     void shouldCreateAndRetrievePet() throws Exception {
-        var result = mockMvc.perform(post("/pets")
+        final var result = mockMvc.perform(post("/pets")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(PET_JSON)
                         .with(jwt("REGISTER_PET")))
@@ -72,7 +72,7 @@ class PetControllerIntegrationTest {
                 .andExpect(jsonPath("$.version").doesNotExist())
                 .andReturn();
 
-        var id = JsonPath.read(result.getResponse().getContentAsString(), "$.id").toString();
+        final var id = JsonPath.read(result.getResponse().getContentAsString(), "$.id").toString();
 
         mockMvc.perform(get("/pets/" + id)
                         .with(jwt()))
@@ -113,16 +113,16 @@ class PetControllerIntegrationTest {
 
     @Test
     void shouldUpdatePet() throws Exception {
-        var result = mockMvc.perform(post("/pets")
+        final var result = mockMvc.perform(post("/pets")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(PET_JSON)
                         .with(jwt("REGISTER_PET")))
                 .andExpect(status().isCreated())
                 .andReturn();
 
-        var id = JsonPath.read(result.getResponse().getContentAsString(), "$.id").toString();
+        final var id = JsonPath.read(result.getResponse().getContentAsString(), "$.id").toString();
 
-        var updateJson = """
+        final var updateJson = """
                 {
                     "name": "Luna Updated",
                     "description": "Very friendly dog",
@@ -144,14 +144,14 @@ class PetControllerIntegrationTest {
 
     @Test
     void shouldDeletePet() throws Exception {
-        var result = mockMvc.perform(post("/pets")
+        final var result = mockMvc.perform(post("/pets")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(PET_JSON)
                         .with(jwt("REGISTER_PET")))
                 .andExpect(status().isCreated())
                 .andReturn();
 
-        var id = JsonPath.read(result.getResponse().getContentAsString(), "$.id").toString();
+        final var id = JsonPath.read(result.getResponse().getContentAsString(), "$.id").toString();
 
         mockMvc.perform(delete("/pets/" + id)
                         .with(jwt("DELETE_PET")))
@@ -180,14 +180,14 @@ class PetControllerIntegrationTest {
     }
 
     private static SecurityMockMvcRequestPostProcessors.JwtRequestPostProcessor jwt(String... roles) {
-        var jwtBuilder = SecurityMockMvcRequestPostProcessors.jwt()
+        final var jwtBuilder = SecurityMockMvcRequestPostProcessors.jwt()
                 .jwt(builder -> builder
                         .claim("sub", "test-user-id")
                         .claim("email", "test@email.com")
                         .claim("given_name", "Test User"));
 
         if (roles.length > 0) {
-            var authorities = Arrays.stream(roles)
+            final var authorities = Arrays.stream(roles)
                     .map(role -> (GrantedAuthority) new SimpleGrantedAuthority("ROLE_" + role))
                     .toList();
 

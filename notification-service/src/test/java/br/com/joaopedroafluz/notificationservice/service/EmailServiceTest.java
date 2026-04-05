@@ -31,7 +31,7 @@ class EmailServiceTest {
 
     @Test
     void shouldSendHtmlEmail() {
-        var mimeMessage = mock(MimeMessage.class);
+        final var mimeMessage = mock(MimeMessage.class);
         when(mailSender.createMimeMessage()).thenReturn(mimeMessage);
         when(templateEngine.process(eq("adoption-email"), any(Context.class))).thenReturn("<html>test</html>");
 
@@ -42,7 +42,7 @@ class EmailServiceTest {
 
     @Test
     void shouldThrowWhenMailSenderFails() {
-        var mimeMessage = mock(MimeMessage.class);
+        final var mimeMessage = mock(MimeMessage.class);
         when(mailSender.createMimeMessage()).thenReturn(mimeMessage);
         when(templateEngine.process(any(String.class), any(Context.class))).thenReturn("<html>test</html>");
         doThrow(new org.springframework.mail.MailSendException("SMTP error"))

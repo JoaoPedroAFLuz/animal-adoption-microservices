@@ -1,5 +1,6 @@
 package br.com.joaopedroafluz.petservice.domain.service;
 
+import br.com.joaopedroafluz.petservice.domain.enums.AuditAction;
 import br.com.joaopedroafluz.petservice.domain.dto.*;
 import br.com.joaopedroafluz.shared.domain.AdoptionMessage;
 import br.com.joaopedroafluz.shared.domain.PetDeletedMessage;
@@ -35,6 +36,7 @@ public class PetService {
     private final PetRepository petRepository;
     private final NotificationService notificationService;
     private final ImageStorageService imageStorageService;
+    private final AuditLogService auditLogService;
 
     public Page<Pet> findAll(PetFilter petFilter, Pageable pageable) {
         final var petSpecification = PetSpecification.withFilters(petFilter);
@@ -80,6 +82,8 @@ public class PetService {
                 new PetRegisteredMessage(pet.getId(), pet.getName(), pet.getSpecie().name(), pet.getBreed())
         );
 
+        auditLogService.log(AuditAction.CREATED, pet);
+
         return pet;
     }
 
@@ -90,7 +94,7 @@ public class PetService {
 
     @Transactional
     public Pet update(UUID id, PetUpdateInputDTO petUpdateInputDTO) {
-        var petFound = findByIdOrThrow(id);
+        final var petFound = findByIdOrThrow(id);
 
         petFound.setName(petUpdateInputDTO.name());
         petFound.setDescription(petUpdateInputDTO.description());
@@ -100,7 +104,11 @@ public class PetService {
         petFound.setGender(petUpdateInputDTO.gender());
         petFound.setBirthDate(petUpdateInputDTO.birthDate());
 
-        return save(petFound);
+        final var pet = save(petFound);
+
+        auditLogService.log(AuditAction.UPDATED, pet);
+
+        return pet;
     }
 
     @Transactional
@@ -125,11 +133,13 @@ public class PetService {
 
     @CacheEvict(value = "featured-pets", allEntries = true)
     public void deleteById(UUID id) {
-        var pet = findByIdOrThrow(id);
+        final var pet = findByIdOrThrow(id);
 
         if (pet.getImageUrl() != null) {
             imageStorageService.delete(pet.getImageUrl());
         }
+
+        auditLogService.log(AuditAction.DELETED, pet);
 
         petRepository.deleteById(id);
 
@@ -138,13 +148,13 @@ public class PetService {
 
     @Transactional
     public Pet uploadImage(UUID id, MultipartFile file) {
-        var pet = findByIdOrThrow(id);
+        final var pet = findByIdOrThrow(id);
 
         if (pet.getImageUrl() != null) {
             imageStorageService.delete(pet.getImageUrl());
         }
 
-        var imageUrl = imageStorageService.upload(file);
+        final var imageUrl = imageStorageService.upload(file);
         pet.setImageUrl(imageUrl);
 
         return save(pet);
@@ -153,7 +163,7 @@ public class PetService {
     @Transactional
     @CacheEvict(value = "featured-pets", allEntries = true)
     public Pet toggleFeatured(UUID id) {
-        var pet = findByIdOrThrow(id);
+        final var pet = findByIdOrThrow(id);
         pet.setFeatured(!pet.isFeatured());
 
         return save(pet);
