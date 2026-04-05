@@ -25,7 +25,8 @@ async function renderHeader() {
 
 describe('Header', () => {
   it('should show sign in button when not authenticated', async () => {
-    mockAuth.mockResolvedValue(null);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    mockAuth.mockResolvedValue(null as any);
 
     await renderHeader();
 
@@ -39,7 +40,8 @@ describe('Header', () => {
       user: { name: 'João' },
       displayName: 'João Luz',
       expires: '',
-    });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } as any);
 
     await renderHeader();
 

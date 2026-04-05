@@ -4,6 +4,7 @@ import Keycloak from 'next-auth/providers/keycloak';
 declare module 'next-auth' {
   interface Session {
     accessToken?: string;
+    idToken?: string;
     roles?: string[];
     displayName?: string;
     error?: string;
@@ -32,6 +33,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       if (account) {
         token.accessToken = account.access_token;
         token.refreshToken = account.refresh_token;
+        token.idToken = account.id_token;
         token.expiresAt = account.expires_at;
         token.roles = extractRoles(account.access_token);
         token.displayName = buildDisplayName(profile);
@@ -47,6 +49,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
     async session({ session, token }) {
       session.accessToken = token.accessToken;
+      session.idToken = token.idToken as string;
       session.roles = token.roles;
       session.displayName = token.displayName as string;
       session.error = token.error;
@@ -56,11 +59,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   },
 });
 
-function buildDisplayName(profile?: { given_name?: string; family_name?: string; name?: string }) {
+function buildDisplayName(profile?: Record<string, unknown>) {
   if (!profile) return '';
 
-  const firstName = profile.given_name || '';
-  const lastName = profile.family_name || '';
+  const firstName = (profile.given_name as string) || '';
+  const lastName = (profile.family_name as string) || '';
   const lastWord = lastName.trim().split(/\s+/).pop() || '';
 
   return `${firstName} ${lastWord}`.trim();
@@ -98,6 +101,7 @@ async function refreshAccessToken(token: import('@auth/core/jwt').JWT) {
 
     token.accessToken = data.access_token;
     token.refreshToken = data.refresh_token;
+    token.idToken = data.id_token;
     token.expiresAt = Math.floor(Date.now() / 1000) + data.expires_in;
     token.roles = extractRoles(data.access_token);
     token.error = undefined;

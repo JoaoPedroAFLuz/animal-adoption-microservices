@@ -5,7 +5,9 @@
 - Before implementing, always plan and explain first — wait for approval before writing code
 - Never commit automatically — always wait for explicit confirmation
 - Before committing, check if README.md needs updating and update it if necessary
+- Before committing, review changes: run tests, lint, format, check git diff for debug code/unused imports, verify .env.example is up to date
 - Always run tests before considering a task done
+- Review changes before finalizing (check for missed edge cases, unused imports, consistency)
 - Review changes before finalizing (check for missed edge cases, unused imports, consistency)
 - When suggesting commits, follow the existing commit message pattern: lowercase, English, no conventional commit prefixes, descriptive of the action
 - When the user grants trust to a tool, add it to `.kiro/agents/pet-adoption.json` allowedTools

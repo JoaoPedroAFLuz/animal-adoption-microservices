@@ -28,7 +28,7 @@ export function AdoptButton({ petId, petName, token }: AdoptButtonProps) {
   return (
     <button
       onClick={handleAdopt}
-      className="w-full rounded-lg bg-brand px-6 py-3 font-medium text-gray-900 hover:bg-brand-dark"
+      className="bg-brand hover:bg-brand-dark w-full rounded-lg px-6 py-3 font-medium text-gray-900"
     >
       Adopt {petName}
     </button>

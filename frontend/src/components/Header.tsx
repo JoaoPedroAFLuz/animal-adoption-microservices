@@ -31,7 +31,16 @@ export async function Header() {
               <form
                 action={async () => {
                   'use server';
-                  await signOut({ redirectTo: '/' });
+                  const idToken = session.idToken;
+                  await signOut({ redirect: false });
+
+                  const keycloakLogoutUrl =
+                    `${process.env.AUTH_KEYCLOAK_ISSUER}/protocol/openid-connect/logout` +
+                    `?id_token_hint=${idToken}` +
+                    `&post_logout_redirect_uri=${encodeURIComponent('http://localhost:3000')}`;
+
+                  const { redirect } = await import('next/navigation');
+                  redirect(keycloakLogoutUrl);
                 }}
               >
                 <button
