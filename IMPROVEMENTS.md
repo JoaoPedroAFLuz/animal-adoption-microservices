@@ -8,6 +8,6 @@
 - [x] Pet details page — full pet info, adopt button placeholder, tests
 - [x] Keycloak authentication — next-auth v5, login/logout, JWT in API calls, tests
 - [x] Adopt flow + my pets — adopt button, /my-pets page, tests
-- [ ] Admin register pet — form, validation, role protection, tests
+- [x] Admin register pet — form, validation, role protection, tests
 - [ ] Admin edit and delete — edit form, delete with confirmation, tests
 - [ ] Docker setup — Dockerfile, docker-compose, env vars, README update

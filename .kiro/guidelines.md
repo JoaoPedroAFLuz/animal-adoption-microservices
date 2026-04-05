@@ -6,6 +6,7 @@
 - Never commit automatically — always wait for explicit confirmation
 - Before committing, check if README.md needs updating and update it if necessary
 - Before committing, review changes: run tests, lint, format, check git diff for debug code/unused imports, verify .env.example is up to date
+- Before committing, run `npx tsc --noEmit` to catch TypeScript errors, deprecations, and type mismatches — fix them before committing
 - Always run tests before considering a task done
 - Review changes before finalizing (check for missed edge cases, unused imports, consistency)
 - Review changes before finalizing (check for missed edge cases, unused imports, consistency)

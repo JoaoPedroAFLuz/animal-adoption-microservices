@@ -1,6 +1,8 @@
 import NextAuth from 'next-auth';
 import Keycloak from 'next-auth/providers/keycloak';
 
+import { decodeJwtPayload } from '@/lib/jwt';
+
 declare module 'next-auth' {
   interface Session {
     accessToken?: string;
@@ -35,8 +37,16 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         token.refreshToken = account.refresh_token;
         token.idToken = account.id_token;
         token.expiresAt = account.expires_at;
-        token.roles = extractRoles(account.access_token);
         token.displayName = buildDisplayName(profile);
+
+        try {
+          const payload = decodeJwtPayload(account.access_token as string);
+          token.roles =
+            (payload.resource_access as Record<string, { roles: string[] }>)?.['animal-adoption']
+              ?.roles || [];
+        } catch {
+          token.roles = [];
+        }
 
         return token;
       }
@@ -69,17 +79,6 @@ function buildDisplayName(profile?: Record<string, unknown>) {
   return `${firstName} ${lastWord}`.trim();
 }
 
-function extractRoles(accessToken?: string): string[] {
-  if (!accessToken) return [];
-
-  try {
-    const payload = JSON.parse(atob(accessToken.split('.')[1]));
-    return payload.resource_access?.['animal-adoption']?.roles || [];
-  } catch {
-    return [];
-  }
-}
-
 async function refreshAccessToken(token: import('@auth/core/jwt').JWT) {
   try {
     const response = await fetch(
@@ -103,8 +102,16 @@ async function refreshAccessToken(token: import('@auth/core/jwt').JWT) {
     token.refreshToken = data.refresh_token;
     token.idToken = data.id_token;
     token.expiresAt = Math.floor(Date.now() / 1000) + data.expires_in;
-    token.roles = extractRoles(data.access_token);
     token.error = undefined;
+
+    try {
+      const payload = decodeJwtPayload(data.access_token as string);
+      token.roles =
+        (payload.resource_access as Record<string, { roles: string[] }>)?.['animal-adoption']
+          ?.roles || [];
+    } catch {
+      token.roles = [];
+    }
 
     return token;
   } catch {

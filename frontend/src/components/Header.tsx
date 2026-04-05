@@ -26,6 +26,15 @@ export async function Header() {
                 My Pets
               </Link>
 
+              {session.roles?.includes('REGISTER_PET') && (
+                <Link
+                  href="/admin/pets/new"
+                  className="text-sm font-medium text-gray-800 hover:text-gray-950"
+                >
+                  Register Pet
+                </Link>
+              )}
+
               <span className="text-sm text-gray-800">{session.displayName}</span>
 
               <form
