@@ -34,5 +34,6 @@ build/
 
 .env
 
-.DS_Store.kiro/settings/
 .DS_Store
+
+.kiro/

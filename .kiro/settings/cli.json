@@ -1,6 +1,0 @@
-{
-  "chat.defaultAgent": "pet-adoption",
-  "chat.enableTodoList": true,
-  "chat.enableThinking": true,
-  "chat.enableCodeIntelligence": true
-}
