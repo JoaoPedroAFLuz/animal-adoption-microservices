@@ -1,5 +1,5 @@
 server:
-  port: ${PET_SERVICE_PORT:8082}
+  port: ${PET_SERVICE_PORT:8081}
 
 spring:
   servlet:
@@ -7,7 +7,7 @@ spring:
       max-file-size: 5MB
       max-request-size: 5MB
   datasource:
-    url: ${PET_SERVICE_DB_URL:jdbc:postgresql://localhost:5434/petservicedb}
+    url: ${PET_SERVICE_DB_URL:jdbc:postgresql://localhost:5433/petservicedb}
     username: ${PET_SERVICE_DB_USERNAME:joaopedroafluz}
     password: ${PET_SERVICE_DB_PASSWORD:docker}
   jpa:
@@ -37,6 +37,10 @@ spring:
           jwk-set-uri: ${KEYCLOAK_ANIMAL_ADOPTION_REALM_OPENID_URI:http://localhost:8080/realms/animal-adoption/protocol/openid-connect/certs}
   cache:
     type: redis
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
 
 minio:
   endpoint: ${MINIO_ENDPOINT:http://localhost:9000}
@@ -67,7 +71,3 @@ management:
   metrics:
     tags:
       application: ${spring.application.name}
-
-redis:
-  host: redis
-  port: 6379

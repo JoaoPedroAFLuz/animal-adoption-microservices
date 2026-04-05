@@ -10,7 +10,7 @@ import type { PetFormData } from '@/lib/schemas';
 async function getToken() {
   const session = await auth();
 
-  if (!session?.accessToken) {
+  if (!session?.accessToken || session.error === 'RefreshTokenError') {
     throw new Error('Not authenticated');
   }
 

@@ -40,12 +40,12 @@ export default async function PetDetailsPage({ params }: PetDetailsPageProps) {
 
       <div className="mt-6 rounded-lg border border-gray-200 bg-white p-8 shadow-sm">
         {pet.imageUrl ? (
-          <div className="relative mb-6 h-64 w-full overflow-hidden rounded-lg">
+          <div className="relative mb-6 h-64 w-full overflow-hidden rounded-lg bg-gray-100">
             <Image
               src={pet.imageUrl}
               alt={pet.name}
               fill
-              className="object-cover"
+              className="object-contain"
               sizes="(max-width: 768px) 100vw, 672px"
             />
           </div>

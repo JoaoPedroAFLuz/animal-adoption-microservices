@@ -19,12 +19,12 @@ export function PetCard({ pet }: PetCardProps) {
       className="hover:border-brand block overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm transition hover:shadow-md"
     >
       {pet.imageUrl ? (
-        <div className="relative h-48 w-full">
+        <div className="relative h-48 w-full bg-gray-100">
           <Image
             src={pet.imageUrl}
             alt={pet.name}
             fill
-            className="object-cover"
+            className="object-contain"
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
           />
         </div>

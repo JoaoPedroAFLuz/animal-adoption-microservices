@@ -5,6 +5,7 @@
 - [ ] Active tab highlighting — underline or color change on the current nav link
 - [ ] Loading skeletons — placeholder shapes while pages load
 - [ ] Search by name — text input to search pets by name
+- [ ] Error pages — friendly error boundaries with retry button when API is unavailable
 
 ## Auth & Users
 

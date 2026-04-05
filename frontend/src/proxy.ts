@@ -10,7 +10,7 @@ export async function proxy(request: NextRequest) {
 
   const isProtected = protectedPaths.some((path) => pathname.startsWith(path));
 
-  if (isProtected && !session) {
+  if (isProtected && (!session || session.error === 'RefreshTokenError')) {
     return NextResponse.redirect(new URL('/api/auth/signin', request.url));
   }
 
