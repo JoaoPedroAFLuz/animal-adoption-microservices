@@ -38,7 +38,9 @@ public class SecurityConfig {
             "/pets/featured",
             "/pets/species",
             "/pets/sizes",
-            "/actuator/prometheus"
+            "/actuator/prometheus",
+            "/swagger-ui/**",
+            "/v3/api-docs/**"
     };
 
     @Bean

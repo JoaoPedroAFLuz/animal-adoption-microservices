@@ -18,7 +18,7 @@
 
 - [x] Pet image upload — S3/MinIO storage, upload endpoint, display on cards and details
 - [ ] Edit profile — custom forms to change name, password, and photo via Keycloak Admin API
-- [ ] OpenAPI/Swagger documentation — auto-generated API docs
+- [x] OpenAPI/Swagger documentation — auto-generated API docs
 - [ ] Audit log — track who created/updated/deleted pets and when
 
 ## DevOps

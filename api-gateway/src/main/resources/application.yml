@@ -34,6 +34,10 @@ spring:
                   args:
                     name: petServiceCircuitBreaker
                     fallbackUri: forward:/fallback
+            - id: pet-service-docs
+              uri: lb://${PET_SERVICE_NAME:pet-service}
+              predicates:
+                - Path=/swagger-ui/**,/v3/api-docs/**
 
 resilience4j:
   circuitbreaker:

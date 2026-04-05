@@ -52,7 +52,9 @@ public class SecurityConfig {
             "/pets/species",
             "/pets/sizes",
             "/pets/{id}",
-            "/actuator/prometheus"
+            "/actuator/prometheus",
+            "/swagger-ui/**",
+            "/v3/api-docs/**"
     };
 
 }
