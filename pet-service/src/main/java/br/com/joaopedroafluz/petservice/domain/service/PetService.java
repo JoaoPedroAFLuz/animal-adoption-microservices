@@ -72,7 +72,6 @@ public class PetService {
     }
 
     @Transactional
-    @CacheEvict(value = "featured-pets", allEntries = true)
     public Pet save(PetRegistrationInputDTO newPetDTO) {
         var pet = convertInputDTOToModel(newPetDTO);
         pet = save(pet);
@@ -90,7 +89,6 @@ public class PetService {
     }
 
     @Transactional
-    @CacheEvict(value = "featured-pets", allEntries = true)
     public Pet update(UUID id, PetUpdateInputDTO petUpdateInputDTO) {
         var petFound = findByIdOrThrow(id);
 
@@ -116,6 +114,7 @@ public class PetService {
 
         pet.setOwnerId(user.id());
         pet.setStatus(Status.ADOPTED);
+        pet.setFeatured(false);
 
         pet = save(pet);
 
@@ -138,7 +137,6 @@ public class PetService {
     }
 
     @Transactional
-    @CacheEvict(value = "featured-pets", allEntries = true)
     public Pet uploadImage(UUID id, MultipartFile file) {
         var pet = findByIdOrThrow(id);
 
@@ -148,6 +146,15 @@ public class PetService {
 
         var imageUrl = imageStorageService.upload(file);
         pet.setImageUrl(imageUrl);
+
+        return save(pet);
+    }
+
+    @Transactional
+    @CacheEvict(value = "featured-pets", allEntries = true)
+    public Pet toggleFeatured(UUID id) {
+        var pet = findByIdOrThrow(id);
+        pet.setFeatured(!pet.isFeatured());
 
         return save(pet);
     }

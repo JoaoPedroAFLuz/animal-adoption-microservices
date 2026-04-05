@@ -104,4 +104,10 @@ public class PetController {
         return PetResponseDTO.from(petService.uploadImage(id, file));
     }
 
+    @PutMapping("/{id}/featured")
+    @PreAuthorize("hasRole('UPDATE_PET')")
+    public PetResponseDTO toggleFeatured(@PathVariable UUID id) {
+        return PetResponseDTO.from(petService.toggleFeatured(id));
+    }
+
 }

@@ -1,0 +1,2 @@
+ALTER TABLE pets ADD COLUMN created_by VARCHAR(255);
+ALTER TABLE pets ADD COLUMN updated_by VARCHAR(255);

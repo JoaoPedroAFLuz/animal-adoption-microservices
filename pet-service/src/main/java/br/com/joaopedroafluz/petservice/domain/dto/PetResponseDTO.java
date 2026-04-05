@@ -22,6 +22,9 @@ public record PetResponseDTO(
         Gender gender,
         LocalDate birthDate,
         String imageUrl,
+        boolean featured,
+        String createdBy,
+        String updatedBy,
         LocalDateTime createdAt,
         LocalDateTime updatedAt
 ) {
@@ -39,6 +42,9 @@ public record PetResponseDTO(
                 pet.getGender(),
                 pet.getBirthDate(),
                 pet.getImageUrl(),
+                pet.isFeatured(),
+                pet.getCreatedBy(),
+                pet.getUpdatedBy(),
                 pet.getCreatedAt(),
                 pet.getUpdatedAt()
         );
