@@ -1,9 +1,18 @@
 import Link from 'next/link';
 
 import { auth, signIn, signOut } from '@/auth';
+import { NavLinks } from '@/components/NavLinks';
 
 export async function Header() {
   const session = await auth();
+
+  const links = [
+    { href: '/pets', label: 'Browse Pets' },
+    ...(session ? [{ href: '/my-pets', label: 'My Pets' }] : []),
+    ...(session?.roles?.includes('REGISTER_PET')
+      ? [{ href: '/admin/pets/new', label: 'Register Pet' }]
+      : []),
+  ];
 
   return (
     <header className="bg-brand shadow-sm">
@@ -13,28 +22,10 @@ export async function Header() {
         </Link>
 
         <div className="flex items-center gap-6">
-          <Link href="/pets" className="text-sm font-medium text-gray-800 hover:text-gray-950">
-            Browse Pets
-          </Link>
+          <NavLinks links={links} />
 
           {session ? (
             <>
-              <Link
-                href="/my-pets"
-                className="text-sm font-medium text-gray-800 hover:text-gray-950"
-              >
-                My Pets
-              </Link>
-
-              {session.roles?.includes('REGISTER_PET') && (
-                <Link
-                  href="/admin/pets/new"
-                  className="text-sm font-medium text-gray-800 hover:text-gray-950"
-                >
-                  Register Pet
-                </Link>
-              )}
-
               <span className="text-sm text-gray-800">{session.displayName}</span>
 
               <form

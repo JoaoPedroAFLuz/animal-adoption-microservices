@@ -7,6 +7,10 @@ vi.mock('next/link', () => ({
   ),
 }));
 
+vi.mock('next/navigation', () => ({
+  usePathname: () => '/',
+}));
+
 vi.mock('@/auth', () => ({
   auth: vi.fn(),
   signIn: vi.fn(),
