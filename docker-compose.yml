@@ -37,6 +37,8 @@ services:
       KC_DB_URL: ${KEYCLOAK_DB_URL}
       KC_DB_USERNAME: ${KEYCLOAK_DB_USERNAME}
       KC_DB_PASSWORD: ${KEYCLOAK_DB_PASSWORD}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
     entrypoint: ["/bin/bash", "/opt/keycloak/start.sh"]
     command: []
     volumes:

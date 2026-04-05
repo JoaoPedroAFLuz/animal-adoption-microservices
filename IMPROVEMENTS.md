@@ -8,7 +8,7 @@
 
 ## Auth & Users
 
-- [ ] Google login — add Google as social identity provider in Keycloak
+- [x] Google login — add Google as social identity provider in Keycloak
 - [ ] User profile page — view/edit name, email, adoption history
 - [ ] User avatar — display user photo from Keycloak/Google in the header
 
