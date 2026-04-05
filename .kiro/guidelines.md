@@ -92,6 +92,27 @@ return Pet.builder()
 
 <!-- Add new preferences and learnings below as they come up -->
 
+### JSX Spacing
+
+- Add blank lines between sibling JSX elements at the same level when they are multi-line blocks
+- No blank lines needed between single-line siblings of the same type (e.g., a list of `<Detail />` or `<option>`)
+
+```tsx
+// ✅ Blank line between multi-line siblings
+<h1 className="text-3xl font-bold">
+  {pet.name}
+</h1>
+
+<span className={`rounded-full ${statusClass}`}>
+  {pet.status}
+</span>
+
+// ✅ No blank line between single-line siblings
+<Detail label="Species" value={pet.specie} />
+<Detail label="Breed" value={pet.breed} />
+<Detail label="Size" value={pet.size} />
+```
+
 ### Frontend Import Order (enforced by ESLint `import/order`)
 1. React/Node imports (`react`, `next/*`)
 2. Library imports (external packages)
@@ -109,7 +130,7 @@ return Pet.builder()
 - Flyway migrations in `classpath:database/migration`
 - Redis cache on `findFeatured()` with 1h TTL
 - Keycloak client: `animal-adoption` (roles: REGISTER_PET, UPDATE_PET, DELETE_PET, ADMIN)
-- Public endpoints: GET /pets, /pets/featured, /pets/species, /pets/sizes, /actuator/prometheus
+- Public endpoints: GET /pets, /pets/{id}, /pets/featured, /pets/species, /pets/sizes, /actuator/prometheus
 
 ### Notification Service (port 8082)
 - No database — purely event-driven

@@ -34,6 +34,7 @@ public class SecurityConfig {
 
     private static final String[] GET_PUBLIC_ENDPOINTS = {
             "/pets",
+            "/pets/{id}",
             "/pets/featured",
             "/pets/species",
             "/pets/sizes",
