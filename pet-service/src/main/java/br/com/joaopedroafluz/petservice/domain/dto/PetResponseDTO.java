@@ -21,6 +21,7 @@ public record PetResponseDTO(
         Status status,
         Gender gender,
         LocalDate birthDate,
+        String imageUrl,
         LocalDateTime createdAt,
         LocalDateTime updatedAt
 ) {
@@ -37,6 +38,7 @@ public record PetResponseDTO(
                 pet.getStatus(),
                 pet.getGender(),
                 pet.getBirthDate(),
+                pet.getImageUrl(),
                 pet.getCreatedAt(),
                 pet.getUpdatedAt()
         );

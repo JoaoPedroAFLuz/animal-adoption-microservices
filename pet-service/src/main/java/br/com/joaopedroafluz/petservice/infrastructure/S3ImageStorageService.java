@@ -1,0 +1,63 @@
+package br.com.joaopedroafluz.petservice.infrastructure;
+
+import br.com.joaopedroafluz.petservice.config.MinioProperties;
+import br.com.joaopedroafluz.petservice.domain.service.ImageStorageService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+
+import java.io.IOException;
+import java.util.UUID;
+
+@Service
+@RequiredArgsConstructor
+public class S3ImageStorageService implements ImageStorageService {
+
+    private final S3Client s3Client;
+    private final MinioProperties minioProperties;
+
+    @Override
+    public String upload(MultipartFile file) {
+        var extension = getExtension(file.getOriginalFilename());
+        var key = UUID.randomUUID() + extension;
+
+        try {
+            var request = PutObjectRequest.builder()
+                                          .bucket(minioProperties.getBucket())
+                                          .key(key)
+                                          .contentType(file.getContentType())
+                                          .build();
+
+            s3Client.putObject(request, RequestBody.fromBytes(file.getBytes()));
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to upload image", e);
+        }
+
+        return minioProperties.getEndpoint() + "/" + minioProperties.getBucket() + "/" + key;
+    }
+
+    @Override
+    public void delete(String imageUrl) {
+        var key = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
+
+        var request = DeleteObjectRequest.builder()
+                                         .bucket(minioProperties.getBucket())
+                                         .key(key)
+                                         .build();
+
+        s3Client.deleteObject(request);
+    }
+
+    private String getExtension(String filename) {
+        if (filename != null && filename.contains(".")) {
+            return filename.substring(filename.lastIndexOf("."));
+        }
+
+        return ".jpg";
+    }
+
+}

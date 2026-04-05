@@ -40,3 +40,20 @@ export async function adoptPet(id: string): Promise<Pet> {
 
   return api.put<Pet>(`/pets/adopt/${id}`, null, { token });
 }
+
+export async function uploadPetImage(petId: string, formData: FormData): Promise<Pet> {
+  const token = await getToken();
+  const apiUrl = process.env.API_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost';
+
+  const response = await fetch(`${apiUrl}/pets/${petId}/image`, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${token}` },
+    body: formData,
+  });
+
+  if (!response.ok) {
+    throw new Error(`API error: ${response.status}`);
+  }
+
+  return response.json();
+}

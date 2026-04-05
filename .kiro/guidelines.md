@@ -92,6 +92,38 @@ return Pet.builder()
 - API Gateway validates JWT (authentication) + routes requests; pet-service handles authorization (`@PreAuthorize`)
 - Each service has its own database (database per service pattern)
 
+## Design Principles
+
+### SOLID
+
+- **Single Responsibility**: each class has one reason to change — controllers handle HTTP, services handle business logic, repositories handle persistence
+- **Open/Closed**: extend behavior through new implementations, not by modifying existing code (e.g. new `ImageStorageService` implementation for a different provider)
+- **Liskov Substitution**: implementations must be interchangeable through their interface (e.g. `S3ImageStorageService` can be swapped for any `ImageStorageService`)
+- **Interface Segregation**: keep interfaces focused — don't force implementations to depend on methods they don't use
+- **Dependency Inversion**: depend on abstractions, not concretions — domain services depend on interfaces, infrastructure provides implementations
+
+### Clean Architecture
+
+- **Domain layer** (`domain/`): entities, enums, exceptions, repository interfaces, service interfaces — no framework dependencies
+- **Infrastructure layer** (`infrastructure/`): concrete implementations of domain interfaces (e.g. `S3ImageStorageService`)
+- **API layer** (`api/`): controllers, exception handlers — framework-specific, thin, delegates to domain services
+- **Config layer** (`config/`): Spring beans, properties, security — wiring only
+
+### Patterns in Use
+
+- **Repository pattern**: `PetRepository` abstracts data access
+- **DTO pattern**: separate objects for API input/output, never expose JPA entities
+- **Factory pattern**: `PetFactory` for test data creation
+- **Strategy pattern**: `ImageStorageService` interface with swappable implementations
+- **Observer pattern**: RabbitMQ events decouple pet-service from notification-service
+- **Builder pattern**: Lombok `@Builder` for entity construction
+
+### Rules
+
+- Third-party integrations (storage, messaging, external APIs) must be behind an interface in the domain layer
+- The implementation goes in the `infrastructure` package
+- Domain services never import infrastructure or framework-specific classes directly
+
 ## Notes
 
 <!-- Add new preferences and learnings below as they come up -->

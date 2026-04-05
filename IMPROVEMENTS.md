@@ -14,7 +14,7 @@
 
 ## Backend
 
-- [ ] Pet image upload — S3/MinIO storage, upload endpoint, display on cards and details
+- [x] Pet image upload — S3/MinIO storage, upload endpoint, display on cards and details
 - [ ] OpenAPI/Swagger documentation — auto-generated API docs
 - [ ] Audit log — track who created/updated/deleted pets and when
 

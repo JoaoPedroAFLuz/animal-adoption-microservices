@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
 
 import { Field, SelectField } from '@/components/FormFields';
-import { createPet, updatePet } from '@/lib/actions';
+import { createPet, updatePet, uploadPetImage } from '@/lib/actions';
 import { petFormSchema } from '@/lib/schemas';
 
 import type { Pet } from '@/types';
@@ -23,7 +23,9 @@ export function PetForm({ pet }: PetFormProps) {
     e.preventDefault();
 
     const formData = new FormData(e.currentTarget);
+    const imageFile = formData.get('image') as File;
     const data = Object.fromEntries(formData);
+    delete data.image;
 
     const result = petFormSchema.safeParse(data);
 
@@ -42,21 +44,26 @@ export function PetForm({ pet }: PetFormProps) {
     setErrors({});
 
     try {
+      let savedPet: Pet;
+
       if (isEdit) {
-        await updatePet(pet.id, result.data);
+        savedPet = await updatePet(pet.id, result.data);
 
         toast.success(`${result.data.name} updated successfully!`);
       } else {
-        const created = await createPet(result.data);
+        savedPet = await createPet(result.data);
 
-        toast.success(`${created.name} registered successfully!`);
-
-        router.push(`/pets/${created.id}`);
-
-        return;
+        toast.success(`${savedPet.name} registered successfully!`);
       }
 
-      router.push(`/pets/${pet.id}`);
+      if (imageFile && imageFile.size > 0) {
+        const imageFormData = new FormData();
+        imageFormData.append('file', imageFile);
+
+        await uploadPetImage(savedPet.id, imageFormData);
+      }
+
+      router.push(`/pets/${savedPet.id}`);
     } catch {
       toast.error(`Failed to ${isEdit ? 'update' : 'register'} pet. Please try again.`);
     }
@@ -110,6 +117,19 @@ export function PetForm({ pet }: PetFormProps) {
           type="date"
           error={errors.birthDate}
           defaultValue={pet?.birthDate}
+        />
+      </div>
+
+      <div>
+        <label htmlFor="image" className="mb-1 block text-sm font-medium text-gray-700">
+          Image <span className="text-gray-400">(optional)</span>
+        </label>
+        <input
+          id="image"
+          name="image"
+          type="file"
+          accept="image/jpeg,image/png,image/webp"
+          className="file:bg-brand w-full rounded-lg border border-gray-300 px-4 py-2 text-sm file:mr-4 file:rounded-lg file:border-0 file:px-4 file:py-2 file:text-sm file:font-medium"
         />
       </div>
 

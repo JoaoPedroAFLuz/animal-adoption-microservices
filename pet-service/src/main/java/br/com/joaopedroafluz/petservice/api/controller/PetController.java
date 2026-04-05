@@ -14,6 +14,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.UUID;
@@ -95,6 +96,12 @@ public class PetController {
     @PreAuthorize("hasRole('DELETE_PET')")
     public void delete(@PathVariable UUID id) {
         petService.deleteById(id);
+    }
+
+    @PostMapping("/{id}/image")
+    @PreAuthorize("hasRole('UPDATE_PET')")
+    public PetResponseDTO uploadImage(@PathVariable UUID id, @RequestParam("file") MultipartFile file) {
+        return PetResponseDTO.from(petService.uploadImage(id, file));
     }
 
 }

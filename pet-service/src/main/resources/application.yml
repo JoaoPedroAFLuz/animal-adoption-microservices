@@ -2,6 +2,10 @@ server:
   port: ${PET_SERVICE_PORT:8082}
 
 spring:
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 5MB
   datasource:
     url: ${PET_SERVICE_DB_URL:jdbc:postgresql://localhost:5434/petservicedb}
     username: ${PET_SERVICE_DB_USERNAME:joaopedroafluz}
@@ -33,6 +37,12 @@ spring:
           jwk-set-uri: ${KEYCLOAK_ANIMAL_ADOPTION_REALM_OPENID_URI:http://localhost:8080/realms/animal-adoption/protocol/openid-connect/certs}
   cache:
     type: redis
+
+minio:
+  endpoint: ${MINIO_ENDPOINT:http://localhost:9000}
+  access-key: ${MINIO_ROOT_USER:minioadmin}
+  secret-key: ${MINIO_ROOT_PASSWORD:minioadmin}
+  bucket: ${MINIO_BUCKET:pet-images}
 
 rabbit:
   exchange: ${RABBIT_MQ_EXCHANGE:pet.exchange}

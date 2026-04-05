@@ -21,6 +21,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Arrays;
 import java.util.List;
@@ -33,6 +34,7 @@ public class PetService {
 
     private final PetRepository petRepository;
     private final NotificationService notificationService;
+    private final ImageStorageService imageStorageService;
 
     public Page<Pet> findAll(PetFilter petFilter, Pageable pageable) {
         final var petSpecification = PetSpecification.withFilters(petFilter);
@@ -126,9 +128,28 @@ public class PetService {
     public void deleteById(UUID id) {
         var pet = findByIdOrThrow(id);
 
+        if (pet.getImageUrl() != null) {
+            imageStorageService.delete(pet.getImageUrl());
+        }
+
         petRepository.deleteById(id);
 
         notificationService.sendDeletedNotification(new PetDeletedMessage(pet.getId(), pet.getName()));
+    }
+
+    @Transactional
+    @CacheEvict(value = "featured-pets", allEntries = true)
+    public Pet uploadImage(UUID id, MultipartFile file) {
+        var pet = findByIdOrThrow(id);
+
+        if (pet.getImageUrl() != null) {
+            imageStorageService.delete(pet.getImageUrl());
+        }
+
+        var imageUrl = imageStorageService.upload(file);
+        pet.setImageUrl(imageUrl);
+
+        return save(pet);
     }
 
     private Pet convertInputDTOToModel(PetRegistrationInputDTO petRegistrationInputDTO) {

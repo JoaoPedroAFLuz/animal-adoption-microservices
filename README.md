@@ -40,6 +40,7 @@ Core service for managing pets and adoptions:
 * Adoption flow: updates pet status, assigns owner, publishes event to RabbitMQ
 * Publishes events to RabbitMQ on pet registration and deletion (admin notifications)
 * Optimistic locking (`@Version`) to prevent race conditions on adoption
+* Pet image upload via S3-compatible storage (MinIO) with public bucket
 * Redis caching on featured pets with 1h TTL
 * Pagination and filtering with JPA Specifications (by species, gender, size, status)
 * Flyway for database migrations

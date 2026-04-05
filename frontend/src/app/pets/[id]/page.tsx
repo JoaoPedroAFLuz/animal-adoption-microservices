@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
@@ -38,6 +39,22 @@ export default async function PetDetailsPage({ params }: PetDetailsPageProps) {
       </Link>
 
       <div className="mt-6 rounded-lg border border-gray-200 bg-white p-8 shadow-sm">
+        {pet.imageUrl ? (
+          <div className="relative mb-6 h-64 w-full overflow-hidden rounded-lg">
+            <Image
+              src={pet.imageUrl}
+              alt={pet.name}
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, 672px"
+            />
+          </div>
+        ) : (
+          <div className="mb-6 flex h-64 items-center justify-center rounded-lg bg-gray-100 text-6xl">
+            {specieEmoji[pet.specie] || '🐾'}
+          </div>
+        )}
+
         <div className="mb-4 flex items-center justify-between">
           <h1 className="text-3xl font-bold text-gray-900">
             {specieEmoji[pet.specie] || '🐾'} {pet.name}

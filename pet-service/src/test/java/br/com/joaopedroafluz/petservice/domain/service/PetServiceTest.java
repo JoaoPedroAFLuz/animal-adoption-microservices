@@ -37,6 +37,9 @@ public class PetServiceTest {
     @Mock
     private NotificationService notificationService;
 
+    @Mock
+    private ImageStorageService imageStorageService;
+
     @Spy
     @InjectMocks
     private PetService petService;

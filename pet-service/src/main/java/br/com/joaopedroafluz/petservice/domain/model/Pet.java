@@ -60,6 +60,9 @@ public class Pet {
     @Column(nullable = false)
     private LocalDate birthDate;
 
+    @Column(name = "image_url")
+    private String imageUrl;
+
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 

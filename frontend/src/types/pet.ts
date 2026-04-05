@@ -17,6 +17,7 @@ export interface Pet {
   status: Status;
   gender: Gender;
   birthDate: string;
+  imageUrl: string | null;
   createdAt: string;
   updatedAt: string;
 }
