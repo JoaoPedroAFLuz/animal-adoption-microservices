@@ -1,8 +1,8 @@
 import { Suspense } from 'react';
 
+import { Pagination } from '@/components/Pagination';
 import { PetCard } from '@/components/PetCard';
 import { PetFilters } from '@/components/PetFilters';
-import { Pagination } from '@/components/Pagination';
 import { api } from '@/lib/api';
 
 import type { Page, Pet } from '@/types';
