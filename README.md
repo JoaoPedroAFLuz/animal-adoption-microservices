@@ -29,7 +29,8 @@ Centralized identity and access management:
 
 * Realm: `animal-adoption` with OAuth 2.0 / OpenID Connect
 * Backend client (`animal-adoption`) with roles: `REGISTER_PET`, `UPDATE_PET`, `DELETE_PET`, `ADMIN`
-* Frontend client (`frontend`) with Authorization Code + PKCE flow for Insomnia/UI testing
+* Frontend client (`frontend`) with Authorization Code + PKCE flow
+* Google identity provider with automatic account linking
 * JWT tokens used by all services for authentication and authorization
 
 ### Pet Service (port 8081)
@@ -43,6 +44,7 @@ Core service for managing pets and adoptions:
 * Pet image upload via S3-compatible storage (MinIO) with public bucket
 * Redis caching on featured pets with 1h TTL
 * Pagination and filtering with JPA Specifications (by species, gender, size, status)
+* Accent-insensitive search by name using PostgreSQL `unaccent` extension
 * Flyway for database migrations
 * Response DTOs to avoid exposing JPA entities
 
@@ -63,11 +65,16 @@ Event-driven service for email notifications:
 Next.js application for browsing and managing pets:
 
 * Browse and filter pets by species, gender, size, and status with pagination
-* Pet details page with adoption flow
+* Search by name with accent-insensitive matching and debounced input
+* Pet details page with adoption flow and image display
+* User profile page with avatar and adoption history
 * Keycloak authentication with NextAuth.js v5 (Authorization Code + PKCE)
+* Google login with automatic account linking
 * Admin pages for registering, editing, and deleting pets (role-based)
+* Pet image upload with client-side validation (size, type)
 * Server actions for secure API calls (tokens never exposed to the client)
 * Zod validation on forms matching backend constraints
+* Loading skeletons for all pages
 
 ### Shared Module
 
@@ -125,7 +132,8 @@ For day-to-day development, run pet-service locally via IntelliJ (with hot reloa
 
 1. `docker compose up -d` — starts infrastructure + notification-service
 2. Run pet-service from IntelliJ (default profile uses `localhost` for all dependencies)
-3. Access the API through the gateway at `http://localhost`
+3. `cd frontend && npm run dev` — starts the frontend on `http://localhost:3000`
+4. Access the API through the gateway at `http://localhost`
 
 ### Remote Debugging
 
@@ -148,6 +156,7 @@ In IntelliJ: **Run** → **Edit Configurations** → **Remote JVM Debug** → se
 | RabbitMQ      | http://localhost:15672        |
 | MailHog       | http://localhost:8025         |
 | Grafana       | http://localhost:3001         |
+| MinIO Console | http://localhost:9001         |
 | Prometheus    | http://localhost:9090         |
 | RedisInsight  | http://localhost:8001         |
 
@@ -159,6 +168,7 @@ available routes.
 ### Core
 
 * Java 21, Spring Boot 3.5, Spring Cloud 2025.0
+* Next.js 16, React 19, Tailwind CSS v4
 * Spring Cloud Gateway — routing, rate limiting, circuit breaker
 * Spring Cloud Eureka — service discovery
 * Spring Security + OAuth 2.0 — authentication and authorization
@@ -166,6 +176,7 @@ available routes.
 * PostgreSQL + Flyway — relational database with versioned migrations
 * RabbitMQ — async messaging with DLQ support
 * Redis — distributed caching
+* MinIO — S3-compatible object storage for pet images
 
 ### Libraries
 

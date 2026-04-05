@@ -4,3 +4,10 @@
   --color-brand: #34d399;
   --color-brand-dark: #2bc48a;
 }
+
+@layer base {
+  button:not(:disabled),
+  [role='button']:not(:disabled) {
+    cursor: pointer;
+  }
+}
