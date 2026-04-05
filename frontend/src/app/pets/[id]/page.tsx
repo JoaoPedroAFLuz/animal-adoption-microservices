@@ -61,14 +61,12 @@ export default async function PetDetailsPage({ params }: PetDetailsPageProps) {
           <div className="mt-8">
             <button
               disabled
-              className="w-full rounded-lg bg-brand px-6 py-3 font-medium text-gray-900 opacity-50"
+              className="bg-brand w-full rounded-lg px-6 py-3 font-medium text-gray-900 opacity-50"
             >
               Adopt {pet.name}
             </button>
 
-            <p className="mt-2 text-center text-sm text-gray-500">
-              Sign in to adopt this pet
-            </p>
+            <p className="mt-2 text-center text-sm text-gray-500">Sign in to adopt this pet</p>
           </div>
         )}
       </div>

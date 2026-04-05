@@ -1,6 +1,10 @@
 import Link from 'next/link';
 
-export function Header() {
+import { auth, signIn, signOut } from '@/auth';
+
+export async function Header() {
+  const session = await auth();
+
   return (
     <header className="bg-brand shadow-sm">
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
@@ -12,9 +16,40 @@ export function Header() {
           <Link href="/pets" className="text-sm font-medium text-gray-800 hover:text-gray-950">
             Browse Pets
           </Link>
-          <button className="rounded-lg bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-gray-800">
-            Sign In
-          </button>
+
+          {session ? (
+            <>
+              <span className="text-sm text-gray-800">{session.user?.name}</span>
+
+              <form
+                action={async () => {
+                  'use server';
+                  await signOut({ redirectTo: '/' });
+                }}
+              >
+                <button
+                  type="submit"
+                  className="rounded-lg bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-gray-800"
+                >
+                  Sign Out
+                </button>
+              </form>
+            </>
+          ) : (
+            <form
+              action={async () => {
+                'use server';
+                await signIn('keycloak');
+              }}
+            >
+              <button
+                type="submit"
+                className="rounded-lg bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-gray-800"
+              >
+                Sign In
+              </button>
+            </form>
+          )}
         </div>
       </nav>
     </header>

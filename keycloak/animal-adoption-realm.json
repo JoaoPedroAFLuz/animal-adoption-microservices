@@ -750,7 +750,8 @@
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
       "redirectUris": [
-        "http://localhost:8080/callback"
+        "http://localhost:8080/callback",
+        "http://localhost:3000/api/auth/callback/keycloak"
       ],
       "webOrigins": [
         "*"
