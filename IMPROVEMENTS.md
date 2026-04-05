@@ -23,5 +23,5 @@
 
 ## DevOps
 
-- [ ] GitHub Actions CI — run tests, lint, build on every push
+- [x] GitHub Actions CI — run tests, lint, build on every push
 - [ ] Production Docker config — nginx reverse proxy with SSL
