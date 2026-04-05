@@ -19,6 +19,7 @@ export function AdoptButton({ petId, petName, token }: AdoptButtonProps) {
       await api.put(`/pets/adopt/${petId}`, null, { token });
 
       toast.success(`You adopted ${petName}!`);
+
       router.refresh();
     } catch {
       toast.error('Failed to adopt. Please try again.');

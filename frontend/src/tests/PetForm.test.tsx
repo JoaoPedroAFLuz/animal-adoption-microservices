@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi } from 'vitest';
 
 import { PetForm } from '@/components/PetForm';
+import { mockPet } from '@/tests/mocks/server';
 
 vi.mock('next/navigation', () => ({
   useRouter: () => ({ push: vi.fn() }),
@@ -38,5 +39,16 @@ describe('PetForm', () => {
     expect(screen.getByText('Size is required')).toBeInTheDocument();
     expect(screen.getByText('Gender is required')).toBeInTheDocument();
     expect(screen.getByText('Birth date is required')).toBeInTheDocument();
+  });
+
+  it('should pre-fill values and show update button in edit mode', () => {
+    render(<PetForm token="test-token" pet={mockPet} />);
+
+    expect(screen.getByLabelText(/name/i)).toHaveValue('Luna');
+    expect(screen.getByLabelText(/breed/i)).toHaveValue('Golden Retriever');
+    expect(screen.getByLabelText(/species/i)).toHaveValue('DOG');
+    expect(screen.getByLabelText(/size/i)).toHaveValue('LARGE');
+    expect(screen.getByLabelText(/gender/i)).toHaveValue('FEMALE');
+    expect(screen.getByRole('button', { name: /update pet/i })).toBeInTheDocument();
   });
 });

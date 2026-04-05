@@ -35,8 +35,9 @@
 
 ### Line Spacing
 
-- Blank line between blocks with **different purposes** (log, service call, return, variable declaration)
+- Blank line between blocks with **different purposes** (log, service call, return, variable declaration, toast, navigation)
 - Keep together lines of the **same logical action** (consecutive setters, consecutive validations, builder chain)
+- This applies to both Java and TypeScript/JSX
 
 ```java
 public Pet adopt(UUID petId, UserDTO user) {

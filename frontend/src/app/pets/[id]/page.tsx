@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 
 import { auth } from '@/auth';
 import { AdoptButton } from '@/components/AdoptButton';
+import { DeleteButton } from '@/components/DeleteButton';
 import { api } from '@/lib/api';
 import { formatDate } from '@/utils/format';
 
@@ -20,6 +21,7 @@ interface PetDetailsPageProps {
 export default async function PetDetailsPage({ params }: PetDetailsPageProps) {
   const { id } = await params;
   const session = await auth();
+  const roles = session?.roles || [];
 
   let pet: Pet;
 
@@ -75,6 +77,23 @@ export default async function PetDetailsPage({ params }: PetDetailsPageProps) {
 
                 <p className="mt-2 text-center text-sm text-gray-500">Sign in to adopt this pet</p>
               </>
+            )}
+          </div>
+        )}
+
+        {session?.accessToken && (roles.includes('UPDATE_PET') || roles.includes('DELETE_PET')) && (
+          <div className="mt-6 flex gap-3 border-t border-gray-200 pt-6">
+            {roles.includes('UPDATE_PET') && (
+              <Link
+                href={`/admin/pets/${pet.id}/edit`}
+                className="w-full rounded-lg border border-gray-300 px-6 py-3 text-center font-medium text-gray-700 hover:bg-gray-50"
+              >
+                Edit
+              </Link>
+            )}
+
+            {roles.includes('DELETE_PET') && (
+              <DeleteButton petId={pet.id} petName={pet.name} token={session.accessToken} />
             )}
           </div>
         )}
