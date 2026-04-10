@@ -1,0 +1,10 @@
+keycloak:
+  server-url: http://keycloak:8080
+
+minio:
+  endpoint: http://minio:9000
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://eureka-server:8761/eureka/

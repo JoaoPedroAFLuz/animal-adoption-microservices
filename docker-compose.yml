@@ -152,6 +152,8 @@ services:
       mc alias set local http://minio:9000 $${MINIO_ROOT_USER} $${MINIO_ROOT_PASSWORD};
       mc mb --ignore-existing local/pet-images;
       mc anonymous set download local/pet-images;
+      mc mb --ignore-existing local/user-avatars;
+      mc anonymous set download local/user-avatars;
       exit 0;
       "
     environment:
@@ -218,6 +220,29 @@ services:
       pet-db:
         condition: service_healthy
       rabbitmq:
+        condition: service_healthy
+      keycloak:
+        condition: service_healthy
+    networks:
+      - adoption-network
+
+  user-service:
+    profiles:
+      - full
+    container_name: user-service
+    build:
+      context: .
+      dockerfile: user-service/Dockerfile
+    ports:
+      - "8083:8083"
+      - "5007:5007"
+    env_file:
+      - .env
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5007
+    depends_on:
+      eureka-server:
         condition: service_healthy
       keycloak:
         condition: service_healthy

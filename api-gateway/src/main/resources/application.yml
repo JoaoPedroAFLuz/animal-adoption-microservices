@@ -38,6 +38,15 @@ spring:
               uri: lb://${PET_SERVICE_NAME:pet-service}
               predicates:
                 - Path=/swagger-ui/**,/v3/api-docs/**
+            - id: ${USER_SERVICE_NAME:user-service}
+              uri: lb://${USER_SERVICE_NAME:user-service}
+              predicates:
+                - Path=/profile/**
+              filters:
+                - name: CircuitBreaker
+                  args:
+                    name: userServiceCircuitBreaker
+                    fallbackUri: forward:/fallback
 
 resilience4j:
   circuitbreaker:
@@ -49,6 +58,8 @@ resilience4j:
         permittedNumberOfCallsInHalfOpenState: 3
     instances:
       petServiceCircuitBreaker:
+        baseConfig: default
+      userServiceCircuitBreaker:
         baseConfig: default
   timelimiter:
     configs:

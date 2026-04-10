@@ -1,0 +1,49 @@
+server:
+  port: ${USER_SERVICE_PORT:8083}
+
+spring:
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 5MB
+  application:
+    name: ${USER_SERVICE_NAME:user-service}
+  cloud:
+    discovery:
+      enabled: true
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${KEYCLOAK_ANIMAL_ADOPTION_REALM_URI:http://localhost:8080/realms/animal-adoption}
+          jwk-set-uri: ${KEYCLOAK_ANIMAL_ADOPTION_REALM_OPENID_URI:http://localhost:8080/realms/animal-adoption/protocol/openid-connect/certs}
+
+keycloak:
+  server-url: ${KEYCLOAK_SERVER_URL:http://localhost:8080}
+  realm: ${KEYCLOAK_REALM:animal-adoption}
+  client-id: ${KEYCLOAK_CLIENT_ID:animal-adoption}
+  client-secret: ${KEYCLOAK_CLIENT_SECRET:}
+
+minio:
+  endpoint: ${MINIO_ENDPOINT:http://localhost:9000}
+  access-key: ${MINIO_ROOT_USER:minioadmin}
+  secret-key: ${MINIO_ROOT_PASSWORD:minioadmin}
+  bucket: ${MINIO_USER_AVATARS_BUCKET:user-avatars}
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_SERVER_URL:http://localhost:8761/eureka/}
+    fetch-registry: true
+    register-with-eureka: true
+  instance:
+    prefer-ip-address: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, prometheus
+  metrics:
+    tags:
+      application: ${spring.application.name}
