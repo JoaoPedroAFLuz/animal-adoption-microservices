@@ -38,3 +38,4 @@ build/
 
 .kiro/
 01.png
+nginx/certs/

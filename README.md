@@ -116,6 +116,14 @@ docker compose up --build -d
 docker compose --profile full up --build -d
 ```
 
+The `full` profile includes an nginx reverse proxy with SSL. Generate the certificates before the first run:
+
+```bash
+./nginx/generate-certs.sh
+```
+
+Then access the application at `https://localhost` (the browser will warn about the self-signed certificate — click "proceed anyway").
+
 Wait until all services are healthy, then the application is ready.
 
 ### Keycloak Setup (first time only)

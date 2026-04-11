@@ -297,6 +297,27 @@ services:
     networks:
       - adoption-network
 
+  nginx:
+    profiles:
+      - full
+    container_name: nginx
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    ports:
+      - "443:443"
+    volumes:
+      - ./nginx/certs:/etc/nginx/certs:ro
+    depends_on:
+      api-gateway:
+        condition: service_started
+      frontend:
+        condition: service_started
+      keycloak:
+        condition: service_healthy
+    networks:
+      - adoption-network
+
   prometheus:
     container_name: prometheus
     build:
