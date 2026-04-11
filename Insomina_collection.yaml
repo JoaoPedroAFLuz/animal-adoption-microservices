@@ -246,6 +246,128 @@ collection:
     environment:
       baseUrl: localhost:80/pets
       firstPetId: 0ab83d8d-3f8f-4936-8073-cd013dc69a74
+  - name: Profile
+    meta:
+      id: fld_profile_001
+      created: 1745705654748
+      modified: 1745705654748
+      sortKey: -1745705654848
+    children:
+      - url: "{{ _.profileBaseUrl }}"
+        name: Get Profile
+        meta:
+          id: req_profile_get
+          created: 1745705688915
+          modified: 1745705688915
+          isPrivate: false
+          sortKey: -1745705688915
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/11.0.2
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.profileBaseUrl }}"
+        name: Update Profile
+        meta:
+          id: req_profile_update
+          created: 1745705688915
+          modified: 1745705688915
+          isPrivate: false
+          sortKey: -1745705688865
+        method: PUT
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"firstName": "João Pedro",
+            	"lastName": "Amorim Fortunato da Luz"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.0.2
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.profileBaseUrl }}/password"
+        name: Update Password
+        meta:
+          id: req_profile_password
+          created: 1745705688915
+          modified: 1745705688915
+          isPrivate: false
+          sortKey: -1745705688815
+        method: PUT
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"currentPassword": "your-current-password",
+            	"newPassword": "your-new-password"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.0.2
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.profileBaseUrl }}/photo"
+        name: Update Photo
+        meta:
+          id: req_profile_photo
+          created: 1745705688915
+          modified: 1745705688915
+          isPrivate: false
+          sortKey: -1745705688765
+        method: PUT
+        body:
+          mimeType: multipart/form-data
+          params:
+            - name: file
+              type: file
+              fileName: ""
+        headers:
+          - name: User-Agent
+            value: insomnia/11.0.2
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+    authentication:
+      type: oauth2
+      grantType: authorization_code
+      authorizationUrl: http://localhost:8080/realms/animal-adoption/protocol/openid-connect/auth
+      accessTokenUrl: http://localhost:8080/realms/animal-adoption/protocol/openid-connect/token
+      clientId: frontend
+      usePkce: true
+      redirectUrl: http://localhost:8080/callback
+      scope: openid profile email
+    environment:
+      profileBaseUrl: localhost:80/profile
 cookieJar:
   name: Default Jar
   meta:

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
 
 import { Field, SelectField } from '@/components/FormFields';
+import { Button } from '@/components/Button';
 import { createPet, updatePet, uploadPetImage } from '@/lib/actions';
 import { imageSchema, petFormSchema } from '@/lib/schemas';
 
@@ -143,12 +144,7 @@ export function PetForm({ pet }: PetFormProps) {
         {errors.image && <p className="mt-1 text-sm text-red-500">{errors.image}</p>}
       </div>
 
-      <button
-        type="submit"
-        className="bg-brand hover:bg-brand-dark w-full rounded-lg px-6 py-3 font-medium text-gray-900"
-      >
-        {isEdit ? 'Update Pet' : 'Register Pet'}
-      </button>
+      <Button type="submit">{isEdit ? 'Update Pet' : 'Register Pet'}</Button>
     </form>
   );
 }

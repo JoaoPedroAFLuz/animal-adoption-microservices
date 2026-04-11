@@ -1,5 +1,6 @@
 package br.com.joaopedroafluz.userservice.api.controller;
 
+import br.com.joaopedroafluz.userservice.config.MinioProperties;
 import br.com.joaopedroafluz.userservice.domain.dto.ProfileResponseDTO;
 import br.com.joaopedroafluz.userservice.domain.dto.UpdatePasswordDTO;
 import br.com.joaopedroafluz.userservice.domain.dto.UpdateProfileDTO;
@@ -19,6 +20,7 @@ public class ProfileController {
 
     private final UserProfileService userProfileService;
     private final ImageStorageService imageStorageService;
+    private final MinioProperties minioProperties;
 
     @GetMapping
     public ProfileResponseDTO getProfile(JwtAuthenticationToken authentication) {
@@ -44,7 +46,7 @@ public class ProfileController {
                                           JwtAuthenticationToken authentication) {
         final var currentProfile = userProfileService.getProfile(authentication.getName());
 
-        if (currentProfile.picture() != null && currentProfile.picture().contains("/user-avatars/")) {
+        if (currentProfile.picture() != null && currentProfile.picture().startsWith(minioProperties.getEndpoint())) {
             imageStorageService.delete(currentProfile.picture());
         }
 

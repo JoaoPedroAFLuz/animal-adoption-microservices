@@ -63,3 +63,33 @@ export async function uploadPetImage(petId: string, formData: FormData): Promise
 
   return response.json();
 }
+
+export async function updateProfile(data: { firstName: string; lastName: string }) {
+  const token = await getToken();
+
+  return api.put('/profile', data, { token });
+}
+
+export async function updatePassword(data: { currentPassword: string; newPassword: string }) {
+  const token = await getToken();
+
+  return api.put('/profile/password', data, { token });
+}
+
+export async function updateProfilePhoto(formData: FormData) {
+  const token = await getToken();
+  const apiUrl = process.env.API_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost';
+
+  const response = await fetch(`${apiUrl}/profile/photo`, {
+    method: 'PUT',
+    headers: { Authorization: `Bearer ${token}` },
+    body: formData,
+  });
+
+  if (!response.ok) {
+    const error = await response.json().catch(() => null);
+    throw new Error(error?.detail || `API error: ${response.status}`);
+  }
+
+  return response.json();
+}

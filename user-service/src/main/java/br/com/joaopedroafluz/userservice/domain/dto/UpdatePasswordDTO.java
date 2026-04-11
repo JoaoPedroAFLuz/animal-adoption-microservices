@@ -5,6 +5,6 @@ import jakarta.validation.constraints.Size;
 
 public record UpdatePasswordDTO(
         @NotBlank String currentPassword,
-        @NotBlank @Size(min = 8) String newPassword
+        @NotBlank @Size(min = 8, message = "Password must be at least 8 characters") String newPassword
 ) {
 }

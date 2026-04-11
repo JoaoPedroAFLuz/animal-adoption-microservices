@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import Link from 'next/link';
 
 import { auth } from '@/auth';
 import { PetCard } from '@/components/PetCard';
@@ -30,6 +31,13 @@ export default async function ProfilePage() {
         <div>
           <h1 className="text-2xl font-bold text-gray-900">{session?.user?.name}</h1>
           <p className="text-gray-500">{session?.user?.email}</p>
+
+          <Link
+            href="/profile/edit"
+            className="bg-brand hover:bg-brand-dark mt-2 inline-block rounded-lg px-6 py-3 font-medium text-gray-900"
+          >
+            Edit Profile
+          </Link>
         </div>
       </div>
 
