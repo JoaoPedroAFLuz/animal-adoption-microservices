@@ -19,11 +19,11 @@ public class AuditConfig {
     @Bean
     public AuditorAware<String> auditorAware() {
         return () -> Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication())
-                .filter(Authentication::isAuthenticated)
-                .map(Authentication::getPrincipal)
-                .filter(Jwt.class::isInstance)
-                .map(Jwt.class::cast)
-                .map(Jwt::getSubject);
+                             .filter(Authentication::isAuthenticated)
+                             .map(Authentication::getPrincipal)
+                             .filter(Jwt.class::isInstance)
+                             .map(Jwt.class::cast)
+                             .map(Jwt::getSubject);
     }
 
 }

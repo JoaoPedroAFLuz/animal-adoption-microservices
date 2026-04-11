@@ -14,9 +14,9 @@ public class OpenApiConfig {
     public OpenAPI openAPI() {
         return new OpenAPI()
                 .info(new Info()
-                        .title("Pet Service API")
-                        .description("API for managing pets and adoptions")
-                        .version("1.0"))
+                              .title("Pet Service API")
+                              .description("API for managing pets and adoptions")
+                              .version("1.0"))
                 .addSecurityItem(new SecurityRequirement().addList("bearer"))
                 .schemaRequirement("bearer", new SecurityScheme()
                         .type(SecurityScheme.Type.HTTP)

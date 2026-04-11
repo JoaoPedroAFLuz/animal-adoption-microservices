@@ -1,9 +1,12 @@
 package br.com.joaopedroafluz.petservice.api.controller;
 
-import br.com.joaopedroafluz.petservice.domain.dto.*;
-import br.com.joaopedroafluz.shared.domain.UserDTO;
+import br.com.joaopedroafluz.petservice.domain.dto.PetFilter;
+import br.com.joaopedroafluz.petservice.domain.dto.PetRegistrationInputDTO;
+import br.com.joaopedroafluz.petservice.domain.dto.PetResponseDTO;
+import br.com.joaopedroafluz.petservice.domain.dto.PetUpdateInputDTO;
 import br.com.joaopedroafluz.petservice.domain.service.PetService;
 import br.com.joaopedroafluz.petservice.util.AuthenticatedUserUtils;
+import br.com.joaopedroafluz.shared.domain.UserDTO;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -45,7 +48,7 @@ public class PetController {
     @GetMapping("/mines")
     public Page<PetResponseDTO> findByLoggedUser(@AuthenticationPrincipal Jwt jwt,
                                                  @PageableDefault(sort = "createdAt") Pageable pageable) {
-        String userId = jwt.getSubject();
+        final var userId = jwt.getSubject();
 
         return petService.findByOwnerId(UUID.fromString(userId), pageable).map(PetResponseDTO::from);
     }

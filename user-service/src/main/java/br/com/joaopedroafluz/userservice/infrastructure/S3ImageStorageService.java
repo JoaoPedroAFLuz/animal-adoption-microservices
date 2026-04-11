@@ -27,10 +27,10 @@ public class S3ImageStorageService implements ImageStorageService {
 
         try {
             final var request = PutObjectRequest.builder()
-                                          .bucket(minioProperties.getBucket())
-                                          .key(key)
-                                          .contentType(file.getContentType())
-                                          .build();
+                                                .bucket(minioProperties.getBucket())
+                                                .key(key)
+                                                .contentType(file.getContentType())
+                                                .build();
 
             s3Client.putObject(request, RequestBody.fromBytes(file.getBytes()));
         } catch (IOException e) {
@@ -45,9 +45,9 @@ public class S3ImageStorageService implements ImageStorageService {
         final var key = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
 
         final var request = DeleteObjectRequest.builder()
-                                         .bucket(minioProperties.getBucket())
-                                         .key(key)
-                                         .build();
+                                               .bucket(minioProperties.getBucket())
+                                               .key(key)
+                                               .build();
 
         s3Client.deleteObject(request);
     }

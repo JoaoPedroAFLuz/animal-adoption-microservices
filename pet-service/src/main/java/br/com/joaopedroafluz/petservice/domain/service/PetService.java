@@ -1,11 +1,9 @@
 package br.com.joaopedroafluz.petservice.domain.service;
 
+import br.com.joaopedroafluz.petservice.domain.dto.PetFilter;
+import br.com.joaopedroafluz.petservice.domain.dto.PetRegistrationInputDTO;
+import br.com.joaopedroafluz.petservice.domain.dto.PetUpdateInputDTO;
 import br.com.joaopedroafluz.petservice.domain.enums.AuditAction;
-import br.com.joaopedroafluz.petservice.domain.dto.*;
-import br.com.joaopedroafluz.shared.domain.AdoptionMessage;
-import br.com.joaopedroafluz.shared.domain.PetDeletedMessage;
-import br.com.joaopedroafluz.shared.domain.PetRegisteredMessage;
-import br.com.joaopedroafluz.shared.domain.UserDTO;
 import br.com.joaopedroafluz.petservice.domain.enums.Size;
 import br.com.joaopedroafluz.petservice.domain.enums.Specie;
 import br.com.joaopedroafluz.petservice.domain.enums.Status;
@@ -14,6 +12,10 @@ import br.com.joaopedroafluz.petservice.domain.exception.PetNotFoundException;
 import br.com.joaopedroafluz.petservice.domain.model.Pet;
 import br.com.joaopedroafluz.petservice.domain.repository.PetRepository;
 import br.com.joaopedroafluz.petservice.domain.repository.specification.PetSpecification;
+import br.com.joaopedroafluz.shared.domain.AdoptionMessage;
+import br.com.joaopedroafluz.shared.domain.PetDeletedMessage;
+import br.com.joaopedroafluz.shared.domain.PetRegisteredMessage;
+import br.com.joaopedroafluz.shared.domain.UserDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -63,14 +65,14 @@ public class PetService {
 
     public List<String> findSpecies() {
         return Arrays.stream(Specie.values())
-                .map(Enum::name)
-                .toList();
+                     .map(Enum::name)
+                     .toList();
     }
 
     public List<String> findSizes() {
         return Arrays.stream(Size.values())
-                .map(Enum::name)
-                .toList();
+                     .map(Enum::name)
+                     .toList();
     }
 
     @Transactional
@@ -78,9 +80,9 @@ public class PetService {
         var pet = convertInputDTOToModel(newPetDTO);
         pet = save(pet);
 
-        notificationService.sendRegisteredNotification(
-                new PetRegisteredMessage(pet.getId(), pet.getName(), pet.getSpecie().name(), pet.getBreed())
-        );
+        notificationService.sendRegisteredNotification(new PetRegisteredMessage(pet.getId(), pet.getName(),
+                                                                                pet.getSpecie().name(),
+                                                                                pet.getBreed()));
 
         auditLogService.log(AuditAction.CREATED, pet);
 
@@ -171,15 +173,15 @@ public class PetService {
 
     private Pet convertInputDTOToModel(PetRegistrationInputDTO petRegistrationInputDTO) {
         return Pet.builder()
-                .name(petRegistrationInputDTO.name())
-                .description(petRegistrationInputDTO.description())
-                .specie(petRegistrationInputDTO.specie())
-                .breed(petRegistrationInputDTO.breed())
-                .size(petRegistrationInputDTO.size())
-                .gender(petRegistrationInputDTO.gender())
-                .birthDate(petRegistrationInputDTO.birthDate())
-                .status(Status.AVAILABLE)
-                .build();
+                  .name(petRegistrationInputDTO.name())
+                  .description(petRegistrationInputDTO.description())
+                  .specie(petRegistrationInputDTO.specie())
+                  .breed(petRegistrationInputDTO.breed())
+                  .size(petRegistrationInputDTO.size())
+                  .gender(petRegistrationInputDTO.gender())
+                  .birthDate(petRegistrationInputDTO.birthDate())
+                  .status(Status.AVAILABLE)
+                  .build();
     }
 
 }

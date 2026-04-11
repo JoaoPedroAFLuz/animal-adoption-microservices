@@ -42,8 +42,8 @@ public class JwtConverter implements Converter<Jwt, AbstractAuthenticationToken>
         }
 
         return roles.stream()
-                .map(role -> new SimpleGrantedAuthority("ROLE_%s".formatted(role)))
-                .toList();
+                    .map(role -> new SimpleGrantedAuthority("ROLE_%s".formatted(role)))
+                    .toList();
     }
 
 }

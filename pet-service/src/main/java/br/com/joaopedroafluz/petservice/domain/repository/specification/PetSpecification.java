@@ -18,7 +18,8 @@ public class PetSpecification {
 
             if (filter.getName() != null && !filter.getName().isBlank()) {
                 final var unaccentName = builder.function("unaccent", String.class, builder.lower(root.get("name")));
-                final var unaccentSearch = builder.function("unaccent", String.class, builder.lower(builder.literal("%" + filter.getName() + "%")));
+                final var unaccentSearch = builder.function("unaccent", String.class, builder.lower(
+                        builder.literal("%" + filter.getName() + "%")));
 
                 predicates.add(builder.like(unaccentName, unaccentSearch));
             }

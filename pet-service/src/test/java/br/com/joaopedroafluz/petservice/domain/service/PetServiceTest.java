@@ -1,8 +1,6 @@
 package br.com.joaopedroafluz.petservice.domain.service;
 
-import br.com.joaopedroafluz.shared.domain.AdoptionMessage;
 import br.com.joaopedroafluz.petservice.domain.dto.PetFilter;
-import br.com.joaopedroafluz.shared.domain.UserDTO;
 import br.com.joaopedroafluz.petservice.domain.enums.Size;
 import br.com.joaopedroafluz.petservice.domain.enums.Specie;
 import br.com.joaopedroafluz.petservice.domain.enums.Status;
@@ -11,6 +9,8 @@ import br.com.joaopedroafluz.petservice.domain.exception.PetNotFoundException;
 import br.com.joaopedroafluz.petservice.domain.model.Pet;
 import br.com.joaopedroafluz.petservice.domain.repository.PetRepository;
 import br.com.joaopedroafluz.petservice.factory.PetFactory;
+import br.com.joaopedroafluz.shared.domain.AdoptionMessage;
+import br.com.joaopedroafluz.shared.domain.UserDTO;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

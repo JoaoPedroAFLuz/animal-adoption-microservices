@@ -1,1 +1,2 @@
-ALTER TABLE pets ADD COLUMN image_url VARCHAR(500);
+ALTER TABLE pets
+    ADD COLUMN image_url VARCHAR(500);

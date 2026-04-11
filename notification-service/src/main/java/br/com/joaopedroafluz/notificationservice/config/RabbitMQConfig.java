@@ -82,9 +82,9 @@ public class RabbitMQConfig {
     // Helpers
     private Queue buildQueueWithDlq(RabbitMQProperties.QueueConfig config) {
         return QueueBuilder.durable(config.getQueue())
-                .withArgument("x-dead-letter-exchange", properties.getExchange())
-                .withArgument("x-dead-letter-routing-key", config.getRoutingKey() + ".dlq")
-                .build();
+                           .withArgument("x-dead-letter-exchange", properties.getExchange())
+                           .withArgument("x-dead-letter-routing-key", config.getRoutingKey() + ".dlq")
+                           .build();
     }
 
     private Queue buildDlq(RabbitMQProperties.QueueConfig config) {

@@ -26,6 +26,7 @@ public class JwtConverter implements Converter<Jwt, AbstractAuthenticationToken>
     @Override
     public AbstractAuthenticationToken convert(@NonNull Jwt jwt) {
         final var authorities = extractAuthorities(jwt);
+
         return new JwtAuthenticationToken(jwt, authorities);
     }
 
@@ -44,8 +45,8 @@ public class JwtConverter implements Converter<Jwt, AbstractAuthenticationToken>
         }
 
         return roles.stream()
-                .map(role -> new SimpleGrantedAuthority("ROLE_%s".formatted(role)))
-                .toList();
+                    .map(role -> new SimpleGrantedAuthority("ROLE_%s".formatted(role)))
+                    .toList();
     }
 
 }

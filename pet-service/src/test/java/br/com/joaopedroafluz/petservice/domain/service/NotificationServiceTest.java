@@ -33,7 +33,7 @@ class NotificationServiceTest {
     @Test
     void shouldSendAdoptionNotification() {
         final var adoptionMessage = new AdoptionMessage(UUID.randomUUID(), "Rex",
-                new UserDTO(UUID.randomUUID(), "João", "joao@email.com"));
+                                                        new UserDTO(UUID.randomUUID(), "João", "joao@email.com"));
 
         when(rabbitProperties.getExchange()).thenReturn("pet.exchange");
         when(rabbitProperties.getAdoptedRoutingKey()).thenReturn("pet.adopted");
@@ -43,7 +43,8 @@ class NotificationServiceTest {
         verify(messageProducer, times(1)).sendMessage(
                 eq("pet.exchange"),
                 eq("pet.adopted"),
-                argThat(msg -> Arrays.equals(msg.getBody(), new Message(JsonUtils.toJson(adoptionMessage).getBytes()).getBody()))
+                argThat(msg -> Arrays.equals(msg.getBody(),
+                                             new Message(JsonUtils.toJson(adoptionMessage).getBytes()).getBody()))
         );
     }
 
@@ -59,7 +60,8 @@ class NotificationServiceTest {
         verify(messageProducer, times(1)).sendMessage(
                 eq("pet.exchange"),
                 eq("pet.registered"),
-                argThat(msg -> Arrays.equals(msg.getBody(), new Message(JsonUtils.toJson(message).getBytes()).getBody()))
+                argThat(msg -> Arrays.equals(msg.getBody(),
+                                             new Message(JsonUtils.toJson(message).getBytes()).getBody()))
         );
     }
 
@@ -75,7 +77,8 @@ class NotificationServiceTest {
         verify(messageProducer, times(1)).sendMessage(
                 eq("pet.exchange"),
                 eq("pet.deleted"),
-                argThat(msg -> Arrays.equals(msg.getBody(), new Message(JsonUtils.toJson(message).getBytes()).getBody()))
+                argThat(msg -> Arrays.equals(msg.getBody(),
+                                             new Message(JsonUtils.toJson(message).getBytes()).getBody()))
         );
     }
 

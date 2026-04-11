@@ -21,13 +21,14 @@ public class S3Config {
     public S3Client s3Client() {
         return S3Client.builder()
                        .endpointOverride(URI.create(minioProperties.getEndpoint()))
-                       .credentialsProvider(StaticCredentialsProvider.create(
-                               AwsBasicCredentials.create(minioProperties.getAccessKey(), minioProperties.getSecretKey())
+                       .credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials
+                                                                                     .create(minioProperties.getAccessKey(),
+                                                                                             minioProperties.getSecretKey())
                        ))
                        .region(Region.US_EAST_1)
                        .serviceConfiguration(S3Configuration.builder()
-                               .pathStyleAccessEnabled(true)
-                               .build())
+                                                            .pathStyleAccessEnabled(true)
+                                                            .build())
                        .build();
     }
 

@@ -20,23 +20,23 @@ public class AuditLogService {
 
     public void log(AuditAction action, Pet pet) {
         final var auditLog = AuditLog.builder()
-                               .action(action)
-                               .entityId(pet.getId())
-                               .userId(getCurrentUserId())
-                               .details(pet.getName() + " (" + pet.getSpecie() + ", " + pet.getBreed() + ")")
-                               .build();
+                                     .action(action)
+                                     .entityId(pet.getId())
+                                     .userId(getCurrentUserId())
+                                     .details(pet.getName() + " (" + pet.getSpecie() + ", " + pet.getBreed() + ")")
+                                     .build();
 
         auditLogRepository.save(auditLog);
     }
 
     private String getCurrentUserId() {
         return Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication())
-                .filter(Authentication::isAuthenticated)
-                .map(Authentication::getPrincipal)
-                .filter(Jwt.class::isInstance)
-                .map(Jwt.class::cast)
-                .map(Jwt::getSubject)
-                .orElse(null);
+                       .filter(Authentication::isAuthenticated)
+                       .map(Authentication::getPrincipal)
+                       .filter(Jwt.class::isInstance)
+                       .map(Jwt.class::cast)
+                       .map(Jwt::getSubject)
+                       .orElse(null);
     }
 
 }

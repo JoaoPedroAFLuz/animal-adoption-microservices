@@ -7,7 +7,8 @@
 <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f4f4; padding:20px 0;">
     <tr>
         <td align="center">
-            <table width="600" cellpadding="0" cellspacing="0" style="background-color:#ffffff; border-radius:8px; overflow:hidden;">
+            <table width="600" cellpadding="0" cellspacing="0"
+                   style="background-color:#ffffff; border-radius:8px; overflow:hidden;">
                 <tr>
                     <td style="background-color:#2196F3; padding:24px; text-align:center; color:#ffffff;">
                         <h1 style="margin:0; font-size:24px;">🐾 New Pet Registered</h1>
@@ -19,9 +20,18 @@
                             A new pet has been registered in the system:
                         </p>
                         <table style="margin:16px 0; font-size:15px; color:#333;">
-                            <tr><td style="padding:4px 16px 4px 0; font-weight:bold;">Name:</td><td th:text="${petName}">Pet</td></tr>
-                            <tr><td style="padding:4px 16px 4px 0; font-weight:bold;">Species:</td><td th:text="${specie}">Dog</td></tr>
-                            <tr><td style="padding:4px 16px 4px 0; font-weight:bold;">Breed:</td><td th:text="${breed}">Breed</td></tr>
+                            <tr>
+                                <td style="padding:4px 16px 4px 0; font-weight:bold;">Name:</td>
+                                <td th:text="${petName}">Pet</td>
+                            </tr>
+                            <tr>
+                                <td style="padding:4px 16px 4px 0; font-weight:bold;">Species:</td>
+                                <td th:text="${specie}">Dog</td>
+                            </tr>
+                            <tr>
+                                <td style="padding:4px 16px 4px 0; font-weight:bold;">Breed:</td>
+                                <td th:text="${breed}">Breed</td>
+                            </tr>
                         </table>
                     </td>
                 </tr>

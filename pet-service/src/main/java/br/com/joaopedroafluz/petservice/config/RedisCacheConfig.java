@@ -27,9 +27,10 @@ public class RedisCacheConfig {
         final var serializer = new GenericJackson2JsonRedisSerializer(objectMapper);
 
         return RedisCacheConfiguration.defaultCacheConfig()
-                .entryTtl(Duration.ofHours(1))
-                .disableCachingNullValues()
-                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(serializer));
+                                      .entryTtl(Duration.ofHours(1))
+                                      .disableCachingNullValues()
+                                      .serializeValuesWith(RedisSerializationContext.
+                                                                   SerializationPair.fromSerializer(serializer));
     }
 
 }

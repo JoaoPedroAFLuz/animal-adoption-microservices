@@ -8,13 +8,15 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.http.*;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
@@ -38,9 +40,8 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         final var problemType = ProblemType.BUSINESS_ERROR;
         final var detail = ex.getMessage();
 
-        final var problem = createProblemBuilder(status, problemType, detail)
-                .userMessage(ex.getMessage())
-                .build();
+        final var problem = createProblemBuilder(status, problemType, detail).userMessage(ex.getMessage())
+                                                                             .build();
 
         return handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);
     }
@@ -51,9 +52,8 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         final var problemType = ProblemType.RESOURCE_NOT_FOUND;
         final var detail = ex.getMessage();
 
-        final var problem = createProblemBuilder(status, problemType, detail)
-                .userMessage(ex.getMessage())
-                .build();
+        final var problem = createProblemBuilder(status, problemType, detail).userMessage(ex.getMessage())
+                                                                             .build();
 
         return handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);
     }
@@ -64,9 +64,8 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         final var problemType = ProblemType.UNAUTHORIZED;
         final var detail = ex.getMessage();
 
-        final var problem = createProblemBuilder(status, problemType, detail)
-                .userMessage(ex.getMessage())
-                .build();
+        final var problem = createProblemBuilder(status, problemType, detail).userMessage(ex.getMessage())
+                                                                             .build();
 
         return handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);
     }
@@ -78,9 +77,8 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         final var problemType = ProblemType.ACCESS_DENIED;
         final var detail = "You are not authorized to perform this action.";
 
-        final var problem = createProblemBuilder(status, problemType, detail)
-                .userMessage(ex.getMessage())
-                .build();
+        final var problem = createProblemBuilder(status, problemType, detail).userMessage(ex.getMessage())
+                                                                             .build();
 
         return handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);
     }
@@ -91,9 +89,8 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         final var problemType = ProblemType.BUSINESS_ERROR;
         final var detail = "This record was updated by another request. Please try again.";
 
-        final var problem = createProblemBuilder(status, problemType, detail)
-                .userMessage(detail)
-                .build();
+        final var problem = createProblemBuilder(status, problemType, detail).userMessage(detail)
+                                                                             .build();
 
         return handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);
     }
@@ -106,9 +103,8 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         final var problemType = ProblemType.SYSTEM_ERROR;
         final var detail = GENERIC_MESSAGE;
 
-        final var problem = createProblemBuilder(status, problemType, detail)
-                .userMessage(detail)
-                .build();
+        final var problem = createProblemBuilder(status, problemType, detail).userMessage(detail)
+                                                                             .build();
 
         return handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);
     }
@@ -122,27 +118,27 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         final var detail = "One or more parameters are invalid.";
 
         final var problemObjects = ex.getBindingResult()
-                .getAllErrors()
-                .stream()
-                .map(objectError -> {
-                    String name = objectError.getObjectName();
-                    String message = messageSource.getMessage(objectError, LocaleContextHolder.getLocale());
-        
-                    if (objectError instanceof FieldError) {
-                        name = ((FieldError) objectError).getField();
-                    }
-        
-                    return Problem.Object.builder()
-                            .name(name)
-                            .userMessage(message)
-                            .build();
-                })
-                .collect(Collectors.toList());
+                                     .getAllErrors()
+                                     .stream()
+                                     .map(objectError -> {
+                                         String name = objectError.getObjectName();
+                                         String message = messageSource.getMessage(objectError,
+                                                                                   LocaleContextHolder.getLocale());
 
-        final var problem = createProblemBuilder(status, problemType, detail)
-                .userMessage(detail)
-                .objects(problemObjects)
-                .build();
+                                         if (objectError instanceof FieldError) {
+                                             name = ((FieldError) objectError).getField();
+                                         }
+
+                                         return Problem.Object.builder()
+                                                              .name(name)
+                                                              .userMessage(message)
+                                                              .build();
+                                     })
+                                     .collect(Collectors.toList());
+
+        final var problem = createProblemBuilder(status, problemType, detail).userMessage(detail)
+                                                                             .objects(problemObjects)
+                                                                             .build();
 
         return handleExceptionInternal(ex, problem, headers, status, request);
     }
@@ -158,9 +154,8 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         if (cause != null && cause.contains("from String")) {
             detail = "Invalid value for enum field: " + extractEnumFieldMessage(cause);
         }
-        final var problem = createProblemBuilder(status, problemType, detail)
-                .userMessage(detail)
-                .build();
+        final var problem = createProblemBuilder(status, problemType, detail).userMessage(detail)
+                                                                             .build();
 
         return handleExceptionInternal(ex, problem, headers, status, request);
     }
@@ -169,18 +164,18 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                                                              HttpStatus status, WebRequest request) {
         if (Objects.isNull(body)) {
             body = Problem.builder()
-                    .title(status.getReasonPhrase())
-                    .status(status.value())
-                    .userMessage(GENERIC_MESSAGE)
-                    .timestamp(OffsetDateTime.now())
-                    .build();
+                          .title(status.getReasonPhrase())
+                          .status(status.value())
+                          .userMessage(GENERIC_MESSAGE)
+                          .timestamp(OffsetDateTime.now())
+                          .build();
         } else if (body instanceof String) {
             body = Problem.builder()
-                    .title((String) body)
-                    .status(status.value())
-                    .userMessage(GENERIC_MESSAGE)
-                    .timestamp(OffsetDateTime.now())
-                    .build();
+                          .title((String) body)
+                          .status(status.value())
+                          .userMessage(GENERIC_MESSAGE)
+                          .timestamp(OffsetDateTime.now())
+                          .build();
         }
 
         return super.handleExceptionInternal(ex, body, headers, status, request);
@@ -188,21 +183,21 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
     private Problem.ProblemBuilder createProblemBuilder(HttpStatusCode status, ProblemType problemType, String detail) {
         return Problem.builder()
-                .status(status.value())
-                .type(problemType.getUri())
-                .title(problemType.getTitle())
-                .detail(detail)
-                .timestamp(OffsetDateTime.now());
+                      .status(status.value())
+                      .type(problemType.getUri())
+                      .title(problemType.getTitle())
+                      .detail(detail)
+                      .timestamp(OffsetDateTime.now());
     }
 
     private String extractEnumFieldMessage(String message) {
-        // Exemplo de mensagem:
-        // Cannot deserialize value of type `Status` from String "INVALID": not one of the values accepted...
         int start = message.indexOf("\"");
         int end = message.indexOf("\"", start + 1);
+
         if (start != -1 && end != -1) {
             return message.substring(start + 1, end);
         }
+
         return "Unknown";
     }
 
