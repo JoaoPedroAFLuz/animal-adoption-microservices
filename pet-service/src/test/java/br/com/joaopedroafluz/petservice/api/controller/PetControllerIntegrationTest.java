@@ -83,10 +83,16 @@ class PetControllerIntegrationTest {
 
     @Test
     void shouldReturnFeaturedPets() throws Exception {
-        mockMvc.perform(post("/pets").contentType(MediaType.APPLICATION_JSON)
-                                     .content(PET_JSON)
-                                     .with(jwt("REGISTER_PET")))
-               .andExpect(status().isCreated());
+        final var result = mockMvc.perform(post("/pets").contentType(MediaType.APPLICATION_JSON)
+                                                        .content(PET_JSON)
+                                                        .with(jwt("REGISTER_PET")))
+                                  .andExpect(status().isCreated())
+                                  .andReturn();
+
+        final var id = JsonPath.read(result.getResponse().getContentAsString(), "$.id").toString();
+
+        mockMvc.perform(put("/pets/" + id + "/featured").with(jwt("UPDATE_PET")))
+               .andExpect(status().isOk());
 
         mockMvc.perform(get("/pets/featured"))
                .andExpect(status().isOk())

@@ -109,7 +109,7 @@ export default async function PetDetailsPage({ params }: PetDetailsPageProps) {
             {roles.includes('UPDATE_PET') && (
               <Link
                 href={`/admin/pets/${pet.id}/edit`}
-                className="w-full rounded-lg border border-gray-300 px-6 py-3 text-center font-medium text-gray-700 hover:bg-gray-50"
+                className="flex w-full items-center justify-center rounded-lg border border-gray-300 px-6 py-3 font-medium text-gray-700 hover:bg-gray-50"
               >
                 Edit
               </Link>

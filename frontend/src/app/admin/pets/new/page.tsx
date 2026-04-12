@@ -1,14 +1,8 @@
-import { redirect } from 'next/navigation';
-
-import { auth } from '@/auth';
 import { PetForm } from '@/components/PetForm';
+import { requireRole } from '@/lib/auth-utils';
 
 export default async function NewPetPage() {
-  const session = await auth();
-
-  if (!session?.roles?.includes('REGISTER_PET')) {
-    redirect('/');
-  }
+  await requireRole('REGISTER_PET');
 
   return (
     <div className="mx-auto max-w-2xl px-6 py-12">

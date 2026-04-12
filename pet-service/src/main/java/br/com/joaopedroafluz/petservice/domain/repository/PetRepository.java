@@ -14,7 +14,7 @@ import java.util.UUID;
 @Repository
 public interface PetRepository extends JpaRepository<Pet, UUID>, JpaSpecificationExecutor<Pet> {
 
-    @Query(value = "SELECT p from Pet p WHERE p.status = 'AVAILABLE' ORDER BY p.createdAt")
+    @Query(value = "SELECT p from Pet p WHERE p.featured = true ORDER BY p.createdAt")
     List<Pet> findFeatured(Pageable pageable);
 
     Page<Pet> findByOwnerId(UUID ownerId, Pageable pageable);

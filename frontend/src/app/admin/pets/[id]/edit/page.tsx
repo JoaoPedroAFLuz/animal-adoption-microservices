@@ -1,8 +1,8 @@
-import { notFound, redirect } from 'next/navigation';
+import { notFound } from 'next/navigation';
 
-import { auth } from '@/auth';
 import { PetForm } from '@/components/PetForm';
 import { api } from '@/lib/api';
+import { requireRole } from '@/lib/auth-utils';
 
 import type { Pet } from '@/types';
 
@@ -12,11 +12,7 @@ interface EditPetPageProps {
 
 export default async function EditPetPage({ params }: EditPetPageProps) {
   const { id } = await params;
-  const session = await auth();
-
-  if (!session?.roles?.includes('UPDATE_PET')) {
-    redirect('/');
-  }
+  await requireRole('UPDATE_PET');
 
   let pet: Pet;
 
