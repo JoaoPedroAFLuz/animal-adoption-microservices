@@ -11,6 +11,7 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.authorization.AuthorizationDeniedException;
@@ -21,8 +22,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import java.time.OffsetDateTime;
-import java.util.Objects;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Log4j2
@@ -30,83 +30,59 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
-    public static final String GENERIC_MESSAGE = "Internal server error. Try again later";
-
     private final MessageSource messageSource;
 
-    @ExceptionHandler(BusinessException.class)
-    public ResponseEntity<Object> handleBusinessException(BusinessException ex, WebRequest request) {
-        final var status = HttpStatus.BAD_REQUEST;
-        final var problemType = ProblemType.BUSINESS_ERROR;
-        final var detail = ex.getMessage();
-
-        final var problem = createProblemBuilder(status, problemType, detail).userMessage(ex.getMessage())
-                                                                             .build();
-
-        return handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);
-    }
-
     @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<Object> handleEntityNotFoundException(EntityNotFoundException ex, WebRequest request) {
-        final var status = HttpStatus.NOT_FOUND;
-        final var problemType = ProblemType.RESOURCE_NOT_FOUND;
-        final var detail = ex.getMessage();
+    public ProblemDetail handleEntityNotFoundException(EntityNotFoundException ex) {
+        final var problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setTitle("Resource not found");
 
-        final var problem = createProblemBuilder(status, problemType, detail).userMessage(ex.getMessage())
-                                                                             .build();
-
-        return handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);
+        return problem;
     }
 
     @ExceptionHandler(UnauthorizedException.class)
-    public ResponseEntity<Object> handleUnauthorizedException(UnauthorizedException ex, WebRequest request) {
-        final var status = HttpStatus.UNAUTHORIZED;
-        final var problemType = ProblemType.UNAUTHORIZED;
-        final var detail = ex.getMessage();
+    public ProblemDetail handleUnauthorizedException(UnauthorizedException ex) {
+        final var problem = ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, ex.getMessage());
+        problem.setTitle("Unauthorized");
 
-        final var problem = createProblemBuilder(status, problemType, detail).userMessage(ex.getMessage())
-                                                                             .build();
-
-        return handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);
+        return problem;
     }
 
     @ExceptionHandler(AuthorizationDeniedException.class)
-    public ResponseEntity<Object> handleAuthorizationDeniedException(AuthorizationDeniedException ex,
-                                                                     WebRequest request) {
-        final var status = HttpStatus.FORBIDDEN;
-        final var problemType = ProblemType.ACCESS_DENIED;
-        final var detail = "You are not authorized to perform this action.";
+    public ProblemDetail handleAuthorizationDeniedException(AuthorizationDeniedException ex) {
+        final var problem = ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN,
+                                                             "You are not authorized to perform this action.");
+        problem.setTitle("Access denied");
 
-        final var problem = createProblemBuilder(status, problemType, detail).userMessage(ex.getMessage())
-                                                                             .build();
-
-        return handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);
+        return problem;
     }
 
     @ExceptionHandler(OptimisticLockException.class)
-    public ResponseEntity<Object> handleOptimisticLockException(OptimisticLockException ex, WebRequest request) {
-        final var status = HttpStatus.CONFLICT;
-        final var problemType = ProblemType.BUSINESS_ERROR;
-        final var detail = "This record was updated by another request. Please try again.";
+    public ProblemDetail handleOptimisticLockException(OptimisticLockException ex) {
+        final var problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT,
+                                                             "This record was updated by another request. Please try again.");
+        problem.setTitle("Conflict");
 
-        final var problem = createProblemBuilder(status, problemType, detail).userMessage(detail)
-                                                                             .build();
+        return problem;
+    }
 
-        return handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);
+    @ExceptionHandler(BusinessException.class)
+    public ProblemDetail handleBusinessException(BusinessException ex) {
+        final var problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
+        problem.setTitle("Business rule violation");
+
+        return problem;
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<Object> handleUncaught(Exception ex, WebRequest request) {
+    public ProblemDetail handleUncaught(Exception ex) {
         log.error(ex.getMessage(), ex);
 
-        final var status = HttpStatus.INTERNAL_SERVER_ERROR;
-        final var problemType = ProblemType.SYSTEM_ERROR;
-        final var detail = GENERIC_MESSAGE;
+        final var problem = ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR,
+                                                             "Internal server error. Try again later.");
+        problem.setTitle("Internal server error");
 
-        final var problem = createProblemBuilder(status, problemType, detail).userMessage(detail)
-                                                                             .build();
-
-        return handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);
+        return problem;
     }
 
     @Override
@@ -114,85 +90,40 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                                                                   HttpHeaders headers,
                                                                   HttpStatusCode status,
                                                                   WebRequest request) {
-        final var problemType = ProblemType.INVALID_PARAMETER;
-        final var detail = "One or more parameters are invalid.";
+        final var errors = ex.getBindingResult().getFieldErrors().stream()
+                             .collect(Collectors.toMap(FieldError::getField,
+                                                       e -> messageSource.getMessage(e,
+                                                                                     LocaleContextHolder.getLocale()),
+                                                       (a, b) -> a));
 
-        final var problemObjects = ex.getBindingResult()
-                                     .getAllErrors()
-                                     .stream()
-                                     .map(objectError -> {
-                                         String name = objectError.getObjectName();
-                                         String message = messageSource.getMessage(objectError,
-                                                                                   LocaleContextHolder.getLocale());
+        final var problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "Validation failed");
+        problem.setTitle("Validation error");
+        problem.setProperty("errors", errors);
 
-                                         if (objectError instanceof FieldError) {
-                                             name = ((FieldError) objectError).getField();
-                                         }
-
-                                         return Problem.Object.builder()
-                                                              .name(name)
-                                                              .userMessage(message)
-                                                              .build();
-                                     })
-                                     .collect(Collectors.toList());
-
-        final var problem = createProblemBuilder(status, problemType, detail).userMessage(detail)
-                                                                             .objects(problemObjects)
-                                                                             .build();
-
-        return handleExceptionInternal(ex, problem, headers, status, request);
+        return ResponseEntity.status(status).body(problem);
     }
 
     @Override
-    public ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex,
-                                                               HttpHeaders headers, HttpStatusCode status,
-                                                               WebRequest request) {
-        final var problemType = ProblemType.INVALID_PARAMETER;
-        var detail = "One or more parameters are invalid.";
+    protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex,
+                                                                  HttpHeaders headers,
+                                                                  HttpStatusCode status,
+                                                                  WebRequest request) {
+        var detail = "Request body is missing or malformed.";
 
         final var cause = ex.getMostSpecificCause().getMessage();
         if (cause != null && cause.contains("from String")) {
             detail = "Invalid value for enum field: " + extractEnumFieldMessage(cause);
         }
-        final var problem = createProblemBuilder(status, problemType, detail).userMessage(detail)
-                                                                             .build();
 
-        return handleExceptionInternal(ex, problem, headers, status, request);
-    }
+        final var problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, detail);
+        problem.setTitle("Invalid request");
 
-    protected ResponseEntity<Object> handleExceptionInternal(Exception ex, Object body, HttpHeaders headers,
-                                                             HttpStatus status, WebRequest request) {
-        if (Objects.isNull(body)) {
-            body = Problem.builder()
-                          .title(status.getReasonPhrase())
-                          .status(status.value())
-                          .userMessage(GENERIC_MESSAGE)
-                          .timestamp(OffsetDateTime.now())
-                          .build();
-        } else if (body instanceof String) {
-            body = Problem.builder()
-                          .title((String) body)
-                          .status(status.value())
-                          .userMessage(GENERIC_MESSAGE)
-                          .timestamp(OffsetDateTime.now())
-                          .build();
-        }
-
-        return super.handleExceptionInternal(ex, body, headers, status, request);
-    }
-
-    private Problem.ProblemBuilder createProblemBuilder(HttpStatusCode status, ProblemType problemType, String detail) {
-        return Problem.builder()
-                      .status(status.value())
-                      .type(problemType.getUri())
-                      .title(problemType.getTitle())
-                      .detail(detail)
-                      .timestamp(OffsetDateTime.now());
+        return ResponseEntity.status(status).body(problem);
     }
 
     private String extractEnumFieldMessage(String message) {
-        int start = message.indexOf("\"");
-        int end = message.indexOf("\"", start + 1);
+        final var start = message.indexOf("\"");
+        final var end = message.indexOf("\"", start + 1);
 
         if (start != -1 && end != -1) {
             return message.substring(start + 1, end);

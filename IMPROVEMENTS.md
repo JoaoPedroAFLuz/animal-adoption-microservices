@@ -15,9 +15,13 @@
 - [ ] Idempotent endpoints — make adopt endpoint safe to call multiple times without side effects
 - [ ] API rate limiting per user — rate limit by JWT subject instead of global IP-based limiting
 - [ ] API versioning — `/v1/pets` vs `/v2/pets` for backward compatibility
-- [ ] Graceful error handling — standardize ProblemDetail responses across all services
+- [x] Graceful error handling — standardize ProblemDetail responses across all services
 
 ## Testing
 
 - [ ] User-service tests — integration and unit tests for profile management endpoints
 - [ ] Pagination improvements — add pagination to `/pets/mines` and `/pets/featured`
+
+## Internationalization
+
+- [ ] i18n — support `Accept-Language` header for error messages (pt-BR and en) using Spring MessageSource

@@ -1,20 +1,25 @@
 package br.com.joaopedroafluz.apigateway.controller;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ProblemDetail;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
-import java.util.Map;
-
 @RestController
 public class FallbackController {
 
-    @GetMapping("/fallback")
-    public Mono<Map<String, String>> fallback(ServerWebExchange exchange) {
+    @GetMapping(value = "/fallback", produces = MediaType.APPLICATION_PROBLEM_JSON_VALUE)
+    public Mono<ProblemDetail> fallback(ServerWebExchange exchange) {
         exchange.getResponse().setStatusCode(HttpStatus.SERVICE_UNAVAILABLE);
-        return Mono.just(Map.of("message", "Service is temporarily unavailable. Please try again later."));
+
+        final var problem = ProblemDetail.forStatusAndDetail(HttpStatus.SERVICE_UNAVAILABLE,
+                                                             "Service is temporarily unavailable. Please try again later.");
+        problem.setTitle("Service unavailable");
+
+        return Mono.just(problem);
     }
 
 }
