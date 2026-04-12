@@ -2,12 +2,12 @@
 
 ## Observability & Reliability
 
-- [ ] Distributed tracing — Micrometer Tracing + Zipkin to trace requests across gateway, pet-service, and notification-service
+- [x] Distributed tracing — Micrometer Tracing + Zipkin to trace requests across gateway, pet-service, and notification-service
 - [ ] Custom health checks — health indicators for Keycloak, MinIO, and RabbitMQ connectivity
 
 ## Database & Performance
 
-- [ ] Database indexing — add indexes to frequently queried columns (owner_id, status, specie) and benchmark with EXPLAIN ANALYZE
+- [x] Database indexing — add indexes to frequently queried columns (owner_id, status, specie) and benchmark with EXPLAIN ANALYZE
 - [ ] Soft delete — mark pets as deleted instead of hard-deleting, preserve data history
 
 ## API Design & Resilience
