@@ -166,6 +166,7 @@ In IntelliJ: **Run** → **Edit Configurations** → **Remote JVM Debug** → se
 | Grafana       | http://localhost:3001         |
 | MinIO Console | http://localhost:9001         |
 | Prometheus    | http://localhost:9090         |
+| Zipkin        | http://localhost:9411         |
 | RedisInsight  | http://localhost:8001         |
 
 💡 A preconfigured `insomnia.json` file is available in the root directory. Import it into Insomnia to test all

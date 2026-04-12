@@ -20,6 +20,7 @@ spring:
     password: ${RABBIT_MQ_PASSWORD:docker}
     listener:
       simple:
+        observation-enabled: true
         retry:
           enabled: true
           initial-interval: 2000
@@ -41,3 +42,18 @@ rabbit:
 
 notification:
   admin-email: ${NOTIFICATION_ADMIN_EMAIL:admin@adoption.com.br}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, prometheus
+  metrics:
+    tags:
+      application: notification-service
+  tracing:
+    sampling:
+      probability: 1.0
+  zipkin:
+    tracing:
+      endpoint: ${ZIPKIN_URL:http://localhost:9411}/api/v2/spans

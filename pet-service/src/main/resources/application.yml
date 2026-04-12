@@ -29,6 +29,8 @@ spring:
     port: ${RABBIT_MQ_PORT:5672}
     username: ${RABBIT_MQ_USER:joaopedroafluz}
     password: ${RABBIT_MQ_PASSWORD:docker}
+    template:
+      observation-enabled: true
   security:
     oauth2:
       resourceserver:
@@ -71,6 +73,12 @@ management:
   metrics:
     tags:
       application: ${spring.application.name}
+  tracing:
+    sampling:
+      probability: 1.0
+  zipkin:
+    tracing:
+      endpoint: ${ZIPKIN_URL:http://localhost:9411}/api/v2/spans
 
 logging:
   level:

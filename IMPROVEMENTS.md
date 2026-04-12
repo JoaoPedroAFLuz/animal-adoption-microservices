@@ -1,27 +1,23 @@
 # Improvements
 
-## UI/UX
+## Observability & Reliability
 
-- [x] Active tab highlighting — underline or color change on the current nav link
-- [x] Loading skeletons — placeholder shapes while pages load
-- [x] Search by name — text input to search pets by name
-- [x] Error pages — friendly error boundaries with retry button when API is unavailable
-- [x] Featured pets — boolean flag on pets, admin toggle, home page shows only featured pets
+- [ ] Distributed tracing — Micrometer Tracing + Zipkin to trace requests across gateway, pet-service, and notification-service
+- [ ] Custom health checks — health indicators for Keycloak, MinIO, and RabbitMQ connectivity
 
-## Auth & Users
+## Database & Performance
 
-- [x] Google login — add Google as social identity provider in Keycloak
-- [x] User profile page — avatar, name, email, and adopted pets
-- [x] User avatar — display user photo from Keycloak/Google in the header
+- [ ] Database indexing — add indexes to frequently queried columns (owner_id, status, specie) and benchmark with EXPLAIN ANALYZE
+- [ ] Soft delete — mark pets as deleted instead of hard-deleting, preserve data history
 
-## Backend
+## API Design & Resilience
 
-- [x] Pet image upload — S3/MinIO storage, upload endpoint, display on cards and details
-- [x] Edit profile — custom forms to change name, password, and photo via Keycloak Admin API
-- [x] OpenAPI/Swagger documentation — auto-generated API docs
-- [x] Audit log — track who created/updated/deleted pets and when
+- [ ] Idempotent endpoints — make adopt endpoint safe to call multiple times without side effects
+- [ ] API rate limiting per user — rate limit by JWT subject instead of global IP-based limiting
+- [ ] API versioning — `/v1/pets` vs `/v2/pets` for backward compatibility
+- [ ] Graceful error handling — standardize ProblemDetail responses across all services
 
-## DevOps
+## Testing
 
-- [x] GitHub Actions CI — run tests, lint, build on every push
-- [ ] Production Docker config — nginx reverse proxy with SSL
+- [ ] User-service tests — integration and unit tests for profile management endpoints
+- [ ] Pagination improvements — add pagination to `/pets/mines` and `/pets/featured`
